@@ -8,6 +8,7 @@ from fastapi import (
     Cookie,
     Depends,
     Header,
+    HTTPException,
     Path,
     Request,
     Response,

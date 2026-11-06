@@ -145,6 +145,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             )
             if cfg.AUTH_COOKIE_SECURE or cfg.APP_ENV.lower() == "production":
                 res.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+            origin = request.headers.get("origin")
+            if origin and "Access-Control-Allow-Origin" not in res.headers:
+                if origin in cfg.CORS_ORIGINS or "*" in cfg.CORS_ORIGINS:
+                    res.headers["Access-Control-Allow-Origin"] = origin
+                    res.headers["Access-Control-Allow-Credentials"] = "true"
             return res
 
         try:
