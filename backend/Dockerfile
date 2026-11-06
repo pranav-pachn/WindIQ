@@ -32,9 +32,11 @@ WORKDIR /app
 # Copy python packages from builder
 COPY --from=builder /install /usr/local
 
-# Copy application source code and migrations
+# Copy application source code, migrations, scripts, and data
 COPY --chown=windiq:windiq app/ /app/app/
 COPY --chown=windiq:windiq migrations/ /app/migrations/
+COPY --chown=windiq:windiq scripts/ /app/scripts/
+COPY --chown=windiq:windiq data/ /app/data/
 COPY --chown=windiq:windiq alembic.ini /app/
 
 # Create data directories and ensure non-root user permissions

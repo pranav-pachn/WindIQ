@@ -220,6 +220,19 @@ class Settings(BaseSettings):
         hide_input_in_errors=True,
     )
 
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def assemble_database_url(cls, v: str) -> str:
+        """Convert standard postgres:// or postgresql:// schemes to postgresql+asyncpg://."""
+        if isinstance(v, str):
+            v_stripped = v.strip()
+            if v_stripped.startswith("postgres://"):
+                return v_stripped.replace("postgres://", "postgresql+asyncpg://", 1)
+            elif v_stripped.startswith("postgresql://") and not v_stripped.startswith("postgresql+asyncpg://"):
+                return v_stripped.replace("postgresql://", "postgresql+asyncpg://", 1)
+            return v_stripped
+        return v
+
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
     def assemble_cors_origins(cls, v: str | list[str]) -> list[str]:

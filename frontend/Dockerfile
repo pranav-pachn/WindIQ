@@ -24,8 +24,10 @@ FROM nginx:alpine AS runner
 # Remove default nginx static assets and config
 RUN rm -rf /usr/share/nginx/html/* /etc/nginx/conf.d/default.conf
 
-# Copy custom Nginx configuration with reverse proxy to backend
+# Copy custom Nginx configuration and entrypoint
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 
 # Copy compiled static assets from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
@@ -36,4 +38,5 @@ EXPOSE 3000
 HEALTHCHECK --interval=10s --timeout=5s --start-period=3s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/healthz || exit 1
 
+ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]
