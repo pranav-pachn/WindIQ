@@ -23,6 +23,11 @@ class Settings(BaseSettings):
         default="postgresql+asyncpg://postgres:postgres@localhost:5432/windiq",
         description="Async PostgreSQL connection string",
     )
+    DB_POOL_SIZE: int = Field(default=5, ge=1, le=50, description="Database connection pool size")
+    DB_MAX_OVERFLOW: int = Field(default=10, ge=0, le=50, description="Database connection pool max overflow")
+    DB_POOL_TIMEOUT: float = Field(default=30.0, ge=1.0, description="Database connection acquisition timeout")
+    DB_POOL_RECYCLE: int = Field(default=300, ge=60, description="Database connection recycling interval in seconds")
+    DB_DISABLE_STATEMENT_CACHE: bool = Field(default=False, description="Disable asyncpg statement cache for transaction poolers")
     LOG_LEVEL: str = Field(default="INFO", description="Application log level")
     CORS_ORIGINS: list[str] = Field(
         default=["http://localhost:3000", "http://localhost:8000"],
@@ -185,6 +190,12 @@ class Settings(BaseSettings):
         default=2.0,
         ge=0.5,
         description="Socket read/write timeout for Redis commands (seconds)",
+    )
+    REDIS_MAX_CONNECTIONS: int = Field(
+        default=20,
+        ge=1,
+        le=100,
+        description="Maximum Redis connection pool size for distributed rate limiting",
     )
     # Distributed Rate Limiting & Fail-Closed Policies
     RATE_LIMIT_ENABLED: bool = Field(

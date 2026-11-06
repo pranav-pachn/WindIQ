@@ -85,6 +85,7 @@ The platform reconciles 100% against the verified 744-hour January 2026 benchmar
 
 ## Documentation & Deployment
 
+* [Zero-Cost Cloud Deployment Guide (Vercel + Render + Supabase + Upstash)](docs/free_cloud_deployment_guide.md)
 * [Render Production Deployment Guide](docs/render_deployment_guide.md)
 * [Final Release Candidate Audit Report](docs/final_release_candidate_audit.md)
 * [Phase 3.1 Frontend Foundation & Overview Report](docs/phase_3_1_frontend_foundation_and_overview.md)

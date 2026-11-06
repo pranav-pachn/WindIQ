@@ -68,9 +68,17 @@ def do_run_migrations(connection: Connection) -> None:
 
 async def run_async_migrations() -> None:
     """Run migrations in 'online' mode with async engine."""
+    url = get_url()
+    settings = get_settings()
+    connect_args: dict = {}
+    if ":6543" in url or getattr(settings, "DB_DISABLE_STATEMENT_CACHE", False):
+        connect_args["statement_cache_size"] = 0
+        connect_args["prepared_statement_cache_size"] = 0
+
     connectable = create_async_engine(
-        get_url(),
+        url,
         poolclass=pool.NullPool,
+        connect_args=connect_args,
     )
 
     async with connectable.connect() as connection:

@@ -2,6 +2,7 @@
 
 import asyncio
 from collections.abc import AsyncGenerator
+from typing import Any
 
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import (
@@ -26,20 +27,27 @@ def get_engine(settings: Settings | None = None) -> AsyncEngine:
     global _engine
     if _engine is None:
         cfg = settings or get_settings()
+        connect_args: dict[str, Any] = {}
+        if ":6543" in cfg.DATABASE_URL or cfg.DB_DISABLE_STATEMENT_CACHE:
+            connect_args["statement_cache_size"] = 0
+            connect_args["prepared_statement_cache_size"] = 0
+
         if cfg.APP_ENV in ("test", "testing"):
             _engine = create_async_engine(
                 cfg.DATABASE_URL,
                 poolclass=NullPool,
+                connect_args=connect_args,
                 echo=cfg.DEBUG and cfg.APP_ENV != "production",
             )
         else:
             _engine = create_async_engine(
                 cfg.DATABASE_URL,
-                pool_size=10,
-                max_overflow=20,
-                pool_timeout=30.0,
-                pool_recycle=1800,
+                pool_size=cfg.DB_POOL_SIZE,
+                max_overflow=cfg.DB_MAX_OVERFLOW,
+                pool_timeout=cfg.DB_POOL_TIMEOUT,
+                pool_recycle=cfg.DB_POOL_RECYCLE,
                 pool_pre_ping=True,
+                connect_args=connect_args,
                 echo=cfg.DEBUG and cfg.APP_ENV != "production",
             )
     return _engine
@@ -86,7 +94,15 @@ async def check_db_health(
     try:
         if target_engine is None:
             if settings is not None:
-                temp_engine = create_async_engine(settings.DATABASE_URL, pool_pre_ping=True)
+                connect_args: dict[str, Any] = {}
+                if ":6543" in settings.DATABASE_URL or settings.DB_DISABLE_STATEMENT_CACHE:
+                    connect_args["statement_cache_size"] = 0
+                    connect_args["prepared_statement_cache_size"] = 0
+                temp_engine = create_async_engine(
+                    settings.DATABASE_URL,
+                    pool_pre_ping=True,
+                    connect_args=connect_args,
+                )
                 target_engine = temp_engine
             else:
                 target_engine = get_engine()

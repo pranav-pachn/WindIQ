@@ -35,7 +35,7 @@ async def init_redis_pool(settings: Settings | None = None) -> Redis:
 
         _redis_pool = ConnectionPool.from_url(
             cfg.REDIS_URL,
-            max_connections=50,
+            max_connections=cfg.REDIS_MAX_CONNECTIONS,
             socket_connect_timeout=cfg.REDIS_CONNECT_TIMEOUT_SECONDS,
             socket_timeout=cfg.REDIS_SOCKET_TIMEOUT_SECONDS,
             retry_on_timeout=True,
