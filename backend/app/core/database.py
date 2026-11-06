@@ -82,7 +82,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 async def check_db_health(
     engine: AsyncEngine | None = None,
     settings: Settings | None = None,
-    timeout_seconds: float = 2.0,
+    timeout_seconds: float = 10.0,
 ) -> bool:
     """Execute a lightweight async connectivity check against PostgreSQL.
 
