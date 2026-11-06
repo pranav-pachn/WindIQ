@@ -1,0 +1,19 @@
+# Docker build ignore patterns
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+.env
+.env.*
+.venv
+venv
+ENV/
+env/
+.pytest_cache/
+.ruff_cache/
+*.log
+tests/
+.git
+.gitignore
+

@@ -1,0 +1,65 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Environments & Local Secrets
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+ENV/
+env/
+
+# Node & Frontend dependencies and build outputs
+node_modules/
+*/node_modules/
+dist/
+*/dist/
+dist-ssr/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Pytest / Coverage / Linter
+.pytest_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Local databases and Docker mounts
+postgres_data/
+.pg_test_db/
+*.db
+*.sqlite3
+
+# Data Pipeline Runtime Caches
+data/raw/cache/
+backend/data/raw/cache/
+*.cache
+
+# Ephemeral Test Screenshots & Generated Dumps
+tests/screenshots/*.png
+!tests/screenshots/.gitkeep
+
+# Logs
+*.log
+logs/
+
+# IDE & OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Agent & System Metadata
+.gemini/
+.system_generated/
