@@ -3,6 +3,8 @@
 import ipaddress
 import json
 from functools import lru_cache
+from typing import Any
+from urllib.parse import urlsplit
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from pydantic import Field, field_validator, model_validator
@@ -316,6 +318,22 @@ class Settings(BaseSettings):
                 raise ValueError(f"Invalid CIDR format in TRUSTED_PROXIES: '{entry}' ({exc})") from exc
 
         return validated
+
+    @model_validator(mode="before")
+    @classmethod
+    def sync_redis_credentials(cls, data: Any) -> Any:
+        """Extract REDIS_PASSWORD from REDIS_URL if REDIS_PASSWORD is not explicitly provided."""
+        if isinstance(data, dict):
+            redis_url = data.get("REDIS_URL")
+            redis_pwd = data.get("REDIS_PASSWORD")
+            if redis_url and (not redis_pwd or redis_pwd == "windiq_redis_dev_secret_pass"):
+                try:
+                    parsed_pwd = urlsplit(str(redis_url)).password
+                    if parsed_pwd:
+                        data["REDIS_PASSWORD"] = parsed_pwd
+                except Exception:
+                    pass
+        return data
 
     @model_validator(mode="after")
     def validate_production_configuration(self) -> "Settings":
