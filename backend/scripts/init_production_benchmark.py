@@ -57,6 +57,7 @@ def run_alembic_migrations() -> None:
     logger.info("Applying database migrations to head...")
     ini_path = backend_dir / "alembic.ini"
     alembic_cfg = Config(str(ini_path))
+    alembic_cfg.set_main_option("script_location", str(backend_dir / "migrations"))
     command.upgrade(alembic_cfg, "head")
     logger.info("Database migrations successfully applied to head.")
 
