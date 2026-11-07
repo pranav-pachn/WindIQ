@@ -408,7 +408,7 @@ export interface RevisionAnalyticsResponse {
 // Phase 4.1 Authentication & RBAC Schemas
 // ---------------------------------------------------------------------------
 
-export type UserRole = "viewer" | "analyst" | "admin";
+export type UserRole = "viewer" | "analyst" | "admin" | "Viewer" | "Analyst" | "Admin";
 
 export interface UserProfileResponse {
   user_id: string;

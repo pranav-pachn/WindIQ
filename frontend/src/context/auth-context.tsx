@@ -93,16 +93,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     (allowedRoles: UserRole | UserRole[]): boolean => {
       if (!user) return false;
       const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
-      return roles.includes(user.role);
+      const userRoleLower = user.role.toLowerCase();
+      return roles.some((r) => r.toLowerCase() === userRoleLower);
     },
     [user]
   );
+
+  const normalizedRole = user?.role ? (user.role.toLowerCase() as UserRole) : null;
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        role: user?.role ?? null,
+        role: normalizedRole,
         isAuthenticated: !!user,
         isLoading,
         login,

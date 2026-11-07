@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import { User, Shield, Key, LogOut, ChevronDown, Check, Loader2, RefreshCw } from 'lucide-react'
+import { User, Key, LogOut, ChevronDown, Sparkles, Loader2 } from 'lucide-react'
 import { useAuth } from '@/context/auth-context'
 import { api } from '@/lib/api-client'
+import { QuickRoleSwitcher } from '@/components/layout/quick-role-switcher'
 import type { ApiKeyItemResponse, ApiKeyCreateResponse } from '@/types/api'
 
 export function UserMenu() {
-  const { user, role, isAuthenticated, isLoading, login, logout } = useAuth()
+  const { user, role, isAuthenticated, isLoading, logout } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
   const [showKeyModal, setShowKeyModal] = useState(false)
   const [keyName, setKeyName] = useState('')
@@ -14,19 +15,8 @@ export function UserMenu() {
   const [createdKey, setCreatedKey] = useState<ApiKeyCreateResponse | null>(null)
   const [isKeyLoading, setIsKeyLoading] = useState(false)
   const [keyError, setKeyError] = useState<string | null>(null)
-  const [isSwitching, setIsSwitching] = useState<string | null>(null)
 
-  const handleQuickLogin = async (email: string, pass: string) => {
-    setIsSwitching(email)
-    try {
-      await login(email, pass)
-      setIsOpen(false)
-    } catch (err: any) {
-      console.error('Failed to log in:', err)
-    } finally {
-      setIsSwitching(null)
-    }
-  }
+  const isAdmin = role?.toLowerCase() === 'admin'
 
   const handleOpenKeys = async () => {
     setShowKeyModal(true)
@@ -108,93 +98,55 @@ export function UserMenu() {
             onClick={() => setIsOpen(false)}
             aria-hidden="true"
           />
-          <div className="absolute right-0 mt-2 w-72 rounded-xl bg-slate-900 border border-slate-800 shadow-2xl z-50 p-3 text-xs text-slate-200">
-            <div className="pb-2.5 border-b border-slate-800">
-              <div className="text-[11px] uppercase tracking-wider text-slate-400 font-bold mb-1">
-                Active Session
-              </div>
-              <div className="font-medium text-slate-100 truncate">
-                {user?.email ?? 'Unauthenticated'}
-              </div>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-950 border border-cyan-800/80 text-cyan-300 capitalize">
-                  Role: {role ?? 'None'}
+          <div className="absolute right-0 mt-2 w-84 sm:w-96 rounded-2xl bg-[#090e1c] border border-slate-800 shadow-2xl z-50 p-4 text-xs text-slate-200 backdrop-blur-xl">
+            <div className="pb-3 border-b border-slate-800/90">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold font-mono">
+                  Active Session
                 </span>
                 {user?.is_active && (
-                  <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-950 text-emerald-400 border border-emerald-800/60">
-                    Active
+                  <span className="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/60 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    Authenticated
+                  </span>
+                )}
+              </div>
+              <div className="font-semibold text-slate-100 truncate text-sm">
+                {user?.email ?? 'Unauthenticated (Guest Mode)'}
+              </div>
+              <div className="flex items-center gap-2 mt-1.5">
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-950 border border-cyan-800/80 text-cyan-300 capitalize font-medium">
+                  Assigned Role: {role ?? 'Guest'}
+                </span>
+                {user?.permissions && (
+                  <span className="text-[10px] text-slate-400">
+                    {user.permissions.length} active scopes
                   </span>
                 )}
               </div>
             </div>
 
-            <div className="py-2.5 border-b border-slate-800">
-              <div className="text-[11px] uppercase tracking-wider text-slate-400 font-bold mb-2">
-                Quick Role Switch (Demo)
+            <div className="py-3 border-b border-slate-800/90">
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-[11px] uppercase tracking-wider text-slate-300 font-bold flex items-center gap-1.5 font-mono">
+                  <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Quick Role Switch (Demo)</span>
+                </div>
+                <span className="text-[10px] text-slate-400">Instant RBAC Toggle</span>
               </div>
-              <div className="space-y-1">
-                <button
-                  type="button"
-                  disabled={isSwitching !== null}
-                  onClick={() => handleQuickLogin('viewer@windiq.local', 'ViewerPass123!#')}
-                  className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-left transition-colors ${
-                    role === 'viewer'
-                      ? 'bg-cyan-950/80 border border-cyan-700/70 text-cyan-200'
-                      : 'hover:bg-slate-800 text-slate-300'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <Shield className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Viewer (Basic Read)</span>
-                  </div>
-                  {role === 'viewer' && <Check className="w-3.5 h-3.5 text-cyan-400" />}
-                </button>
 
-                <button
-                  type="button"
-                  disabled={isSwitching !== null}
-                  onClick={() => handleQuickLogin('analyst@windiq.local', 'AnalystPass123!#')}
-                  className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-left transition-colors ${
-                    role === 'analyst'
-                      ? 'bg-cyan-950/80 border border-cyan-700/70 text-cyan-200'
-                      : 'hover:bg-slate-800 text-slate-300'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <Shield className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Analyst (Granular Analytics)</span>
-                  </div>
-                  {role === 'analyst' && <Check className="w-3.5 h-3.5 text-cyan-400" />}
-                </button>
-
-                <button
-                  type="button"
-                  disabled={isSwitching !== null}
-                  onClick={() => handleQuickLogin('admin@windiq.local', 'AdminPass123!#')}
-                  className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-left transition-colors ${
-                    role === 'admin'
-                      ? 'bg-cyan-950/80 border border-cyan-700/70 text-cyan-200'
-                      : 'hover:bg-slate-800 text-slate-300'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <Shield className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>Admin (Full Privileges + API Keys)</span>
-                  </div>
-                  {role === 'admin' && <Check className="w-3.5 h-3.5 text-cyan-400" />}
-                </button>
-              </div>
+              <QuickRoleSwitcher variant="cards" onRoleSwitched={() => {}} />
             </div>
 
-            <div className="pt-2 space-y-1">
-              {role === 'admin' && (
+            <div className="pt-2.5 space-y-1">
+              {isAdmin && (
                 <button
                   type="button"
                   onClick={handleOpenKeys}
-                  className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left text-cyan-400 hover:bg-cyan-950/50 hover:text-cyan-300 transition-colors"
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-left text-cyan-400 hover:bg-cyan-950/50 hover:text-cyan-300 transition-colors font-medium border border-cyan-900/40"
                 >
-                  <Key className="w-3.5 h-3.5" />
-                  <span>Provision Machine API Keys</span>
+                  <Key className="w-4 h-4" />
+                  <span>Provision Machine API Keys (Admin)</span>
                 </button>
               )}
 
@@ -205,10 +157,10 @@ export function UserMenu() {
                     logout()
                     setIsOpen(false)
                   }}
-                  className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left text-rose-400 hover:bg-rose-950/50 hover:text-rose-300 transition-colors"
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-left text-rose-400 hover:bg-rose-950/50 hover:text-rose-300 transition-colors"
                 >
-                  <LogOut className="w-3.5 h-3.5" />
-                  <span>Sign Out</span>
+                  <LogOut className="w-4 h-4" />
+                  <span>Sign Out Session</span>
                 </button>
               )}
             </div>

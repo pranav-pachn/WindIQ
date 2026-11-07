@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge'
 import { formatUtcDateTime, formatLondonDateTime } from '@/lib/formatters'
 import { useApiHealth } from '@/hooks/use-api-health'
 import { UserMenu } from '@/components/layout/user-menu'
+import { QuickRoleSwitcher } from '@/components/layout/quick-role-switcher'
 
 interface TopNavProps {
   pageTitle: string
@@ -126,6 +127,11 @@ export function TopNav({
               <span>API Offline</span>
             </Badge>
           )}
+        </div>
+
+        {/* Quick Role Switcher (Demo Shortcut for Reviewers/Recruiters) */}
+        <div className="hidden sm:block">
+          <QuickRoleSwitcher variant="compact" />
         </div>
 
         {/* User Account & Role Badge */}
