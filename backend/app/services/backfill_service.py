@@ -120,6 +120,7 @@ class HistoricalBackfillService:
                 else:
                     existing_evaluations += 1
 
+            await self.session.commit()
             curr_delivery += timedelta(days=1)
 
         await self.session.commit()
