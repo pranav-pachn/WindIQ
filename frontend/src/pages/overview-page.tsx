@@ -162,6 +162,7 @@ export function OverviewPage() {
                   <DataFreshnessCard
                     datasetHealth={overviewQuery.data.dataset_health}
                     detailedHealth={dataHealthQuery.data}
+                    evaluationPeriod={overviewQuery.data.evaluation_period}
                   />
                 )}
               </div>

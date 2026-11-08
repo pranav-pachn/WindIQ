@@ -45,7 +45,7 @@ export function ForecastDirectionCard({
               <span className="text-xs font-normal text-[#718198]">hrs</span>
             </div>
             <div className="text-[11px] text-[#718198] leading-tight">
-              Day-ahead forecast exceeded measured settlement actuals
+              Day-ahead forecast exceeded measured settlement actuals during Jan 2026
             </div>
           </div>
 
@@ -63,7 +63,7 @@ export function ForecastDirectionCard({
               <span className="text-xs font-normal text-[#718198]">hrs</span>
             </div>
             <div className="text-[11px] text-[#718198] leading-tight">
-              Measured settlement actuals exceeded day-ahead forecast
+              Measured settlement actuals exceeded day-ahead forecast during Jan 2026
             </div>
           </div>
         </div>
@@ -100,7 +100,7 @@ export function ForecastDirectionCard({
         <div className="rounded bg-[#0E1726] p-2.5 border border-[#1E2B3E] flex items-start gap-2 text-[11px] text-[#718198]">
           <Info className="w-3.5 h-3.5 text-[#35B9C8] shrink-0 mt-0.5" />
           <p className="leading-snug">
-            <strong className="text-[#9AAABD]">Analytical Boundary:</strong> Evaluates national wind generation forecast deviation against outturn. This metric measures wind forecasting accuracy and does not represent total system electricity procurement or net demand positions.
+            <strong className="text-[#9AAABD]">Analytical Boundary:</strong> Evaluates national wind generation forecast deviation against outturn for the historical January 2026 evaluation period. Historical overforecast (+1,747.89 MW bias, 84.9% of hours) reflects observed winter meteorological conditions and does not represent a guaranteed future operating pattern.
           </p>
         </div>
       </CardContent>

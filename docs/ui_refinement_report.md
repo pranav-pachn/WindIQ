@@ -233,6 +233,37 @@ To establish complete design cohesion across the platform matching the refined E
    - **Multi-Horizon Error Convergence (`MultiHorizonChart`)**: Restyled convergence banner with `#162337` MAE reduction card (`34.16%` in `#35B98A`, `−835.70 MW`), ComposedChart dual-axis canvas, and 6 horizon bucket cards (`#111C2D` / `#26364A`).
    - **Settlement Trace Modal (`PublicationTraceModal`)**: Dialog aligned with `#0B1220/80` backdrop, `#111C2D` container, and `#162337` step boxes.
 
+### 3.8 Presentation & Analytical Ergonomics Refinements (P1/P2 Pass)
+
+1. **KPI Label Simplification & Tooltips (P1)**:
+   - Primary labels updated from verbose strings to clean standard abbreviations: `MAE`, `RMSE`, `MAPE`, `Forecast Bias`, and `Directional Split`.
+   - Complete formal metric names, calculation methods, and penalty descriptions relocated to interactive tooltips.
+   - Redundant acronym badges removed from cards where the title already clearly conveys the metric.
+
+2. **De-duplication of Directional Metrics (P1)**:
+   - Overforecast / Underforecast split on KPI Card 6 refocused as a compact summary: `632 : 112 hrs` with `85% Over` badge and `632 overforecast vs 112 underforecast` subtitle.
+   - Detailed visual breakdown, segmented proportion bar, and boundary notes dedicated to the `Forecast Direction Analysis` panel.
+
+3. **Data Freshness & Source Horizon Disambiguation (P1)**:
+   - Dual timestamp structure explicitly distinguishing:
+     - **Pipeline Ingestion Run**: Timestamp and relative age of backend ingestion job execution (`datasetHealth.last_successful_ingestion_utc`, e.g., `8m ago`).
+     - **Available Source Data**: Coverage horizon of physical market delivery data (`01 Feb 2026 23:00 UTC` for canonical benchmark; dynamic live horizon when active).
+   - Truthful scheduler indicator: strictly requires `enabled === true && status === 'RUNNING'` to report active polling; renders `Scheduler Disabled — Cloud Demo Mode` and `Static Benchmark Mode` when disabled.
+
+4. **Generation Baseline Visual Separation (P2)**:
+   - Replaced narrow flex strip with three prominent, high-contrast stat blocks:
+     - `Mean Day-Ahead Forecast`: `13,031.4 MW` (`#35B9C8` accent).
+     - `Mean Settlement Actual`: `11,283.6 MW` (`#E7EDF5` primary text).
+     - `Absolute Difference`: `+1,747.9 MW` (`#E7AD4A` warning).
+   - Rendered `Forecast-to-Actual Ratio: 115.5%` as a secondary context pill at top-right with explanatory tooltip.
+
+5. **Mobile Responsive Adaptation (P2)**:
+   - Adjusted KPI container from 1-column stack to a compact 2-column grid (`grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3.5`).
+   - Compact card padding (`p-3 sm:p-4`) and responsive typography (`text-lg sm:text-2xl`), enabling the complete 6-card KPI grid to fit comfortably on 390px mobile screens without excessive scrolling.
+
+6. **Historical Context Correction**:
+   - Explicitly clarified that the `+1,747.89 MW` bias, `115.5%` ratio, and `84.9%` (632h) overforecast reflect observed historical behavior during the January 2026 winter evaluation period and must not be interpreted as a guaranteed future operating pattern across all seasons.
+
 ---
 
 ## 4. Visual Artifacts Catalog
@@ -242,6 +273,8 @@ High-resolution screenshots were re-captured from the active runtime and saved t
 | Screenshot File | Description | Dimensions |
 |---|---|---|
 | `dashboard_executive_overview_viewport.png` | Executive Overview primary viewport (KPI grid, generation baseline, direction analysis) | 1440 × 900 |
+| `dashboard_executive_overview_1440x900.png` | Executive Overview 1440x900 desktop audit screenshot | 1440 × 900 |
+| `dashboard_executive_overview_390x844.png` | Executive Overview 390x844 mobile compact 2-column KPI grid | 390 × 844 |
 | `dashboard_executive_overview_full.png` | Complete Executive Overview page including daily trend charts and extremes | 1440 × 2650 |
 | `accuracy_view1_timeline.png` | Forecast Accuracy View 1: Filters, hourly evaluations table, and pagination | 1440 × 900 |
 | `accuracy_view1_lineage_modal.png` | Settlement Lineage & Audit Modal: 3-step mathematical proof and Elexon BMRS readings | 1440 × 900 |

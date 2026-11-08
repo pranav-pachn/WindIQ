@@ -1,15 +1,16 @@
-import { Database, Clock, Cpu, CheckCircle2, AlertTriangle } from 'lucide-react'
+import { Database, Clock, Cpu, CheckCircle2, AlertTriangle, Calendar } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { formatUtcDateTime, formatLondonDateTime } from '@/lib/formatters'
-import type { DatasetHealthInfo, DataHealthResponse } from '@/types/api'
+import { formatUtcDateTime, formatLondonDateTime, formatDate } from '@/lib/formatters'
+import type { DatasetHealthInfo, DataHealthResponse, EvaluationPeriodInfo } from '@/types/api'
 
 interface DataFreshnessCardProps {
   datasetHealth: DatasetHealthInfo
   detailedHealth?: DataHealthResponse
+  evaluationPeriod?: EvaluationPeriodInfo
 }
 
-function formatDataAge(utcTimestamp?: string | null): string {
+function formatPipelineAge(utcTimestamp?: string | null): string {
   if (!utcTimestamp) return 'No timestamp'
   const date = new Date(utcTimestamp.endsWith('Z') ? utcTimestamp : `${utcTimestamp}Z`)
   const now = new Date()
@@ -29,6 +30,7 @@ function formatDataAge(utcTimestamp?: string | null): string {
 export function DataFreshnessCard({
   datasetHealth,
   detailedHealth,
+  evaluationPeriod,
 }: DataFreshnessCardProps) {
   const scheduler = detailedHealth?.scheduler
   // Strictly require enabled === true AND status === 'RUNNING' to claim running scheduler
@@ -36,7 +38,15 @@ export function DataFreshnessCard({
   // Only claim leader lock if scheduler is actually active and enabled
   const isLeader = isSchedulerActive && Boolean(scheduler?.is_leader)
 
-  const dataAge = formatDataAge(datasetHealth.last_successful_ingestion_utc)
+  const pipelineAge = formatPipelineAge(datasetHealth.last_successful_ingestion_utc)
+  const isBenchmarkEnd = evaluationPeriod?.delivery_end_date === '2026-02-01'
+  const sourceBadgeText = isBenchmarkEnd ? 'Jan 2026 Benchmark' : 'Source Horizon'
+  const sourceHorizonDate = evaluationPeriod?.delivery_end_date
+    ? `${formatDate(evaluationPeriod.delivery_end_date)} 23:00 UTC`
+    : '01 Feb 2026, 23:00 UTC'
+  const evalHoursText = evaluationPeriod?.total_evaluation_hours
+    ? `${evaluationPeriod.total_evaluation_hours.toLocaleString()} Evaluated Hrs`
+    : '744 Evaluated Hrs'
 
   return (
     <Card className="h-full flex flex-col bg-[#111C2D] border-[#26364A]">
@@ -44,7 +54,7 @@ export function DataFreshnessCard({
         <div className="flex items-center justify-between">
           <CardTitle className="text-xs">
             <Database className="w-4 h-4 text-[#35B9C8]" />
-            <span>Data Freshness</span>
+            <span>Data Freshness &amp; Ingestion</span>
           </CardTitle>
 
           {isSchedulerActive ? (
@@ -61,26 +71,46 @@ export function DataFreshnessCard({
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
-        {/* Latest Successful Ingestion Timestamp */}
-        <div className="rounded-lg p-3 bg-[#162337] border border-[#26364A] space-y-1.5">
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-[#9AAABD] flex items-center gap-1.5 font-medium">
-              <Clock className="w-3.5 h-3.5 text-[#718198]" />
-              Latest Successful Ingestion
-            </span>
-            <span className="text-[10px] font-mono text-[#E7AD4A] px-1.5 py-0.5 rounded bg-[#2A2015] border border-[#48331E]">
-              Data Age: {dataAge}
-            </span>
-          </div>
-
-          <div className="space-y-0.5">
-            <div className="font-mono text-sm font-semibold text-[#E7EDF5] tabular-nums">
+      <CardContent className="space-y-3.5 flex-1 flex flex-col justify-between">
+        {/* Dual Timestamps: Ingestion Run vs Source Data Boundary */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          {/* Latest Pipeline Ingestion Run */}
+          <div className="rounded-lg p-2.5 bg-[#162337] border border-[#26364A] space-y-1">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-[#9AAABD] flex items-center gap-1 font-medium text-[11px]">
+                <Clock className="w-3 h-3 text-[#718198]" />
+                Latest Ingestion Run
+              </span>
+              <span className="text-[10px] font-mono text-[#35B98A] px-1.5 py-0.2 rounded bg-[#133829] border border-[#1C523B]">
+                {pipelineAge}
+              </span>
+            </div>
+            <div className="font-mono text-xs font-semibold text-[#E7EDF5] tabular-nums">
               {formatUtcDateTime(datasetHealth.last_successful_ingestion_utc)}
             </div>
-            <div className="text-[11px] font-mono text-[#718198] flex items-center justify-between">
-              <span>Local UK: {formatLondonDateTime(datasetHealth.last_successful_ingestion_utc)}</span>
-              <span className="text-[10px] text-[#718198]">Elexon BMRS Verified</span>
+            <div className="text-[10px] font-mono text-[#718198] flex items-center justify-between pt-0.5">
+              <span>Local: {formatLondonDateTime(datasetHealth.last_successful_ingestion_utc)}</span>
+              <span>BMRS Ingestion</span>
+            </div>
+          </div>
+
+          {/* Latest Available Source Data */}
+          <div className="rounded-lg p-2.5 bg-[#162337] border border-[#26364A] space-y-1">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-[#9AAABD] flex items-center gap-1 font-medium text-[11px]">
+                <Calendar className="w-3 h-3 text-[#718198]" />
+                Available Source Data
+              </span>
+              <span className="text-[10px] font-mono text-[#35B9C8] px-1.5 py-0.2 rounded bg-[#0E2833] border border-[#183E4C]">
+                {sourceBadgeText}
+              </span>
+            </div>
+            <div className="font-mono text-xs font-semibold text-[#E7EDF5] tabular-nums">
+              {sourceHorizonDate}
+            </div>
+            <div className="text-[10px] font-mono text-[#718198] flex items-center justify-between pt-0.5">
+              <span>Elexon Delivery Horizon</span>
+              <span>{evalHoursText}</span>
             </div>
           </div>
         </div>
@@ -119,7 +149,7 @@ export function DataFreshnessCard({
             <div className="flex items-center gap-2">
               <strong className="text-[#9AAABD]">Ingestion Engine: </strong>
               <span className="font-mono text-[#E7EDF5]">
-                {isSchedulerActive ? 'Active Polling' : 'Static Benchmark Mode'}
+                {isSchedulerActive ? 'Active Polling' : 'Static Benchmark Mode (Cloud Demo)'}
               </span>
               {isLeader && (
                 <span className="text-[9px] font-mono text-[#35B98A] bg-[#0E2833] border border-[#183E4C] px-1 rounded">
@@ -130,7 +160,7 @@ export function DataFreshnessCard({
             <p className="text-[10px] leading-tight text-[#718198]">
               {isSchedulerActive
                 ? 'Continuous background polling enabled with PostgreSQL advisory lock coordination.'
-                : 'Background polling is paused in free-tier cloud demonstration mode. Serving verified canonical January 2026 Forecast Accuracy benchmark data.'}
+                : 'Automated background scheduler is paused in cloud demo mode. The platform serves deterministic, verified January 2026 Elexon benchmark data.'}
             </p>
           </div>
         </div>

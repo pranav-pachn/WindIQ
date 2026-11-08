@@ -58,8 +58,8 @@ export function KpiGrid({ metrics, isBenchmarkPreset = false }: KpiGridProps) {
         </Button>
       </div>
 
-      {/* Grid of 6 Core KPI Cards (3 columns for generous card width and clean alignment) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+      {/* Grid of 6 Core KPI Cards (compact 2-column mobile, 3-column desktop) */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3.5">
         {/* 1. Evaluated Hours */}
         <KpiCard
           title="Evaluated Hours"
@@ -73,37 +73,34 @@ export function KpiGrid({ metrics, isBenchmarkPreset = false }: KpiGridProps) {
 
         {/* 2. MAE */}
         <KpiCard
-          title="Mean Absolute Error"
+          title="MAE"
           value={formatNumber(metrics.mae_mw, decimals)}
           unit="MW"
-          badgeText="MAE"
           icon={Activity}
-          tooltip={METRIC_DESCRIPTIONS.mae.description}
-          subtitle="Average linear forecast deviation across hours"
+          tooltip="Mean Absolute Error: Average linear forecast deviation across active delivery hours."
+          subtitle="Mean Absolute Error"
           trend="neutral"
         />
 
         {/* 3. RMSE */}
         <KpiCard
-          title="Root Mean Squared Error"
+          title="RMSE"
           value={formatNumber(metrics.rmse_mw, decimals)}
           unit="MW"
-          badgeText="RMSE"
           icon={TrendingUp}
-          tooltip={METRIC_DESCRIPTIONS.rmse.description}
-          subtitle="Heavily penalizes large hourly deviations"
+          tooltip="Root Mean Squared Error: Penalizes large hourly deviations more heavily than MAE."
+          subtitle="Root Mean Squared Error"
           trend="neutral"
         />
 
         {/* 4. MAPE */}
         <KpiCard
-          title="Mean Absolute Percentage Error"
+          title="MAPE"
           value={formatNumber(metrics.mape_pct, decimals)}
           unit="%"
-          badgeText="MAPE"
           icon={Percent}
-          tooltip={METRIC_DESCRIPTIONS.mape.description}
-          subtitle={`Relative error across ${metrics.mape_denominator} active hours`}
+          tooltip={`Mean Absolute Percentage Error: Relative error across ${metrics.mape_denominator} hours with non-zero actuals.`}
+          subtitle="Mean Absolute % Error"
           trend="neutral"
         />
 
@@ -114,18 +111,18 @@ export function KpiGrid({ metrics, isBenchmarkPreset = false }: KpiGridProps) {
           unit="MW"
           badgeText="Signed"
           icon={Compass}
-          tooltip={METRIC_DESCRIPTIONS.bias.description}
+          tooltip="Mean signed error (Forecast − Actual). Positive = average forecast exceeded actual generation. Historical Jan 2026 result; not a guaranteed future pattern."
           subtitle={
             metrics.forecast_bias_mw > 0
-              ? 'Positive bias: systematic generation overprediction'
+              ? 'Average forecast exceeded actual generation'
               : metrics.forecast_bias_mw < 0
-              ? 'Negative bias: systematic generation underprediction'
-              : 'Zero bias: balanced over/under predictions'
+              ? 'Average actual generation exceeded forecast'
+              : 'Zero bias across evaluated hours'
           }
           trend={metrics.forecast_bias_mw > 0 ? 'negative' : 'positive'}
         />
 
-        {/* 6. Over vs Under */}
+        {/* 6. Directional Split — compact summary; detail lives in the panel below */}
         <KpiCard
           title="Overforecast vs Underforecast"
           value={`${metrics.overforecast_count} : ${metrics.underforecast_count}`}
@@ -136,8 +133,8 @@ export function KpiGrid({ metrics, isBenchmarkPreset = false }: KpiGridProps) {
               : undefined
           }
           icon={metrics.overforecast_count > metrics.underforecast_count ? ArrowUpRight : ArrowDownRight}
-          tooltip="Count of hours where forecast exceeded actuals vs actuals exceeded forecast"
-          subtitle={`${metrics.overforecast_count} overforecast vs ${metrics.underforecast_count} underforecast`}
+          tooltip="Hours where forecast exceeded actuals vs actuals exceeded forecast. See the Forecast Direction Analysis panel below for the full distribution."
+          subtitle="Overforecast : Underforecast split"
           trend={metrics.overforecast_count > metrics.underforecast_count ? 'negative' : 'positive'}
         />
       </div>
@@ -147,37 +144,72 @@ export function KpiGrid({ metrics, isBenchmarkPreset = false }: KpiGridProps) {
         metrics.avg_actual_mw !== null &&
         metrics.avg_forecast_mw !== undefined &&
         metrics.avg_actual_mw !== undefined && (
-          <div className="bg-[#162337] border border-[#26364A] rounded-lg p-3.5 flex flex-wrap items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-3">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-[#718198] font-semibold">
-                Generation Baseline:
-              </span>
+          <div className="bg-[#111C2D] border border-[#26364A] rounded-lg p-3 sm:p-3.5 space-y-2.5">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#1E2B3E] pb-2">
               <div className="flex items-center gap-2">
-                <span className="text-[#9AAABD]">Forecast:</span>
-                <span className="font-mono text-[#35B9C8] font-semibold tabular-nums">
-                  {formatNumber(metrics.avg_forecast_mw, 1)} MW
+                <span className="text-[10px] font-mono uppercase tracking-wider text-[#9AAABD] font-semibold">
+                  Generation Baseline (January 2026 Benchmark)
                 </span>
-                <span className="text-[#718198]">vs</span>
-                <span className="text-[#9AAABD]">Actual:</span>
-                <span className="font-mono text-[#E7EDF5] font-semibold tabular-nums">
-                  {formatNumber(metrics.avg_actual_mw, 1)} MW
+                <span className="hidden sm:inline text-[10px] text-[#718198]">
+                  Mean hourly generation volume across 744 evaluated hours
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 text-[11px] text-[#718198]">
+                <span>Forecast-to-Actual Ratio:</span>
+                <span
+                  className="font-mono text-xs font-semibold px-1.5 py-0.5 rounded bg-[#162337] border border-[#26364A] text-[#E7EDF5] tabular-nums"
+                  title="Historical ratio during the January 2026 evaluation period. Reflects winter wind outturn conditions."
+                >
+                  {metrics.avg_actual_mw
+                    ? ((metrics.avg_forecast_mw / metrics.avg_actual_mw) * 100).toFixed(1)
+                    : 0}%
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-5 text-[11px] text-[#9AAABD]">
-              <div>
-                <span>Absolute Difference: </span>
-                <span className="font-mono text-[#E7EDF5] font-semibold tabular-nums">
-                  {formatNumber((metrics.avg_forecast_mw || 0) - (metrics.avg_actual_mw || 0), 1)} MW
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+              {/* Stat Block 1: Day-Ahead Forecast */}
+              <div className="p-2.5 rounded bg-[#162337] border border-[#26364A] flex flex-col justify-between">
+                <span className="text-[10px] font-mono uppercase tracking-wide text-[#718198]">
+                  Mean Day-Ahead Forecast
+                </span>
+                <div className="mt-1">
+                  <span className="font-mono text-base sm:text-lg font-bold text-[#35B9C8] tabular-nums">
+                    {formatNumber(metrics.avg_forecast_mw, 1)} MW
+                  </span>
+                </div>
+                <span className="text-[10px] text-[#718198] mt-0.5">
+                  Locked at 09:00 UK cutoff
                 </span>
               </div>
-              <div className="border-l border-[#26364A] pl-5">
-                <span>Forecast-to-Actual Ratio: </span>
-                <span className="font-mono text-[#E7EDF5] font-semibold tabular-nums">
-                  {metrics.avg_actual_mw
-                    ? ((metrics.avg_forecast_mw / metrics.avg_actual_mw) * 100).toFixed(1)
-                    : 0}%
+
+              {/* Stat Block 2: Settlement Actual */}
+              <div className="p-2.5 rounded bg-[#162337] border border-[#26364A] flex flex-col justify-between">
+                <span className="text-[10px] font-mono uppercase tracking-wide text-[#718198]">
+                  Mean Settlement Actual
+                </span>
+                <div className="mt-1">
+                  <span className="font-mono text-base sm:text-lg font-bold text-[#E7EDF5] tabular-nums">
+                    {formatNumber(metrics.avg_actual_mw, 1)} MW
+                  </span>
+                </div>
+                <span className="text-[10px] text-[#718198] mt-0.5">
+                  Elexon BMRS FUELHH outturn
+                </span>
+              </div>
+
+              {/* Stat Block 3: Mean Forecast Error (Forecast − Actual) */}
+              <div className="p-2.5 rounded bg-[#162337] border border-[#26364A] flex flex-col justify-between">
+                <span className="text-[10px] font-mono uppercase tracking-wide text-[#718198]">
+                  Mean Forecast Error (Forecast − Actual)
+                </span>
+                <div className="mt-1">
+                  <span className="font-mono text-base sm:text-lg font-bold text-[#E7AD4A] tabular-nums">
+                    +{formatNumber((metrics.avg_forecast_mw || 0) - (metrics.avg_actual_mw || 0), 1)} MW
+                  </span>
+                </div>
+                <span className="text-[10px] text-[#718198] mt-0.5">
+                  Mean hourly forecast overestimation
                 </span>
               </div>
             </div>
