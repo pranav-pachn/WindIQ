@@ -3,7 +3,7 @@
 # ============================================================================
 
 # Stage 1: Dependency Builder
-FROM python:3.12-slim AS builder
+FROM python:3.12-slim-bookworm AS builder
 
 WORKDIR /build
 
@@ -14,10 +14,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir --default-timeout=100 --retries=5 --prefix=/install -r requirements.txt
 
 # Stage 2: Production Runtime
-FROM python:3.12-slim AS runner
+FROM python:3.12-slim-bookworm AS runner
 
 # Create non-root system user and group
 RUN groupadd -r windiq && useradd -r -g windiq -d /app -s /sbin/nologin windiq
