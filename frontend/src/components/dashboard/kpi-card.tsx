@@ -39,33 +39,42 @@ export function KpiCard({
   return (
     <Card
       className={cn(
-        'p-3.5 sm:p-4 flex flex-col justify-between h-full bg-[#111C2D] border-[#26364A] hover:border-[#374B63] transition-colors',
+        'p-4 flex flex-col justify-between h-full bg-[#111C2D] border-[#26364A] hover:border-[#374B63] transition-colors',
         className
       )}
     >
       <div>
         {/* Metric Header */}
-        <div className="flex items-center justify-between gap-1.5 mb-2">
-          <span className="text-[11px] font-medium text-[#9AAABD] uppercase tracking-wider flex items-center gap-1.5 truncate">
-            {Icon && <Icon className="w-3.5 h-3.5 text-[#718198] shrink-0" />}
-            <span className="truncate">{title}</span>
-            {tooltip && <Tooltip title={title} content={tooltip} />}
+        <div className="flex items-start justify-between gap-1.5 mb-2 min-h-[36px]">
+          <span className="text-[11px] font-medium text-[#9AAABD] uppercase tracking-normal flex items-start gap-1.5 min-w-0">
+            {Icon && <Icon className="w-3.5 h-3.5 text-[#718198] shrink-0 mt-0.5" />}
+            <span className="break-words line-clamp-2 leading-tight">{title}</span>
+            {tooltip && (
+              <span className="shrink-0 mt-0.5">
+                <Tooltip title={title} content={tooltip} />
+              </span>
+            )}
           </span>
 
           {badgeText && (
-            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#162337] border border-[#26364A] text-[#718198] shrink-0">
+            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#162337] border border-[#26364A] text-[#718198] shrink-0 mt-0.5">
               {badgeText}
             </span>
           )}
         </div>
 
         {/* Metric Value & Unit */}
-        <div className="flex items-baseline gap-1.5 my-1">
-          <span className={cn('text-2xl font-bold font-mono tracking-tight tabular-nums', valueColorMap[trend])}>
+        <div className="flex items-baseline gap-1.5 my-1 whitespace-nowrap">
+          <span
+            className={cn(
+              'text-2xl font-bold font-mono tracking-tight tabular-nums',
+              valueColorMap[trend]
+            )}
+          >
             {value}
           </span>
           {unit && (
-            <span className="text-xs font-semibold text-[#718198] font-mono">
+            <span className="text-xs font-semibold text-[#718198] font-mono shrink-0">
               {unit}
             </span>
           )}
@@ -74,7 +83,7 @@ export function KpiCard({
 
       {/* Metric Explanation Subtitle */}
       {subtitle && (
-        <p className="mt-2 text-[11px] text-[#718198] leading-snug border-t border-[#1E2B3E] pt-2">
+        <p className="mt-2.5 text-[11px] text-[#718198] leading-snug border-t border-[#1E2B3E] pt-2">
           {subtitle}
         </p>
       )}

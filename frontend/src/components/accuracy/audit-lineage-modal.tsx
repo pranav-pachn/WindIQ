@@ -38,22 +38,22 @@ export function AuditLineageModal({ item, onClose }: AuditLineageModalProps) {
       role="dialog"
       aria-modal="true"
       aria-labelledby="audit-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 animate-in fade-in duration-150"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0B1220]/80 backdrop-blur-sm animate-in fade-in duration-150"
     >
       <div
-        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl bg-app-surface border border-app-border shadow-2xl p-6 text-slate-200"
+        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl bg-[#111C2D] border border-[#26364A] shadow-2xl p-6 text-[#E7EDF5]"
       >
         {/* Header */}
-        <div className="flex items-start justify-between border-b border-app-border pb-4 mb-5">
+        <div className="flex items-start justify-between border-b border-[#26364A] pb-4 mb-5">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-app-elevated border border-app-border text-accent">
+            <div className="p-2 rounded-lg bg-[#162337] border border-[#26364A] text-[#35B9C8]">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <h2 id="audit-modal-title" className="text-base font-bold text-slate-100 flex items-center gap-2">
+              <h2 id="audit-modal-title" className="text-base font-bold text-[#E7EDF5] flex items-center gap-2">
                 Settlement Lineage &amp; Mathematical Audit
               </h2>
-              <p className="text-xs text-muted font-mono mt-0.5">
+              <p className="text-xs text-[#718198] font-mono mt-0.5">
                 Delivery: {formatLondonWithDstOffset(item.delivery_hour_utc)} • UTC: {item.delivery_hour_utc}
               </p>
             </div>
@@ -62,22 +62,22 @@ export function AuditLineageModal({ item, onClose }: AuditLineageModalProps) {
             type="button"
             onClick={onClose}
             aria-label="Close audit lineage modal"
-            className="p-1.5 text-muted hover:text-white rounded-md hover:bg-app-elevated focus:outline-none focus:border-accent"
+            className="p-1.5 text-[#718198] hover:text-[#E7EDF5] rounded-md hover:bg-[#162337] focus:outline-none focus:border-[#35B9C8]"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Section 1: Forecast Lineage & 09:00 Cutoff Eligibility Check */}
-        <div className="mb-5 p-4 rounded-lg bg-app-elevated border border-app-border">
+        <div className="mb-5 p-4 rounded-lg bg-[#162337] border border-[#26364A]">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-accent flex items-center gap-1.5">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#35B9C8] flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5" />
               1. Day-Ahead Forecast Lineage &amp; Decision Lock
             </span>
             {isEligible ? (
               <Badge variant="success" size="sm">
-                <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                <CheckCircle2 className="w-3 h-3 text-[#35B98A]" />
                 Eligible (Pre-09:00 Cutoff)
               </Badge>
             ) : (
@@ -88,108 +88,108 @@ export function AuditLineageModal({ item, onClose }: AuditLineageModalProps) {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs mb-3">
-            <div className="p-2.5 rounded bg-app-bg border border-app-border">
-              <span className="text-[10px] text-muted uppercase tracking-wide block">Raw Record ID</span>
-              <span className="font-mono font-bold text-slate-100">
+            <div className="p-2.5 rounded bg-[#0B1220] border border-[#26364A]">
+              <span className="text-[10px] text-[#718198] uppercase tracking-wide block">Raw Record ID</span>
+              <span className="font-mono font-bold text-[#E7EDF5]">
                 #{item.traceability?.selected_forecast_id ?? "—"}
               </span>
             </div>
-            <div className="p-2.5 rounded bg-app-bg border border-app-border">
-              <span className="text-[10px] text-muted uppercase tracking-wide block">Published (UTC)</span>
-              <span className="font-mono text-accent">
+            <div className="p-2.5 rounded bg-[#0B1220] border border-[#26364A]">
+              <span className="text-[10px] text-[#718198] uppercase tracking-wide block">Published (UTC)</span>
+              <span className="font-mono text-[#35B9C8]">
                 {item.selected_publish_time_utc ? formatUtcDateTime(item.selected_publish_time_utc) : "—"}
               </span>
             </div>
-            <div className="p-2.5 rounded bg-app-bg border border-app-border">
-              <span className="text-[10px] text-muted uppercase tracking-wide block">Decision Cutoff</span>
-              <span className="font-mono text-slate-300">
+            <div className="p-2.5 rounded bg-[#0B1220] border border-[#26364A]">
+              <span className="text-[10px] text-[#718198] uppercase tracking-wide block">Decision Cutoff</span>
+              <span className="font-mono text-[#9AAABD]">
                 {formatUtcDateTime(item.decision_cutoff_utc)}
               </span>
             </div>
-            <div className="p-2.5 rounded bg-app-bg border border-app-border">
-              <span className="text-[10px] text-muted uppercase tracking-wide block">Lead Time</span>
-              <span className="font-mono text-emerald-300 font-semibold">{leadTimeText}</span>
+            <div className="p-2.5 rounded bg-[#0B1220] border border-[#26364A]">
+              <span className="text-[10px] text-[#718198] uppercase tracking-wide block">Lead Time</span>
+              <span className="font-mono text-[#35B98A] font-semibold">{leadTimeText}</span>
             </div>
           </div>
 
-          <div className="text-[11px] text-muted bg-app-bg p-2.5 rounded border border-app-border">
-            <span className="text-slate-300 font-semibold">Eligibility Verification:</span> Forecast was published at{" "}
-            <span className="font-mono text-accent">{item.selected_publish_time_utc}</span> prior to the day-ahead{" "}
-            <span className="font-mono text-slate-200">09:00 Europe/London</span> decision cutoff on{" "}
-            <span className="font-mono text-slate-200">{item.decision_date}</span>. Any later publications leading up to delivery were disqualified to preserve true day-ahead commitment status.
+          <div className="text-[11px] text-[#718198] bg-[#0B1220] p-2.5 rounded border border-[#26364A]">
+            <span className="text-[#E7EDF5] font-semibold">Eligibility Verification:</span> Forecast was published at{" "}
+            <span className="font-mono text-[#35B9C8]">{item.selected_publish_time_utc}</span> prior to the day-ahead{" "}
+            <span className="font-mono text-[#E7EDF5]">09:00 Europe/London</span> decision cutoff on{" "}
+            <span className="font-mono text-[#E7EDF5]">{item.decision_date}</span>. Any later publications leading up to delivery were disqualified to preserve true day-ahead commitment status.
           </div>
         </div>
 
         {/* Section 2: Constituent Settlement Readings (FUELHH Half-Hours) */}
-        <div className="mb-5 p-4 rounded-lg bg-app-elevated border border-app-border">
+        <div className="mb-5 p-4 rounded-lg bg-[#162337] border border-[#26364A]">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
-              <Database className="w-3.5 h-3.5 text-accent" />
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#E7EDF5] flex items-center gap-1.5">
+              <Database className="w-3.5 h-3.5 text-[#35B9C8]" />
               2. Constituent Settlement Readings (Elexon BMRS FUELHH)
             </span>
-            <span className="text-xs font-mono text-muted">
+            <span className="text-xs font-mono text-[#718198]">
               Actual ID: #{item.traceability?.hourly_actual_id ?? "—"}
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs mb-3">
-            <div className="p-3 rounded bg-app-bg border border-app-border flex items-center justify-between">
+            <div className="p-3 rounded-md bg-[#0B1220] border border-[#26364A] flex items-center justify-between">
               <div>
-                <span className="text-[10px] text-muted uppercase tracking-wide block">
+                <span className="text-[10px] text-[#718198] uppercase tracking-wide block">
                   Settlement Period {sp1?.settlement_period ?? "—"} (Half-Hour 1)
                 </span>
-                <span className="font-mono text-slate-300 text-[11px]">
+                <span className="font-mono text-[#9AAABD] text-[11px]">
                   {sp1?.start_time_utc ? formatUtcDateTime(sp1.start_time_utc) : "—"}
                 </span>
               </div>
-              <span className="font-mono text-sm font-bold text-slate-100">
+              <span className="font-mono text-sm font-bold text-[#E7EDF5] tabular-nums">
                 {sp1 ? formatMw(sp1.generation_mw) : "—"}
               </span>
             </div>
 
-            <div className="p-3 rounded bg-app-bg border border-app-border flex items-center justify-between">
+            <div className="p-3 rounded-md bg-[#0B1220] border border-[#26364A] flex items-center justify-between">
               <div>
-                <span className="text-[10px] text-muted uppercase tracking-wide block">
+                <span className="text-[10px] text-[#718198] uppercase tracking-wide block">
                   Settlement Period {sp2?.settlement_period ?? "—"} (Half-Hour 2)
                 </span>
-                <span className="font-mono text-slate-300 text-[11px]">
+                <span className="font-mono text-[#9AAABD] text-[11px]">
                   {sp2?.start_time_utc ? formatUtcDateTime(sp2.start_time_utc) : "—"}
                 </span>
               </div>
-              <span className="font-mono text-sm font-bold text-slate-100">
+              <span className="font-mono text-sm font-bold text-[#E7EDF5] tabular-nums">
                 {sp2 ? formatMw(sp2.generation_mw) : "—"}
               </span>
             </div>
           </div>
 
           {sp1 && sp2 && (
-            <div className="p-2.5 rounded bg-app-bg border border-app-border text-xs font-mono text-slate-200 flex items-center justify-between">
-              <span className="text-muted">Actual Generation Mean Formula:</span>
-              <span className="font-semibold">
+            <div className="p-2.5 rounded-md bg-[#0B1220] border border-[#26364A] text-xs font-mono text-[#E7EDF5] flex items-center justify-between">
+              <span className="text-[#718198]">Actual Generation Mean Formula:</span>
+              <span className="font-semibold tabular-nums">
                 ({formatMw(sp1.generation_mw, 1, false)} + {formatMw(sp2.generation_mw, 1, false)}) / 2 ={" "}
-                <span className="text-accent underline">{formatMw(item.actual_generation_mw)}</span>
+                <span className="text-[#35B9C8] underline">{formatMw(item.actual_generation_mw)}</span>
               </span>
             </div>
           )}
         </div>
 
         {/* Section 3: Error & Percentage Derivation Proof */}
-        <div className="p-4 rounded-lg bg-app-elevated border border-app-border">
-          <span className="text-xs font-semibold uppercase tracking-wider text-amber-400 flex items-center gap-1.5 mb-3">
+        <div className="p-4 rounded-lg bg-[#162337] border border-[#26364A]">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#E7AD4A] flex items-center gap-1.5 mb-3 font-mono">
             <Calculator className="w-3.5 h-3.5" />
             3. Error Derivation &amp; Percentage Proof
           </span>
 
           <div className="space-y-2.5 text-xs font-mono">
             {/* Signed error */}
-            <div className="p-2.5 rounded bg-app-bg border border-app-border flex items-center justify-between">
-              <span className="text-muted">Signed Forecast Error (Forecast − Actual):</span>
-              <span className="font-semibold text-slate-100 flex items-center gap-1.5">
+            <div className="p-2.5 rounded-md bg-[#0B1220] border border-[#26364A] flex items-center justify-between">
+              <span className="text-[#718198]">Signed Forecast Error (Forecast − Actual):</span>
+              <span className="font-semibold text-[#E7EDF5] flex items-center gap-1.5 tabular-nums">
                 <span>{formatMw(item.forecast_generation_mw, 1, false)}</span>
-                <span className="text-muted">−</span>
+                <span className="text-[#718198]">−</span>
                 <span>{formatMw(item.actual_generation_mw, 1, false)}</span>
-                <ArrowRight className="w-3 h-3 text-accent" />
-                <span className={item.forecast_error_mw && item.forecast_error_mw > 0 ? "text-amber-400" : "text-accent"}>
+                <ArrowRight className="w-3 h-3 text-[#35B9C8]" />
+                <span className={item.forecast_error_mw && item.forecast_error_mw > 0 ? "text-[#E7AD4A]" : "text-[#35B9C8]"}>
                   {item.forecast_error_mw && item.forecast_error_mw > 0 ? "+" : ""}
                   {formatMw(item.forecast_error_mw)}
                 </span>
@@ -197,26 +197,26 @@ export function AuditLineageModal({ item, onClose }: AuditLineageModalProps) {
             </div>
 
             {/* Absolute error */}
-            <div className="p-2.5 rounded bg-app-bg border border-app-border flex items-center justify-between">
-              <span className="text-muted">Absolute Forecast Error |ΔMW|:</span>
-              <span className="font-semibold text-slate-100">
+            <div className="p-2.5 rounded-md bg-[#0B1220] border border-[#26364A] flex items-center justify-between">
+              <span className="text-[#718198]">Absolute Forecast Error |ΔMW|:</span>
+              <span className="font-semibold text-[#E7EDF5] tabular-nums">
                 |{item.forecast_error_mw && item.forecast_error_mw > 0 ? "+" : ""}
                 {formatMw(item.forecast_error_mw, 1, false)}| ={" "}
-                <span className="text-accent font-bold">{formatMw(item.absolute_error_mw)}</span>
+                <span className="text-[#35B9C8] font-bold">{formatMw(item.absolute_error_mw)}</span>
               </span>
             </div>
 
             {/* APE */}
-            <div className="p-2.5 rounded bg-app-bg border border-app-border flex items-center justify-between">
-              <span className="text-muted">Absolute Percentage Error (APE):</span>
+            <div className="p-2.5 rounded-md bg-[#0B1220] border border-[#26364A] flex items-center justify-between">
+              <span className="text-[#718198]">Absolute Percentage Error (APE):</span>
               {item.actual_generation_mw && item.actual_generation_mw > 0 ? (
-                <span className="font-semibold text-slate-100 flex items-center gap-1.5">
+                <span className="font-semibold text-[#E7EDF5] flex items-center gap-1.5 tabular-nums">
                   <span>({formatMw(item.absolute_error_mw, 1, false)} / {formatMw(item.actual_generation_mw, 1, false)}) × 100%</span>
-                  <ArrowRight className="w-3 h-3 text-accent" />
-                  <span className="text-accent font-bold">{formatPct(item.absolute_percentage_error, 4)}</span>
+                  <ArrowRight className="w-3 h-3 text-[#35B9C8]" />
+                  <span className="text-[#35B9C8] font-bold">{formatPct(item.absolute_percentage_error, 4)}</span>
                 </span>
               ) : (
-                <span className="text-amber-400 italic">
+                <span className="text-[#E7AD4A] italic">
                   NULL (Excluded from MAPE: Actual generation is ≤ 0 MW to prevent division by zero)
                 </span>
               )}
@@ -225,14 +225,14 @@ export function AuditLineageModal({ item, onClose }: AuditLineageModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="mt-5 flex items-center justify-between pt-4 border-t border-app-border">
-          <span className="text-[11px] text-muted">
+        <div className="mt-5 flex items-center justify-between pt-4 border-t border-[#26364A]">
+          <span className="text-[11px] text-[#718198]">
             Audit standard: GB Elexon BMRS WINDFOR day-ahead commitment
           </span>
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-1.5 text-xs font-medium rounded-md bg-app-elevated hover:bg-slate-700/60 border border-app-border text-slate-200 transition-colors"
+            className="px-4 py-1.5 text-xs font-medium rounded-md bg-[#162337] hover:bg-[#1E2B3E] border border-[#26364A] text-[#E7EDF5] transition-colors"
           >
             Close Audit
           </button>

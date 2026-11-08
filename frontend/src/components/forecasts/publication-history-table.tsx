@@ -30,15 +30,15 @@ export const PublicationHistoryTable: React.FC<PublicationHistoryTableProps> = (
     if (onOpenAuditModal) onOpenAuditModal()
   }
   return (
-    <div className="bg-app-surface border border-app-border rounded-xl overflow-hidden">
-      <div className="px-5 py-3.5 border-b border-app-border bg-app-elevated/40 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-slate-100 flex items-center gap-2">
+    <div className="bg-[#111C2D] border border-[#26364A] rounded-lg overflow-hidden">
+      <div className="px-5 py-3.5 border-b border-[#26364A] bg-[#162337] flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-[#E7EDF5] flex items-center gap-2">
           <span>Complete Publication Lifecycle &amp; Step Revision Ledger</span>
-          <span className="text-xs px-2 py-0.5 rounded-full bg-app-elevated border border-app-border text-muted font-mono">
+          <span className="text-xs px-2 py-0.5 rounded-full bg-[#0B1220] border border-[#26364A] text-[#718198] font-mono">
             {pubs.length} versions
           </span>
         </h3>
-        <span className="text-xs text-muted">
+        <span className="text-xs text-[#718198]">
           Ordered chronologically from earliest to final publication before delivery
         </span>
       </div>
@@ -46,7 +46,7 @@ export const PublicationHistoryTable: React.FC<PublicationHistoryTableProps> = (
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead>
-            <tr className="bg-[#0E1726] text-muted font-mono text-[11px] uppercase tracking-wider border-b border-app-border">
+            <tr className="bg-[#0E1726] text-[#718198] font-mono text-[11px] uppercase tracking-wider border-b border-[#26364A]">
               <th className="py-2.5 px-3">#</th>
               <th className="py-2.5 px-3">Publication Time (UTC)</th>
               <th className="py-2.5 px-3">UK Local Time</th>
@@ -58,31 +58,31 @@ export const PublicationHistoryTable: React.FC<PublicationHistoryTableProps> = (
               <th className="py-2.5 px-3 text-center">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-app-border/40 font-mono">
+          <tbody className="divide-y divide-[#1E2B3E] font-mono">
             {pubs.map((pub, idx) => {
               const isSelected = pub.is_selected || (selId && pub.id === selId)
               return (
                 <tr
                   key={pub.id ?? `${pub.publish_time_utc}-${idx}`}
-                  className={`transition-colors hover:bg-app-elevated/60 ${
+                  className={`transition-colors hover:bg-[#162337]/70 ${
                     isSelected
-                      ? 'bg-app-elevated border-l-2 border-l-accent font-medium'
+                      ? 'bg-[#162337] border-l-2 border-l-[#35B9C8] font-medium'
                       : ''
                   }`}
                 >
-                  <td className="py-2 px-3 text-muted">{idx + 1}</td>
-                  <td className="py-2 px-3 text-slate-200">
+                  <td className="py-2 px-3 text-[#718198]">{idx + 1}</td>
+                  <td className="py-2 px-3 text-[#E7EDF5]">
                     {formatDateTimeUtc(pub.publish_time_utc)}
                   </td>
-                  <td className="py-2 px-3 text-muted">
+                  <td className="py-2 px-3 text-[#718198]">
                     {formatDateTimeLondon(pub.publish_time_utc)}
                   </td>
-                  <td className="py-2 px-3 text-right text-slate-300">
+                  <td className="py-2 px-3 text-right text-[#9AAABD]">
                     {pub.lead_time_hours !== null && pub.lead_time_hours !== undefined
                       ? `${pub.lead_time_hours > 0 ? '+' : ''}${pub.lead_time_hours.toFixed(1)}h`
                       : 'N/A'}
                   </td>
-                  <td className="py-2 px-3 text-right font-medium text-slate-100">
+                  <td className="py-2 px-3 text-right font-medium text-[#E7EDF5]">
                     {formatNumber(pub.forecast_mw)}
                   </td>
                   <td className="py-2 px-3 text-right">
@@ -90,10 +90,10 @@ export const PublicationHistoryTable: React.FC<PublicationHistoryTableProps> = (
                       <span
                         className={`inline-flex items-center gap-0.5 text-[11px] font-medium ${
                           pub.revision_mw > 0
-                            ? 'text-emerald-400'
+                            ? 'text-[#35B98A]'
                             : pub.revision_mw < 0
-                            ? 'text-rose-400'
-                            : 'text-muted'
+                            ? 'text-[#E36D73]'
+                            : 'text-[#718198]'
                         }`}
                       >
                         {pub.revision_mw > 0 && <ArrowUpRight className="w-3 h-3" />}
@@ -102,40 +102,40 @@ export const PublicationHistoryTable: React.FC<PublicationHistoryTableProps> = (
                         {formatNumber(pub.revision_mw)}
                       </span>
                     ) : (
-                      <span className="text-muted">—</span>
+                      <span className="text-[#718198]">—</span>
                     )}
                   </td>
                   <td className="py-2 px-3 text-center">
                     {pub.is_eligible ? (
-                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] bg-emerald-950/70 text-emerald-300 border border-emerald-800/60 font-sans">
-                        <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400" />
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] bg-[#133829] text-[#35B98A] border border-[#1C523B] font-sans">
+                        <CheckCircle2 className="w-2.5 h-2.5 text-[#35B98A]" />
                         ELIGIBLE
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] bg-app-elevated text-muted border border-app-border font-sans">
-                        <XCircle className="w-2.5 h-2.5 text-muted" />
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] bg-[#162337] text-[#718198] border border-[#26364A] font-sans">
+                        <XCircle className="w-2.5 h-2.5 text-[#718198]" />
                         POST-CUTOFF
                       </span>
                     )}
                   </td>
                   <td className="py-2 px-3 text-center">
                     {isSelected ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] bg-accent/20 text-accent border border-accent/60 font-sans font-medium">
-                        <Award className="w-3 h-3 text-accent" />
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] bg-[#0E2833] text-[#35B9C8] border border-[#183E4C] font-sans font-medium">
+                        <Award className="w-3 h-3 text-[#35B9C8]" />
                         D-1 WINNER
                       </span>
                     ) : (
-                      <span className="text-muted text-[10px]">—</span>
+                      <span className="text-[#718198] text-[10px]">—</span>
                     )}
                   </td>
                   <td className="py-2 px-3 text-center">
                     <button
                       type="button"
                       onClick={() => handleAudit(pub)}
-                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-sans font-medium text-slate-300 bg-app-elevated hover:bg-slate-700/60 border border-app-border hover:text-white transition-colors cursor-pointer"
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-sans font-medium text-[#35B9C8] bg-[#162337] hover:bg-[#1E2B3E] border border-[#26364A] transition-colors cursor-pointer"
                       title="Inspect raw BMRS payload & lineage"
                     >
-                      <Eye className="w-3 h-3 text-accent" />
+                      <Eye className="w-3 h-3 text-[#35B9C8]" />
                       <span>Audit</span>
                     </button>
                   </td>

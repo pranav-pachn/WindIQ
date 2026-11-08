@@ -149,17 +149,17 @@ export function AccuracyPage() {
   return (
     <div className="space-y-6">
       {/* 1. Header Toolbar */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-3.5 rounded-xl bg-app-surface border border-app-border">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-3.5 rounded-lg bg-[#111C2D] border border-[#26364A]">
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           {/* Active window indicator */}
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-app-elevated border border-app-border text-xs">
-            <Calendar className="w-3.5 h-3.5 text-accent" />
-            <span className="text-muted">Evaluation Window:</span>
-            <span className="font-mono text-slate-200 font-medium">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#162337] border border-[#26364A] text-xs">
+            <Calendar className="w-3.5 h-3.5 text-[#35B9C8]" />
+            <span className="text-[#9AAABD]">Evaluation Window:</span>
+            <span className="font-mono text-[#E7EDF5] font-medium">
               {formatDate(period.deliveryDateFrom)} – {formatDate(period.deliveryDateTo)}
             </span>
             {isBenchmark && (
-              <span className="px-1.5 py-0.5 rounded text-[10px] bg-emerald-950/60 border border-emerald-800/60 text-emerald-300 ml-1 font-mono">
+              <span className="px-1.5 py-0.5 rounded text-[10px] bg-[#133829] border border-[#1C523B] text-[#35B98A] ml-1 font-mono">
                 Jan 2026 Benchmark
               </span>
             )}
@@ -167,13 +167,13 @@ export function AccuracyPage() {
 
           {/* Single-day drilldown badge / clear button */}
           {selectedDay && (
-            <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-app-elevated border border-accent/50 text-xs text-accent">
-              <span className="text-muted">Drilldown:</span>
-              <span className="font-mono font-bold text-slate-100">{formatDate(selectedDay)}</span>
+            <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-[#162337] border border-[#35B9C8]/50 text-xs text-[#35B9C8]">
+              <span className="text-[#9AAABD]">Drilldown:</span>
+              <span className="font-mono font-bold text-[#E7EDF5]">{formatDate(selectedDay)}</span>
               <button
                 type="button"
                 onClick={() => handleDayFilterChange(null)}
-                className="ml-1 text-muted hover:text-slate-100"
+                className="ml-1 text-[#718198] hover:text-[#E7EDF5]"
                 title="Clear day filter"
               >
                 ✕
@@ -186,12 +186,12 @@ export function AccuracyPage() {
         <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs">
           {/* Hour of Day Filter */}
           <div className="flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-muted" />
+            <Clock className="w-3.5 h-3.5 text-[#718198]" />
             <select
               value={selectedHour !== null ? String(selectedHour) : "ALL"}
               onChange={(e) => handleHourFilterChange(e.target.value === "ALL" ? null : Number(e.target.value))}
               aria-label="Filter by hour of day in Europe/London"
-              className="rounded bg-app-bg border border-app-border px-2.5 py-1.5 text-slate-200 text-xs focus:outline-none focus:border-accent font-mono"
+              className="rounded-md bg-[#0B1220] border border-[#26364A] px-2.5 py-1.5 text-[#E7EDF5] text-xs focus:outline-none focus:border-[#35B9C8] font-mono"
             >
               <option value="ALL">All Hours (24h)</option>
               {Array.from({ length: 24 }, (_, i) => (
@@ -204,12 +204,12 @@ export function AccuracyPage() {
 
           {/* Status Filter */}
           <div className="flex items-center gap-1.5">
-            <Filter className="w-3.5 h-3.5 text-muted" />
+            <Filter className="w-3.5 h-3.5 text-[#718198]" />
             <select
               value={statusFilter}
               onChange={(e) => handleStatusFilterChange(e.target.value)}
               aria-label="Filter by evaluation status"
-              className="rounded bg-app-bg border border-app-border px-2.5 py-1.5 text-slate-200 text-xs focus:outline-none focus:border-accent font-mono"
+              className="rounded-md bg-[#0B1220] border border-[#26364A] px-2.5 py-1.5 text-[#E7EDF5] text-xs focus:outline-none focus:border-[#35B9C8] font-mono"
             >
               <option value="ALL">Status: ALL</option>
               <option value="VALID">VALID Only</option>
@@ -223,10 +223,10 @@ export function AccuracyPage() {
             type="button"
             disabled={isExportingCsv || !seriesData?.items?.length}
             onClick={handleExportCsv}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-app-elevated hover:bg-slate-700/60 border border-app-border text-slate-200 text-xs font-medium disabled:opacity-40 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#162337] hover:bg-[#1E2B3E] border border-[#26364A] text-[#E7EDF5] text-xs font-medium disabled:opacity-40 transition-colors"
             title="Export all matching evaluation records to CSV"
           >
-            <Download className="w-3.5 h-3.5 text-accent" />
+            <Download className="w-3.5 h-3.5 text-[#35B9C8]" />
             <span>Export CSV</span>
           </button>
         </div>
@@ -234,9 +234,9 @@ export function AccuracyPage() {
 
       {/* 2. Inconsistency Alert Banner (if multi-page pagination drift occurs) */}
       {seriesError && (
-        <div className="p-3.5 rounded-xl bg-status-error/10 border border-status-error/40 text-rose-300 text-xs flex items-center justify-between">
+        <div className="p-3.5 rounded-lg bg-[#2A1618] border border-[#4A2024] text-[#E36D73] text-xs flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
+            <AlertCircle className="w-4 h-4 text-[#E36D73] flex-shrink-0" />
             <span>
               <strong>Evaluation Dataset Inconsistency:</strong> {seriesError.message}
             </span>
@@ -247,7 +247,7 @@ export function AccuracyPage() {
               refetchSeries();
               refetchTable();
             }}
-            className="px-3 py-1 rounded bg-rose-900/80 hover:bg-rose-800 text-white font-medium transition-colors flex items-center gap-1"
+            className="px-3 py-1 rounded bg-[#4A2024] hover:bg-[#5A282D] text-[#E7EDF5] font-medium transition-colors flex items-center gap-1"
           >
             <RotateCcw className="w-3 h-3" />
             Resync Dataset
@@ -256,14 +256,14 @@ export function AccuracyPage() {
       )}
 
       {/* 3. Four-View Workstation Tabs */}
-      <div className="flex items-center gap-1 border-b border-app-border pb-2 text-xs">
+      <div className="flex items-center gap-1.5 bg-[#0B1220] p-1 rounded-lg border border-[#26364A] text-xs overflow-x-auto">
         <button
           type="button"
           onClick={() => setViewMode("timeline")}
           className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
             viewMode === "timeline"
-              ? "bg-app-elevated text-accent border border-accent/40"
-              : "text-muted hover:text-slate-200 hover:bg-app-surface/60 border border-transparent"
+              ? "bg-[#162337] text-[#35B9C8] border border-[#35B9C8]/40 font-semibold shadow-sm"
+              : "text-[#9AAABD] hover:text-[#E7EDF5] hover:bg-[#162337]/50 border border-transparent"
           }`}
         >
           <BarChart3 className="w-3.5 h-3.5" />
@@ -275,8 +275,8 @@ export function AccuracyPage() {
           onClick={() => setViewMode("diurnal")}
           className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
             viewMode === "diurnal"
-              ? "bg-app-elevated text-accent border border-accent/40"
-              : "text-muted hover:text-slate-200 hover:bg-app-surface/60 border border-transparent"
+              ? "bg-[#162337] text-[#35B9C8] border border-[#35B9C8]/40 font-semibold shadow-sm"
+              : "text-[#9AAABD] hover:text-[#E7EDF5] hover:bg-[#162337]/50 border border-transparent"
           }`}
         >
           <Sun className="w-3.5 h-3.5" />
@@ -288,8 +288,8 @@ export function AccuracyPage() {
           onClick={() => setViewMode("distribution")}
           className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
             viewMode === "distribution"
-              ? "bg-app-elevated text-accent border border-accent/40"
-              : "text-muted hover:text-slate-200 hover:bg-app-surface/60 border border-transparent"
+              ? "bg-[#162337] text-[#35B9C8] border border-[#35B9C8]/40 font-semibold shadow-sm"
+              : "text-[#9AAABD] hover:text-[#E7EDF5] hover:bg-[#162337]/50 border border-transparent"
           }`}
         >
           <Layers className="w-3.5 h-3.5" />
@@ -301,8 +301,8 @@ export function AccuracyPage() {
           onClick={() => setViewMode("daily")}
           className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
             viewMode === "daily"
-              ? "bg-app-elevated text-accent border border-accent/40"
-              : "text-muted hover:text-slate-200 hover:bg-app-surface/60 border border-transparent"
+              ? "bg-[#162337] text-[#35B9C8] border border-[#35B9C8]/40 font-semibold shadow-sm"
+              : "text-[#9AAABD] hover:text-[#E7EDF5] hover:bg-[#162337]/50 border border-transparent"
           }`}
         >
           <TableIcon className="w-3.5 h-3.5" />

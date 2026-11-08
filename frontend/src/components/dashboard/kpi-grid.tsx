@@ -58,8 +58,8 @@ export function KpiGrid({ metrics, isBenchmarkPreset = false }: KpiGridProps) {
         </Button>
       </div>
 
-      {/* Grid of 6 Core KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
+      {/* Grid of 6 Core KPI Cards (3 columns for generous card width and clean alignment) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
         {/* 1. Evaluated Hours */}
         <KpiCard
           title="Evaluated Hours"
@@ -85,7 +85,7 @@ export function KpiGrid({ metrics, isBenchmarkPreset = false }: KpiGridProps) {
 
         {/* 3. RMSE */}
         <KpiCard
-          title="Root Mean Sq. Error"
+          title="Root Mean Squared Error"
           value={formatNumber(metrics.rmse_mw, decimals)}
           unit="MW"
           badgeText="RMSE"
@@ -97,7 +97,7 @@ export function KpiGrid({ metrics, isBenchmarkPreset = false }: KpiGridProps) {
 
         {/* 4. MAPE */}
         <KpiCard
-          title="Mean Abs. % Error"
+          title="Mean Absolute Percentage Error"
           value={formatNumber(metrics.mape_pct, decimals)}
           unit="%"
           badgeText="MAPE"
@@ -127,7 +127,7 @@ export function KpiGrid({ metrics, isBenchmarkPreset = false }: KpiGridProps) {
 
         {/* 6. Over vs Under */}
         <KpiCard
-          title="Over vs Under"
+          title="Overforecast vs Underforecast"
           value={`${metrics.overforecast_count} : ${metrics.underforecast_count}`}
           unit="hrs"
           badgeText={

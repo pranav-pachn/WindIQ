@@ -83,17 +83,17 @@ export function ForecastPage() {
   return (
     <div className="space-y-6 pb-12">
       {/* Page Title & Status Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-app-border">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-3.5 rounded-lg bg-[#111C2D] border border-[#26364A]">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-app-elevated border border-app-border text-accent">
+            <div className="p-2 rounded-lg bg-[#162337] border border-[#26364A] text-[#35B9C8]">
               <Compass className="w-5 h-5" />
             </div>
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-slate-100">
+              <h1 className="text-xl font-bold tracking-tight text-[#E7EDF5]">
                 Forecast Explorer &amp; Multi-Horizon Analysis
               </h1>
-              <p className="text-xs text-muted mt-0.5">
+              <p className="text-xs text-[#718198] mt-0.5">
                 Multi-cycle BMRS WINDFOR publication history, horizon error convergence, and forward revision trajectory analytics.
               </p>
             </div>
@@ -101,8 +101,8 @@ export function ForecastPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="border-app-border bg-app-elevated text-muted text-xs py-1 px-2.5 font-mono">
-            <Clock className="w-3.5 h-3.5 text-muted mr-1.5" />
+          <Badge variant="outline" className="border-[#26364A] bg-[#162337] text-[#9AAABD] text-xs py-1 px-2.5 font-mono">
+            <Clock className="w-3.5 h-3.5 text-[#718198] mr-1.5" />
             Window: {deliveryDateFrom} to {deliveryDateTo}
           </Badge>
         </div>
@@ -124,29 +124,29 @@ export function ForecastPage() {
       {viewMode === 'single_hour' && (
         <div className="space-y-6">
           {isSingleHourLoading && (
-            <Card className="bg-slate-900 border-slate-800">
-              <CardContent className="p-12 text-center text-slate-400 space-y-3">
-                <RefreshCw className="h-6 w-6 animate-spin mx-auto text-cyan-400" />
+            <Card className="bg-[#111C2D] border-[#26364A]">
+              <CardContent className="p-12 text-center text-[#718198] space-y-3">
+                <RefreshCw className="h-6 w-6 animate-spin mx-auto text-[#35B9C8]" />
                 <p className="text-sm">Loading publication evolution for {selectedDeliveryHourUtc}...</p>
               </CardContent>
             </Card>
           )}
 
           {isSingleHourError && (
-            <Card className="bg-rose-950/20 border-rose-900/50">
+            <Card className="bg-[#2A1618] border-[#4A2024]">
               <CardContent className="p-6 text-center space-y-3">
-                <AlertCircle className="h-6 w-6 text-rose-400 mx-auto" />
-                <div className="text-sm text-rose-300 font-medium">
+                <AlertCircle className="h-6 w-6 text-[#E36D73] mx-auto" />
+                <div className="text-sm text-[#E36D73] font-medium">
                   Failed to load publication trajectory
                 </div>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-[#9AAABD]">
                   {singleHourError instanceof Error ? singleHourError.message : 'Unknown error'}
                 </p>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => refetchSingleHour()}
-                  className="border-rose-800 text-rose-300"
+                  className="border-[#4A2024] bg-[#162337] text-[#E36D73] hover:bg-[#2A1618]"
                 >
                   Retry
                 </Button>
@@ -173,29 +173,29 @@ export function ForecastPage() {
       {viewMode === 'multi_horizon' && (
         <div className="space-y-6">
           {isMultiHorizonLoading && (
-            <Card className="bg-slate-900 border-slate-800">
-              <CardContent className="p-12 text-center text-slate-400 space-y-3">
-                <RefreshCw className="h-6 w-6 animate-spin mx-auto text-cyan-400" />
+            <Card className="bg-[#111C2D] border-[#26364A]">
+              <CardContent className="p-12 text-center text-[#718198] space-y-3">
+                <RefreshCw className="h-6 w-6 animate-spin mx-auto text-[#35B9C8]" />
                 <p className="text-sm">Computing multi-horizon error convergence ({horizonMode} mode)...</p>
               </CardContent>
             </Card>
           )}
 
           {isMultiHorizonError && (
-            <Card className="bg-rose-950/20 border-rose-900/50">
+            <Card className="bg-[#2A1618] border-[#4A2024]">
               <CardContent className="p-6 text-center space-y-3">
-                <AlertCircle className="h-6 w-6 text-rose-400 mx-auto" />
-                <div className="text-sm text-rose-300 font-medium">
+                <AlertCircle className="h-6 w-6 text-[#E36D73] mx-auto" />
+                <div className="text-sm text-[#E36D73] font-medium">
                   Failed to compute multi-horizon analysis
                 </div>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-[#9AAABD]">
                   {multiHorizonError instanceof Error ? multiHorizonError.message : 'Unknown error'}
                 </p>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => refetchMultiHorizon()}
-                  className="border-rose-800 text-rose-300"
+                  className="border-[#4A2024] bg-[#162337] text-[#E36D73] hover:bg-[#2A1618]"
                 >
                   Retry
                 </Button>
@@ -211,29 +211,29 @@ export function ForecastPage() {
       {viewMode === 'revisions' && (
         <div className="space-y-6">
           {isRevisionLoading && (
-            <Card className="bg-slate-900 border-slate-800">
-              <CardContent className="p-12 text-center text-slate-400 space-y-3">
-                <RefreshCw className="h-6 w-6 animate-spin mx-auto text-cyan-400" />
+            <Card className="bg-[#111C2D] border-[#26364A]">
+              <CardContent className="p-12 text-center text-[#718198] space-y-3">
+                <RefreshCw className="h-6 w-6 animate-spin mx-auto text-[#35B9C8]" />
                 <p className="text-sm">Analyzing forward revision trajectories &amp; diurnal volatility...</p>
               </CardContent>
             </Card>
           )}
 
           {isRevisionError && (
-            <Card className="bg-rose-950/20 border-rose-900/50">
+            <Card className="bg-[#2A1618] border-[#4A2024]">
               <CardContent className="p-6 text-center space-y-3">
-                <AlertCircle className="h-6 w-6 text-rose-400 mx-auto" />
-                <div className="text-sm text-rose-300 font-medium">
+                <AlertCircle className="h-6 w-6 text-[#E36D73] mx-auto" />
+                <div className="text-sm text-[#E36D73] font-medium">
                   Failed to load revision analytics
                 </div>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-[#9AAABD]">
                   {revisionError instanceof Error ? revisionError.message : 'Unknown error'}
                 </p>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => refetchRevisions()}
-                  className="border-rose-800 text-rose-300"
+                  className="border-[#4A2024] bg-[#162337] text-[#E36D73] hover:bg-[#2A1618]"
                 >
                   Retry
                 </Button>
@@ -257,29 +257,29 @@ export function ForecastPage() {
       {viewMode === 'comparison' && (
         <div className="space-y-6">
           {isTimelineLoading && (
-            <Card className="bg-slate-900 border-slate-800">
-              <CardContent className="p-12 text-center text-slate-400 space-y-3">
-                <RefreshCw className="h-6 w-6 animate-spin mx-auto text-cyan-400" />
+            <Card className="bg-[#111C2D] border-[#26364A]">
+              <CardContent className="p-12 text-center text-[#718198] space-y-3">
+                <RefreshCw className="h-6 w-6 animate-spin mx-auto text-[#35B9C8]" />
                 <p className="text-sm">Loading complete hourly evaluations timeline...</p>
               </CardContent>
             </Card>
           )}
 
           {isTimelineError && (
-            <Card className="bg-rose-950/20 border-rose-900/50">
+            <Card className="bg-[#2A1618] border-[#4A2024]">
               <CardContent className="p-6 text-center space-y-3">
-                <AlertCircle className="h-6 w-6 text-rose-400 mx-auto" />
-                <div className="text-sm text-rose-300 font-medium">
+                <AlertCircle className="h-6 w-6 text-[#E36D73] mx-auto" />
+                <div className="text-sm text-[#E36D73] font-medium">
                   Failed to load comparison timeline
                 </div>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-[#9AAABD]">
                   {timelineError instanceof Error ? timelineError.message : 'Unknown error'}
                 </p>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => refetchTimeline()}
-                  className="border-rose-800 text-rose-300"
+                  className="border-[#4A2024] bg-[#162337] text-[#E36D73] hover:bg-[#2A1618]"
                 >
                   Retry
                 </Button>

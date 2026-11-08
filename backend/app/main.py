@@ -12,7 +12,7 @@ from fastapi.responses import JSONResponse
 
 from app.api.v1.router import api_v1_router
 from app.core.config import Settings, get_settings
-from app.core.database import check_db_health, close_db
+from app.core.database import check_db_health, close_db, get_engine
 from app.core.logging import get_logger, request_id_ctx, setup_logging
 
 logger = get_logger("windiq.app")
@@ -229,7 +229,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         from app.core.redis import check_redis_health
 
         app_settings = getattr(request.app.state, "settings", None)
-        is_db_ready = await check_db_health(settings=app_settings)
+        is_db_ready = await check_db_health(engine=get_engine(app_settings))
         is_redis_ready = await check_redis_health(settings=app_settings)
         is_ready = is_db_ready and is_redis_ready
 

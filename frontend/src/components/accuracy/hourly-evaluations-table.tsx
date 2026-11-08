@@ -44,24 +44,24 @@ export function HourlyEvaluationsTable({
   const endRecord = Math.min(pagination.page * pagination.page_size, pagination.total_items);
 
   return (
-    <div className="rounded-xl bg-app-surface border border-app-border p-4 space-y-4">
+    <div className="rounded-lg bg-[#111C2D] border border-[#26364A] p-4 space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h3 className="text-sm font-semibold text-slate-100 flex items-center gap-2">
+          <h3 className="text-sm font-semibold text-[#E7EDF5] flex items-center gap-2">
             Granular Hourly Forecast vs Actual Evaluations
           </h3>
-          <p className="text-xs text-muted">
+          <p className="text-xs text-[#718198]">
             Traceable to Elexon BMRS WINDFOR day-ahead publications and FUELHH settlement readings
           </p>
         </div>
 
         {/* Page size selection */}
-        <div className="flex items-center gap-2 text-xs text-muted">
+        <div className="flex items-center gap-2 text-xs text-[#718198]">
           <span>Rows per page:</span>
           <select
             value={pagination.page_size}
             onChange={(e) => onPageSizeChange(Number(e.target.value))}
-            className="rounded bg-app-bg border border-app-border px-2 py-1 text-slate-200 text-xs focus:outline-none focus:border-accent font-mono"
+            className="rounded-md bg-[#0B1220] border border-[#26364A] px-2 py-1 text-[#E7EDF5] text-xs focus:outline-none focus:border-[#35B9C8] font-mono"
           >
             <option value={25}>25</option>
             <option value={50}>50</option>
@@ -71,13 +71,13 @@ export function HourlyEvaluationsTable({
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-app-border">
+      <div className="overflow-x-auto rounded-md border border-[#26364A]">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
-            <tr className="bg-[#0E1726] border-b border-app-border text-muted">
+            <tr className="bg-[#0E1726] border-b border-[#26364A] text-[#718198] text-[11px] font-mono uppercase tracking-wider">
               <th
                 onClick={() => onSortChange("delivery_hour_utc")}
-                className="py-2.5 px-3 font-semibold cursor-pointer hover:text-slate-200 select-none whitespace-nowrap"
+                className="py-2.5 px-3 font-semibold cursor-pointer hover:text-[#E7EDF5] select-none whitespace-nowrap"
               >
                 <div className="flex items-center gap-1.5">
                   Delivery Hour (London + Offset)
@@ -86,7 +86,7 @@ export function HourlyEvaluationsTable({
               </th>
               <th
                 onClick={() => onSortChange("forecast_generation_mw")}
-                className="py-2.5 px-3 font-semibold text-right cursor-pointer hover:text-slate-200 select-none whitespace-nowrap"
+                className="py-2.5 px-3 font-semibold text-right cursor-pointer hover:text-[#E7EDF5] select-none whitespace-nowrap"
               >
                 <div className="flex items-center justify-end gap-1.5">
                   Day-Ahead Forecast
@@ -95,7 +95,7 @@ export function HourlyEvaluationsTable({
               </th>
               <th
                 onClick={() => onSortChange("actual_generation_mw")}
-                className="py-2.5 px-3 font-semibold text-right cursor-pointer hover:text-slate-200 select-none whitespace-nowrap"
+                className="py-2.5 px-3 font-semibold text-right cursor-pointer hover:text-[#E7EDF5] select-none whitespace-nowrap"
               >
                 <div className="flex items-center justify-end gap-1.5">
                   Actual Generation
@@ -104,7 +104,7 @@ export function HourlyEvaluationsTable({
               </th>
               <th
                 onClick={() => onSortChange("signed_error_mw")}
-                className="py-2.5 px-3 font-semibold text-right cursor-pointer hover:text-slate-200 select-none whitespace-nowrap"
+                className="py-2.5 px-3 font-semibold text-right cursor-pointer hover:text-[#E7EDF5] select-none whitespace-nowrap"
               >
                 <div className="flex items-center justify-end gap-1.5">
                   Signed Error (ΔMW)
@@ -113,7 +113,7 @@ export function HourlyEvaluationsTable({
               </th>
               <th
                 onClick={() => onSortChange("absolute_error_mw")}
-                className="py-2.5 px-3 font-semibold text-right cursor-pointer hover:text-slate-200 select-none whitespace-nowrap"
+                className="py-2.5 px-3 font-semibold text-right cursor-pointer hover:text-[#E7EDF5] select-none whitespace-nowrap"
               >
                 <div className="flex items-center justify-end gap-1.5">
                   |Error| (MW)
@@ -131,16 +131,16 @@ export function HourlyEvaluationsTable({
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-app-border/40 font-mono">
+          <tbody className="divide-y divide-[#1E2B3E] font-mono">
             {isLoading ? (
               <tr>
-                <td colSpan={8} className="py-12 text-center text-muted text-xs italic font-sans">
+                <td colSpan={8} className="py-12 text-center text-[#718198] text-xs italic font-sans">
                   Loading evaluations...
                 </td>
               </tr>
             ) : items.length === 0 ? (
               <tr>
-                <td colSpan={8} className="py-12 text-center text-muted text-xs italic font-sans">
+                <td colSpan={8} className="py-12 text-center text-[#718198] text-xs italic font-sans">
                   No hourly forecast evaluations match the active filter criteria.
                 </td>
               </tr>
@@ -153,32 +153,32 @@ export function HourlyEvaluationsTable({
                 return (
                   <tr
                     key={item.delivery_hour_utc}
-                    className={`hover:bg-app-elevated/60 transition-colors ${
-                      isSelected ? "bg-app-elevated border-l-2 border-accent" : ""
+                    className={`hover:bg-[#162337]/70 transition-colors ${
+                      isSelected ? "bg-[#162337] border-l-2 border-[#35B9C8]" : ""
                     }`}
                   >
                     <td className="py-2.5 px-3 whitespace-nowrap">
-                      <div className="font-semibold text-slate-200">
+                      <div className="font-semibold text-[#E7EDF5]">
                         {formatLondonWithDstOffset(item.delivery_hour_utc)}
                       </div>
-                      <div className="text-[10px] text-muted">
+                      <div className="text-[10px] text-[#718198]">
                         UTC: {item.delivery_hour_utc.substring(0, 19).replace("T", " ")}
                       </div>
                     </td>
-                    <td className="py-2.5 px-3 text-right font-medium text-accent">
+                    <td className="py-2.5 px-3 text-right font-semibold text-[#35B9C8] tabular-nums">
                       {formatMw(item.forecast_generation_mw)}
                     </td>
-                    <td className="py-2.5 px-3 text-right font-medium text-slate-200">
+                    <td className="py-2.5 px-3 text-right font-medium text-[#E7EDF5] tabular-nums">
                       {formatMw(item.actual_generation_mw)}
                     </td>
-                    <td className={`py-2.5 px-3 text-right font-medium ${isOver ? "text-amber-400" : isUnder ? "text-accent" : "text-muted"}`}>
+                    <td className={`py-2.5 px-3 text-right font-medium tabular-nums ${isOver ? "text-[#E7AD4A]" : isUnder ? "text-[#35B9C8]" : "text-[#718198]"}`}>
                       {isOver ? "+" : ""}
                       {formatMw(item.forecast_error_mw)}
                     </td>
-                    <td className="py-2.5 px-3 text-right text-slate-200">
+                    <td className="py-2.5 px-3 text-right text-[#E7EDF5] tabular-nums">
                       {formatMw(item.absolute_error_mw)}
                     </td>
-                    <td className="py-2.5 px-3 text-right text-muted">
+                    <td className="py-2.5 px-3 text-right text-[#9AAABD] tabular-nums">
                       {item.absolute_percentage_error !== null && item.absolute_percentage_error !== undefined
                         ? formatPct(item.absolute_percentage_error)
                         : "—"}
@@ -202,7 +202,7 @@ export function HourlyEvaluationsTable({
                       <button
                         type="button"
                         onClick={() => onInspectLineage(item)}
-                        className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded bg-app-elevated hover:bg-app-surface border border-app-border text-accent transition-colors focus:outline-none focus:border-accent"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-[#162337] hover:bg-[#1E2B3E] border border-[#26364A] text-[#35B9C8] transition-colors focus:outline-none focus:border-[#35B9C8]"
                         title="Audit selected forecast publication and half-hour settlement pairs"
                       >
                         <ShieldCheck className="w-3.5 h-3.5" />
@@ -219,11 +219,11 @@ export function HourlyEvaluationsTable({
 
       {/* Pagination Footer */}
       {pagination.total_items > 0 && (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 text-xs text-muted">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 text-xs text-[#718198]">
           <div>
-            Showing <span className="font-mono text-slate-200 font-semibold">{startRecord}</span> to{" "}
-            <span className="font-mono text-slate-200 font-semibold">{endRecord}</span> of{" "}
-            <span className="font-mono text-slate-200 font-semibold">{pagination.total_items}</span> evaluations
+            Showing <span className="font-mono text-[#E7EDF5] font-semibold">{startRecord}</span> to{" "}
+            <span className="font-mono text-[#E7EDF5] font-semibold">{endRecord}</span> of{" "}
+            <span className="font-mono text-[#E7EDF5] font-semibold">{pagination.total_items}</span> evaluations
           </div>
 
           <div className="flex items-center gap-1.5 self-end sm:self-auto">
@@ -231,19 +231,19 @@ export function HourlyEvaluationsTable({
               type="button"
               disabled={!pagination.has_previous || isLoading}
               onClick={() => onPageChange(pagination.page - 1)}
-              className="p-1.5 rounded bg-app-elevated hover:bg-app-surface border border-app-border disabled:opacity-40 text-slate-300 focus:outline-none transition-colors"
+              className="p-1.5 rounded-md bg-[#162337] hover:bg-[#1E2B3E] border border-[#26364A] disabled:opacity-40 text-[#E7EDF5] focus:outline-none transition-colors"
               aria-label="Previous page"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <span className="px-2 font-mono text-slate-300">
+            <span className="px-2 font-mono text-[#9AAABD]">
               Page {pagination.page} of {pagination.total_pages || 1}
             </span>
             <button
               type="button"
               disabled={!pagination.has_next || isLoading}
               onClick={() => onPageChange(pagination.page + 1)}
-              className="p-1.5 rounded bg-app-elevated hover:bg-app-surface border border-app-border disabled:opacity-40 text-slate-300 focus:outline-none transition-colors"
+              className="p-1.5 rounded-md bg-[#162337] hover:bg-[#1E2B3E] border border-[#26364A] disabled:opacity-40 text-[#E7EDF5] focus:outline-none transition-colors"
               aria-label="Next page"
             >
               <ChevronRight className="w-4 h-4" />

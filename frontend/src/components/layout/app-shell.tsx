@@ -38,7 +38,7 @@ export function AppShell() {
       case '/overview':
         return {
           title: 'Executive Overview',
-          subtitle: 'National GB Wind Generation Day-Ahead Forecast Accuracy & Benchmarks',
+          subtitle: 'National GB Wind Forecast Analytics',
         }
       case '/accuracy':
         return {

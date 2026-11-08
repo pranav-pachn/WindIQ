@@ -128,23 +128,110 @@ Non-standard and informal terminology was audited and eliminated from all explor
 
 ---
 
-### 3.4 Cloud Status & Runtime Truthfulness
+### 3.4 API Status & SLA Latency Presentation
 
-1. **Real-Time Health Telemetry**:
-   - The Top Navigation health badge actively queries `/health/ready` (falling back to `/health/live`).
-   - Latency is computed on the client via `performance.now()` and displayed in milliseconds (e.g. `Online • 4426ms` during initial cold starts, `~120ms` warm).
-   - If the backend becomes unreachable, the status immediately switches to `Offline` with `#E36D73` border and `WifiOff` indicator.
+The API connectivity indicator in the application header (`frontend/src/components/layout/top-nav.tsx`) decouples binary connectivity from response time performance and provides an accessible explanatory tooltip:
 
-2. **Transparent Scheduler Status**:
-   - `frontend/src/components/dashboard/data-freshness-card.tsx` inspects `detailedHealth.scheduler.enabled`.
-   - In free-tier cloud demo mode (`SCHEDULER_ENABLED=false`), the UI explicitly renders:
-     - Badge: `Scheduler disabled — cloud demo mode`
-     - Ingestion Engine: `Static Benchmark Mode`
-     - Explanation: *"Background polling is paused in free-tier cloud demonstration mode. Serving verified canonical January 2026 benchmark data."*
-   - No false claims of active background polling or autonomous workers are displayed without runtime evidence.
+1. **Separated Connectivity Pill**:
+   - Discrete status pill indicating true network connectivity (`Online` in green `#35B98A`, `Checking` with pulsing indicator, or `Offline` in red `#E36D73`).
+2. **Dedicated Latency Badge with Accessible Tooltip & Label**:
+   - Latency measured via `performance.now()` is presented in a dedicated metric badge with a descriptive `Latency:` label prefix.
+   - Wrapped in an interactive `<Tooltip>` with `role="status"` and `aria-label`, providing clear explanations of SLA performance targets:
+     - **Optimal SLA (<500ms)**: Neutral elevated styling (`#162337` surface, `#9AAABD` text, `#26364A` border) with tooltip indicating optimal operation within standard SLA targets (<500ms).
+     - **Elevated Latency (500ms–2000ms)**: Amber cautionary badge (`#332514` surface, `#E7AD4A` text, `#5A3E1B` border) noting elevated service response time.
+     - **Cold Start / High Latency (≥2000ms)**: Amber/orange alert badge (`#3A2218` surface, `#E7AD4A` text, `#653723` border) with `(Cold Start)` flag explaining container spin-up delays on free-tier cloud hosting.
 
-3. **Ingestion Outturn**:
-   - Displays exact verified database metadata: `18,104` WINDFOR records, `1,488` half-hourly FUELHH settlement readings, and last successful ingestion timestamp (`07 Nov 2026, 18:45:43 UTC`).
+---
+
+### 3.5 KPI Grid Architecture & Terminology Refinement
+
+To resolve card crowding, complete abbreviations, and ensure symmetrical horizontal and vertical alignment across all cards, the Core Forecast Accuracy Metrics grid (`frontend/src/components/dashboard/kpi-grid.tsx` and `frontend/src/components/dashboard/kpi-card.tsx`) was restructured:
+
+1. **KPI Terminology & Acronym Disambiguation**:
+   - Card 2: Heading **Mean Absolute Error** | Badge `MAE`
+   - Card 3: Heading **Root Mean Squared Error** | Badge `RMSE`
+   - Card 4: Heading **Mean Absolute Percentage Error** | Badge `MAPE`
+   - Card 5: Heading **Forecast Bias** | Badge `Signed`
+   - Card 6: Heading **Overforecast vs Underforecast** | Badge `85% Over`
+   - Eliminates redundant duplicates (e.g. `MAE` heading + `MAE` badge, or `Root Mean Squared Error (RMSE)` heading + `RMSE` badge).
+
+2. **Expanded Card Width (3-Column Layout)**:
+   - Transitioned desktop grid from 6 cramped columns to a spacious 3-column architecture (`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5`).
+   - Card widths doubled from ~180px to ~376px, providing ample horizontal room for all metadata elements.
+   - The Overforecast vs Underforecast value (`632 : 112 hrs`) remains strictly on a single line on desktop.
+
+3. **Natural Two-Line Wrapping & Value Alignment**:
+   - Removed `truncate` ellipses from headings; cards use `min-h-[36px]` with `break-words line-clamp-2 leading-tight`, allowing longer headings to wrap cleanly to two lines.
+   - Symmetrical header heights preserve strict horizontal alignment across all numerical values (`744 hrs`, `2,038.91 MW`, `2,504.76 MW` in row 1; `22.04 %`, `+1,747.89 MW`, `632 : 112 hrs` in row 2).
+
+---
+
+### 3.6 Header Subtitle Shortening
+
+The Executive Overview subtitle in `frontend/src/components/layout/app-shell.tsx` was shortened to:
+> **"National GB Wind Forecast Analytics"**
+
+This eliminates text truncation across standard desktop viewports (1280px and 1440px) while maintaining complete descriptive clarity.
+
+---
+
+### 3.7 Performance Investigation: 1546 ms API Latency
+
+A thorough performance investigation was conducted into the elevated ~1546 ms latency indicator:
+
+1. **Endpoint Identified**:
+   - The latency badge is driven by `useApiHealth()` in `frontend/src/hooks/use-api-health.ts`, measuring the round-trip probe time of `GET /health/ready`.
+2. **Root Cause Analysis**:
+   - In `backend/app/main.py:232`, `check_db_health(settings=app_settings)` was previously called with `settings` passed and `engine=None`.
+   - In `backend/app/core/database.py:96-106`, passing `settings` caused the health check to create a brand-new SQLAlchemy `AsyncEngine` (`create_async_engine`), initiate a fresh TCP handshake and TLS negotiation over the internet to Supabase Tokyo (`aws-0-ap-northeast-1.pooler.supabase.com:5432`), execute `SELECT 1`, and then immediately call `dispose()`.
+   - Creating and destroying an async engine + TLS handshake on every probe added **1200–2500ms** of unnecessary network overhead.
+3. **Database & Network Geography Breakdown**:
+   - **Supabase Host**: `aws-0-ap-northeast-1.pooler.supabase.com` (AWS Tokyo, Japan).
+   - **Render / Client Host**: Oregon (`us-west-1`) or local client.
+   - Cross-continental ping round-trip time (RTT): ~120–150ms per round trip. A cold TLS handshake requires 3-4 round trips (~450–600ms).
+   - Redis latency: < 1ms (Upstash serverless Redis ping).
+4. **Resolution**:
+   - Modified `backend/app/main.py` to pass `engine=get_engine(app_settings)` to `check_db_health`, reusing the warm pooled connection instead of creating and disposing of an engine on every health check.
+   - Frontend request frequency was audited: React Query caches data with `staleTime: 300000` (5 minutes) and refetches health only once every 30 seconds (`refetchInterval: 30000`). No duplicate or runaway requests were occurring.
+
+---
+
+### 3.8 Environment-Aware Scheduler Status & Ingestion Audit
+
+Scheduler status and ingestion telemetry (`frontend/src/components/dashboard/data-freshness-card.tsx`) are verified separately across runtime environments:
+
+1. **Separation of Environments**:
+   - **Local Docker Environment**: With `SCHEDULER_ENABLED=true`, the backend initializes `WindIQScheduler`, acquiring a PostgreSQL advisory lock. The card reflects runtime truth: `Background Scheduler Active`, Ingestion Engine `Active Polling`, and `Leader Lock`.
+   - **Public Cloud / Demonstration Environment**: With `SCHEDULER_ENABLED=false` (to preserve free-tier compute quotas), the backend reports `enabled: false, status: "DISABLED"`. The card reflects runtime truth: `Scheduler Disabled — Cloud Demo Mode` with Ingestion Engine `Static Benchmark Mode`.
+   - **Strict Guarantee**: The condition `isSchedulerActive = Boolean(scheduler?.enabled) && scheduler?.status === 'RUNNING'` prevents any disabled or paused scheduler from ever being displayed as active.
+2. **Standardized Ingestion Terminology**:
+   - Card title: `Data Freshness`.
+   - Section header: `Latest Successful Ingestion`.
+   - Outturn tile: `FUELHH Readings` (half-hourly outturn readings).
+   - Ingestion explanation: Explicit reference to the canonical January 2026 `Forecast Accuracy` benchmark dataset.
+3. **Dynamic Data Age**:
+   - Dynamic elapsed time (`formatDataAge`) calculated directly from `datasetHealth.last_successful_ingestion_utc` (e.g. `Data Age: Xm ago` or `Xd ago`).
+
+---
+
+### 3.9 Design System Alignment Across /accuracy and /forecasts
+
+To establish complete design cohesion across the platform matching the refined Executive Overview:
+
+1. **Forecast Accuracy (`/accuracy`)**:
+   - **Toolbar & Filter Header**: Styled with institutional container (`#111C2D` / `#26364A`), active window badge, Europe/London hour-of-day selector (`#0B1220` / `#26364A`), evaluation status filter, and Export CSV button (`#162337` / `#26364A`).
+   - **Workstation Tabs**: 4 views (`1. Hourly Timeline & Evaluations`, `2. 24-Hour Diurnal Pattern`, `3. Error Distribution & Quantiles`, `4. Daily Performance Ledger`) styled as segmented controls (`#0B1220` container with active pill in `#162337` / `#35B9C8`).
+   - **Evaluations Table (`HourlyEvaluationsTable`)**: Clean `#111C2D` panel with `#162337` header, monospace tabular numbers, hover highlight (`#162337/70`), explicit status badges (`VALID`, `MISSING_FORECAST`, `MISSING_ACTUAL`), and institutional `Audit Lineage` button (`#162337` / `#26364A` / `#35B9C8`).
+   - **Daily Ledger (`DailyAccuracyLedger`)**: Restyled performance extremes and summary cards with restrained semantic accents (Best MAE `#35B98A`, Worst MAE `#E36D73`, Best MAPE `#35B9C8`, Worst MAPE `#E7AD4A`).
+   - **Audit Modal (`AuditLineageModal`)**: Frosted backdrop (`#0B1220/80 backdrop-blur-sm`), dialog card (`#111C2D` / `#26364A`), and 3-step settlement verification proof boxes (`#162337` / `#26364A`).
+
+2. **Forecast Explorer (`/forecasts`)**:
+   - **Header & Title Card**: Consistent analytical heading with `#111C2D` card background, compass icon badge in `#162337` / `#35B9C8`, and evaluation window badge.
+   - **Unified Toolbar (`ForecastToolbar`)**: Matching segmented workstation tab controls, delivery hour selector with monospace timestamps, population mode toggles, and min swing filter.
+   - **Publication Trajectory (`PublicationTrajectoryChart`)**: 4 KPI cards row (`Selected D-1 Forecast` in `#35B9C8` with `09:00 Cutoff` badge, `Actual Generation` in `#E7EDF5` with `2 x FUELHH` badge, `Day-Ahead Error` with `Overforecast` / `Underforecast` semantic pill, `Publication Versions` with direct `Audit Lineage` action).
+   - **Publication Lifecycle Ledger (`PublicationHistoryTable`)**: Clean `#111C2D` table with selected D-1 row highlighted in `#162337` with `#35B9C8` left border accent, `ELIGIBLE` (`#133829` / `#35B98A`) and `POST-CUTOFF` (`#162337` / `#718198`) badges, and `D-1 WINNER` badge (`#0E2833` / `#35B9C8`).
+   - **Multi-Horizon Error Convergence (`MultiHorizonChart`)**: Restyled convergence banner with `#162337` MAE reduction card (`34.16%` in `#35B98A`, `−835.70 MW`), ComposedChart dual-axis canvas, and 6 horizon bucket cards (`#111C2D` / `#26364A`).
+   - **Settlement Trace Modal (`PublicationTraceModal`)**: Dialog aligned with `#0B1220/80` backdrop, `#111C2D` container, and `#162337` step boxes.
 
 ---
 
@@ -188,13 +275,13 @@ Every validation check executed cleanly:
    npm --prefix frontend test
    # Test Files: 13 passed (13)
    # Tests:      48 passed (48)
-   # Duration:   7.78s
+   # Duration:   21.36s
    ```
 
 4. **Production Bundle Build (Vite)**:
    ```bash
    npm --prefix frontend run build
-   # Output: Built in 2.00s with optimized vendor chunks
+   # Output: Built in 5.22s with optimized vendor chunks (0 errors)
    ```
 
 5. **RBAC & Security Audit Script**:

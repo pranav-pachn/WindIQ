@@ -41,22 +41,22 @@ export function DailyAccuracyLedger({
       {summary && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {/* Best MAE */}
-          <div className="p-4 rounded-xl bg-app-surface border border-app-border relative overflow-hidden">
-            <div className="flex items-center justify-between text-xs text-muted mb-1">
-              <span className="font-semibold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+          <div className="p-4 rounded-lg bg-[#111C2D] border border-[#26364A] relative overflow-hidden">
+            <div className="flex items-center justify-between text-xs text-[#718198] mb-1">
+              <span className="font-semibold uppercase tracking-wider text-[#35B98A] flex items-center gap-1.5 font-mono text-[11px]">
                 <Award className="w-3.5 h-3.5" />
                 Best MAE (Lowest Error)
               </span>
             </div>
-            <div className="text-xl sm:text-2xl font-bold font-mono text-emerald-300">
+            <div className="text-xl sm:text-2xl font-bold font-mono text-[#35B98A] tabular-nums">
               {summary.best_day_mae ? formatMw(summary.best_day_mae.value) : "—"}
             </div>
-            <div className="text-xs font-mono text-slate-300 mt-1 flex items-center justify-between">
-              <span className="text-muted">Delivery Date:</span>
+            <div className="text-xs font-mono text-[#9AAABD] mt-1.5 flex items-center justify-between">
+              <span className="text-[#718198]">Delivery Date:</span>
               <button
                 type="button"
                 onClick={() => summary.best_day_mae && onSelectDay(summary.best_day_mae.delivery_date)}
-                className="underline text-emerald-400 hover:text-emerald-300"
+                className="underline text-[#35B98A] hover:text-[#45D19E] transition-colors font-semibold"
               >
                 {summary.best_day_mae ? formatDate(summary.best_day_mae.delivery_date) : "—"}
               </button>
@@ -64,22 +64,22 @@ export function DailyAccuracyLedger({
           </div>
 
           {/* Worst MAE */}
-          <div className="p-4 rounded-xl bg-app-surface border border-app-border relative overflow-hidden">
-            <div className="flex items-center justify-between text-xs text-muted mb-1">
-              <span className="font-semibold uppercase tracking-wider text-rose-400 flex items-center gap-1.5">
+          <div className="p-4 rounded-lg bg-[#111C2D] border border-[#26364A] relative overflow-hidden">
+            <div className="flex items-center justify-between text-xs text-[#718198] mb-1">
+              <span className="font-semibold uppercase tracking-wider text-[#E36D73] flex items-center gap-1.5 font-mono text-[11px]">
                 <AlertOctagon className="w-3.5 h-3.5" />
                 Worst MAE (Highest Error)
               </span>
             </div>
-            <div className="text-xl sm:text-2xl font-bold font-mono text-rose-300">
+            <div className="text-xl sm:text-2xl font-bold font-mono text-[#E36D73] tabular-nums">
               {summary.worst_day_mae ? formatMw(summary.worst_day_mae.value) : "—"}
             </div>
-            <div className="text-xs font-mono text-slate-300 mt-1 flex items-center justify-between">
-              <span className="text-muted">Delivery Date:</span>
+            <div className="text-xs font-mono text-[#9AAABD] mt-1.5 flex items-center justify-between">
+              <span className="text-[#718198]">Delivery Date:</span>
               <button
                 type="button"
                 onClick={() => summary.worst_day_mae && onSelectDay(summary.worst_day_mae.delivery_date)}
-                className="underline text-rose-400 hover:text-rose-300"
+                className="underline text-[#E36D73] hover:text-[#EE8287] transition-colors font-semibold"
               >
                 {summary.worst_day_mae ? formatDate(summary.worst_day_mae.delivery_date) : "—"}
               </button>
@@ -87,22 +87,22 @@ export function DailyAccuracyLedger({
           </div>
 
           {/* Best MAPE (Independent Date) */}
-          <div className="p-4 rounded-xl bg-app-surface border border-app-border">
-            <div className="flex items-center justify-between text-xs text-muted mb-1">
-              <span className="font-semibold uppercase tracking-wider text-accent flex items-center gap-1.5">
+          <div className="p-4 rounded-lg bg-[#111C2D] border border-[#26364A]">
+            <div className="flex items-center justify-between text-xs text-[#718198] mb-1">
+              <span className="font-semibold uppercase tracking-wider text-[#35B9C8] flex items-center gap-1.5 font-mono text-[11px]">
                 <TrendingDown className="w-3.5 h-3.5" />
                 Best MAPE (Relative)
               </span>
             </div>
-            <div className="text-xl sm:text-2xl font-bold font-mono text-accent">
+            <div className="text-xl sm:text-2xl font-bold font-mono text-[#35B9C8] tabular-nums">
               {summary.best_day_mape ? formatPct(summary.best_day_mape.value) : "—"}
             </div>
-            <div className="text-xs font-mono text-slate-300 mt-1 flex items-center justify-between">
-              <span className="text-muted">Delivery Date:</span>
+            <div className="text-xs font-mono text-[#9AAABD] mt-1.5 flex items-center justify-between">
+              <span className="text-[#718198]">Delivery Date:</span>
               <button
                 type="button"
                 onClick={() => summary.best_day_mape && onSelectDay(summary.best_day_mape.delivery_date)}
-                className="underline text-accent hover:text-accent/80"
+                className="underline text-[#35B9C8] hover:text-[#52C8D6] transition-colors font-semibold"
               >
                 {summary.best_day_mape ? formatDate(summary.best_day_mape.delivery_date) : "—"}
               </button>
@@ -110,22 +110,22 @@ export function DailyAccuracyLedger({
           </div>
 
           {/* Worst MAPE */}
-          <div className="p-4 rounded-xl bg-app-surface border border-app-border">
-            <div className="flex items-center justify-between text-xs text-muted mb-1">
-              <span className="font-semibold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+          <div className="p-4 rounded-lg bg-[#111C2D] border border-[#26364A]">
+            <div className="flex items-center justify-between text-xs text-[#718198] mb-1">
+              <span className="font-semibold uppercase tracking-wider text-[#E7AD4A] flex items-center gap-1.5 font-mono text-[11px]">
                 <TrendingUp className="w-3.5 h-3.5" />
                 Worst MAPE (Relative)
               </span>
             </div>
-            <div className="text-xl sm:text-2xl font-bold font-mono text-amber-300">
+            <div className="text-xl sm:text-2xl font-bold font-mono text-[#E7AD4A] tabular-nums">
               {summary.worst_day_mape ? formatPct(summary.worst_day_mape.value) : "—"}
             </div>
-            <div className="text-xs font-mono text-slate-300 mt-1 flex items-center justify-between">
-              <span className="text-muted">Delivery Date:</span>
+            <div className="text-xs font-mono text-[#9AAABD] mt-1.5 flex items-center justify-between">
+              <span className="text-[#718198]">Delivery Date:</span>
               <button
                 type="button"
                 onClick={() => summary.worst_day_mape && onSelectDay(summary.worst_day_mape.delivery_date)}
-                className="underline text-amber-400 hover:text-amber-300"
+                className="underline text-[#E7AD4A] hover:text-[#F3BD5E] transition-colors font-semibold"
               >
                 {summary.worst_day_mape ? formatDate(summary.worst_day_mape.delivery_date) : "—"}
               </button>
@@ -135,23 +135,23 @@ export function DailyAccuracyLedger({
       )}
 
       {/* 2. Daily Accuracy Ledger Table */}
-      <div className="rounded-xl bg-app-surface border border-app-border p-4 space-y-4">
+      <div className="rounded-lg bg-[#111C2D] border border-[#26364A] p-4 space-y-4">
         <div>
-          <h3 className="text-sm font-semibold text-slate-100 flex items-center gap-2">
+          <h3 className="text-sm font-semibold text-[#E7EDF5] flex items-center gap-2">
             Daily Accuracy Ledger ({items.length} Evaluated Delivery Days)
           </h3>
-          <p className="text-xs text-muted">
+          <p className="text-xs text-[#718198]">
             Day-by-day aggregated forecast accuracy, completeness, and bias metrics across Europe/London calendar dates
           </p>
         </div>
 
-        <div className="overflow-x-auto rounded-lg border border-app-border">
+        <div className="overflow-x-auto rounded-md border border-[#26364A]">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="bg-[#0E1726] border-b border-app-border text-muted">
+              <tr className="bg-[#0E1726] border-b border-[#26364A] text-[#718198] text-[11px] font-mono uppercase tracking-wider">
                 <th
                   onClick={() => onSortChange("delivery_date")}
-                  className="py-2.5 px-3 font-semibold cursor-pointer hover:text-slate-200 select-none whitespace-nowrap"
+                  className="py-2.5 px-3 font-semibold cursor-pointer hover:text-[#E7EDF5] select-none whitespace-nowrap"
                 >
                   <div className="flex items-center gap-1.5">
                     Delivery Date (London)
@@ -218,47 +218,47 @@ export function DailyAccuracyLedger({
                   return (
                     <tr
                       key={row.delivery_date}
-                      className="hover:bg-app-elevated/60 transition-colors"
+                      className="hover:bg-[#162337]/70 transition-colors"
                     >
-                      <td className="py-2.5 px-3 whitespace-nowrap font-semibold text-slate-200">
+                      <td className="py-2.5 px-3 whitespace-nowrap font-semibold text-[#E7EDF5]">
                         {formatDate(row.delivery_date)}
                       </td>
-                      <td className="py-2.5 px-3 text-center text-muted">
-                        <span className="text-slate-200">{row.valid_hours}</span> / {row.total_hours} hrs
+                      <td className="py-2.5 px-3 text-center text-[#718198]">
+                        <span className="text-[#E7EDF5] tabular-nums">{row.valid_hours}</span> / {row.total_hours} hrs
                       </td>
-                      <td className="py-2.5 px-3 text-right text-slate-100 font-bold">
+                      <td className="py-2.5 px-3 text-right text-[#E7EDF5] font-bold tabular-nums">
                         {formatMw(row.mae_mw)}
                       </td>
-                      <td className="py-2.5 px-3 text-right text-slate-300">
+                      <td className="py-2.5 px-3 text-right text-[#9AAABD] tabular-nums">
                         {formatMw(row.rmse_mw)}
                       </td>
-                      <td className="py-2.5 px-3 text-right text-slate-200 font-medium">
+                      <td className="py-2.5 px-3 text-right text-[#E7EDF5] font-medium tabular-nums">
                         {formatPct(row.mape_pct)}
                       </td>
                       <td
-                        className={`py-2.5 px-3 text-right font-medium ${
+                        className={`py-2.5 px-3 text-right font-medium tabular-nums ${
                           biasInfo.direction === "positive"
-                            ? "text-amber-400"
+                            ? "text-[#E7AD4A]"
                             : biasInfo.direction === "negative"
-                            ? "text-accent"
-                            : "text-muted"
+                            ? "text-[#35B9C8]"
+                            : "text-[#718198]"
                         }`}
                       >
                         {biasInfo.text}
                       </td>
-                      <td className="py-2.5 px-3 text-center text-xs">
-                        <span className="text-amber-400 font-medium">{row.overforecast_hours}</span>
-                        <span className="text-muted mx-1">:</span>
-                        <span className="text-accent font-medium">{row.underforecast_hours}</span>
+                      <td className="py-2.5 px-3 text-center text-xs tabular-nums">
+                        <span className="text-[#E7AD4A] font-medium">{row.overforecast_hours}</span>
+                        <span className="text-[#718198] mx-1">:</span>
+                        <span className="text-[#35B9C8] font-medium">{row.underforecast_hours}</span>
                       </td>
                       <td className="py-2.5 px-3 text-center">
                         <button
                           type="button"
                           onClick={() => onSelectDay(row.delivery_date)}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded bg-app-elevated hover:bg-app-surface border border-app-border text-slate-200 transition-colors focus:outline-none focus:border-accent"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md bg-[#162337] hover:bg-[#1E2B3E] border border-[#26364A] text-[#35B9C8] transition-colors focus:outline-none focus:border-[#35B9C8]"
                         >
                           Explore
-                          <ChevronRight className="w-3.5 h-3.5 text-accent" />
+                          <ChevronRight className="w-3.5 h-3.5 text-[#35B9C8]" />
                         </button>
                       </td>
                     </tr>

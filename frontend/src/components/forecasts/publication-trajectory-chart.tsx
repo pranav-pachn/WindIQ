@@ -44,56 +44,56 @@ export const PublicationTrajectoryChart: React.FC<PublicationTrajectoryChartProp
   }))
 
   return (
-    <div className="bg-app-surface border border-app-border rounded-xl p-5 mb-6">
+    <div className="bg-[#111C2D] border border-[#26364A] rounded-lg p-5 mb-6">
       {/* KPI Cards Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-app-elevated border border-app-border rounded-lg p-3.5">
-          <div className="flex items-center justify-between text-xs text-muted mb-1">
-            <span className="flex items-center gap-1.5">
-              <Target className="w-3.5 h-3.5 text-accent" />
+        <div className="bg-[#162337] border border-[#26364A] rounded-lg p-3.5">
+          <div className="flex items-center justify-between text-xs text-[#9AAABD] mb-1">
+            <span className="flex items-center gap-1.5 font-medium">
+              <Target className="w-3.5 h-3.5 text-[#35B9C8]" />
               Selected D-1 Forecast
             </span>
-            <span className="text-[10px] font-mono px-1.5 py-0.2 bg-app-bg text-accent border border-app-border rounded">
+            <span className="text-[10px] font-mono px-1.5 py-0.5 bg-[#0B1220] text-[#35B9C8] border border-[#26364A] rounded">
               09:00 Cutoff
             </span>
           </div>
-          <div className="text-xl font-bold font-mono text-accent">
+          <div className="text-xl font-bold font-mono text-[#35B9C8]">
             {selectedPub ? `${formatNumber(selectedPub.forecast_mw)} MW` : 'N/A'}
           </div>
-          <div className="text-[11px] text-muted mt-1">
-            Lead time: <span className="font-mono text-slate-300">{selectedPub?.lead_time_hours}h</span>
+          <div className="text-[11px] text-[#718198] mt-1">
+            Lead time: <span className="font-mono text-[#E7EDF5]">{selectedPub?.lead_time_hours}h</span>
           </div>
         </div>
 
-        <div className="bg-app-elevated border border-app-border rounded-lg p-3.5">
-          <div className="flex items-center justify-between text-xs text-muted mb-1">
-            <span className="flex items-center gap-1.5">
-              <Zap className="w-3.5 h-3.5 text-emerald-400" />
+        <div className="bg-[#162337] border border-[#26364A] rounded-lg p-3.5">
+          <div className="flex items-center justify-between text-xs text-[#9AAABD] mb-1">
+            <span className="flex items-center gap-1.5 font-medium">
+              <Zap className="w-3.5 h-3.5 text-[#35B98A]" />
               Actual Generation
             </span>
-            <span className="text-[10px] font-mono px-1.5 py-0.2 bg-app-bg text-emerald-300 border border-app-border rounded">
+            <span className="text-[10px] font-mono px-1.5 py-0.5 bg-[#0B1220] text-[#35B98A] border border-[#26364A] rounded">
               2 x FUELHH
             </span>
           </div>
-          <div className="text-xl font-bold font-mono text-slate-100">
+          <div className="text-xl font-bold font-mono text-[#E7EDF5]">
             {actualMw !== null ? `${formatNumber(actualMw)} MW` : 'Missing'}
           </div>
-          <div className="text-[11px] text-muted mt-1">
-            Status: <span className="text-emerald-400 font-medium">{data.actual_data_status}</span>
+          <div className="text-[11px] text-[#718198] mt-1">
+            Status: <span className="text-[#35B98A] font-medium">{data.actual_data_status}</span>
           </div>
         </div>
 
-        <div className="bg-app-elevated border border-app-border rounded-lg p-3.5">
-          <div className="flex items-center justify-between text-xs text-muted mb-1">
-            <span className="flex items-center gap-1.5">
-              <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+        <div className="bg-[#162337] border border-[#26364A] rounded-lg p-3.5">
+          <div className="flex items-center justify-between text-xs text-[#9AAABD] mb-1">
+            <span className="flex items-center gap-1.5 font-medium">
+              <AlertTriangle className="w-3.5 h-3.5 text-[#E7AD4A]" />
               Day-Ahead Error
             </span>
             <span
-              className={`text-[10px] font-mono px-1.5 py-0.2 rounded border ${
+              className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${
                 errorMw !== null && errorMw > 0
-                  ? 'bg-amber-950/40 text-amber-300 border-amber-800/40'
-                  : 'bg-accent/10 text-accent border-accent/40'
+                  ? 'bg-[#3E2E14] text-[#E7AD4A] border-[#E7AD4A]/40'
+                  : 'bg-[#0E2833] text-[#35B9C8] border-[#183E4C]'
               }`}
             >
               {errorMw !== null && errorMw > 0 ? 'Overforecast' : 'Underforecast'}
@@ -101,72 +101,72 @@ export const PublicationTrajectoryChart: React.FC<PublicationTrajectoryChartProp
           </div>
           <div
             className={`text-xl font-bold font-mono ${
-              errorMw !== null && errorMw > 0 ? 'text-amber-300' : 'text-accent'
+              errorMw !== null && errorMw > 0 ? 'text-[#E7AD4A]' : 'text-[#35B9C8]'
             }`}
           >
             {errorMw !== null
               ? `${errorMw > 0 ? '+' : ''}${formatNumber(errorMw)} MW`
               : 'N/A'}
           </div>
-          <div className="text-[11px] text-muted mt-1">
+          <div className="text-[11px] text-[#718198] mt-1">
             Abs Error:{' '}
-            <span className="font-mono text-slate-200">
+            <span className="font-mono text-[#E7EDF5]">
               {errorMw !== null ? `${formatNumber(Math.abs(errorMw))} MW` : 'N/A'}
             </span>
           </div>
         </div>
 
-        <div className="bg-app-elevated border border-app-border rounded-lg p-3.5">
-          <div className="flex items-center justify-between text-xs text-muted mb-1">
-            <span className="flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-accent" />
+        <div className="bg-[#162337] border border-[#26364A] rounded-lg p-3.5">
+          <div className="flex items-center justify-between text-xs text-[#9AAABD] mb-1">
+            <span className="flex items-center gap-1.5 font-medium">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#35B9C8]" />
               Publication Versions
             </span>
             {onOpenAuditModal ? (
               <button
                 type="button"
                 onClick={onOpenAuditModal}
-                className="text-[10px] font-mono px-1.5 py-0.5 bg-app-bg text-accent border border-app-border rounded hover:bg-app-surface cursor-pointer transition-colors"
+                className="text-[10px] font-mono px-2 py-0.5 bg-[#0B1220] text-[#35B9C8] border border-[#26364A] rounded hover:bg-[#111C2D] cursor-pointer transition-colors"
                 title="Inspect decision cutoff and settlement lineage"
               >
                 Audit Lineage
               </button>
             ) : (
-              <span className="text-[10px] font-mono px-1.5 py-0.2 bg-app-bg text-muted rounded">
+              <span className="text-[10px] font-mono px-1.5 py-0.5 bg-[#0B1220] text-[#718198] border border-[#26364A] rounded">
                 Rolling 3-Day
               </span>
             )}
           </div>
-          <div className="text-xl font-bold font-mono text-slate-100">
+          <div className="text-xl font-bold font-mono text-[#E7EDF5]">
             {data.total_publications}
           </div>
-          <div className="text-[11px] text-muted mt-1">
-            Eligible: <span className="text-accent font-medium">{data.eligible_publications}</span> | Forward:{' '}
-            <span className="text-slate-300">{data.forward_publications}</span>
+          <div className="text-[11px] text-[#718198] mt-1">
+            Eligible: <span className="text-[#35B9C8] font-medium">{data.eligible_publications}</span> | Forward:{' '}
+            <span className="text-[#9AAABD]">{data.forward_publications}</span>
           </div>
         </div>
       </div>
 
       {/* Trajectory Step Line Chart */}
       <div className="mb-2 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
+        <h3 className="text-sm font-semibold text-[#E7EDF5] flex items-center gap-2">
           <span>Forecast Evolution Across Lead Times</span>
-          <span className="text-xs text-muted font-normal">
+          <span className="text-xs text-[#718198] font-normal">
             (Target Delivery: {formatDateTimeUtc(data.delivery_hour_utc)})
           </span>
         </h3>
-        <div className="flex items-center gap-4 text-xs">
+        <div className="flex items-center gap-4 text-xs font-mono">
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-0.5 bg-accent inline-block" />
-            <span className="text-slate-300">WINDFOR Evolution</span>
+            <span className="w-3 h-0.5 bg-[#35B9C8] inline-block" />
+            <span className="text-[#9AAABD]">WINDFOR Evolution</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-0.5 bg-slate-300 border-dashed inline-block" />
-            <span className="text-slate-300">Actual ({formatNumber(actualMw ?? 0)} MW)</span>
+            <span className="w-3 h-0.5 bg-[#E7EDF5] border-dashed inline-block" />
+            <span className="text-[#9AAABD]">Actual ({formatNumber(actualMw ?? 0)} MW)</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-3 h-0.5 bg-[#E7AD4A] inline-block" />
-            <span className="text-amber-300 font-medium">09:00 D-1 Cutoff</span>
+            <span className="text-[#E7AD4A] font-medium">09:00 D-1 Cutoff</span>
           </div>
         </div>
       </div>
@@ -211,24 +211,24 @@ export const PublicationTrajectoryChart: React.FC<PublicationTrajectoryChartProp
                 if (active && payload && payload.length) {
                   const p = payload[0].payload
                   return (
-                    <div className="bg-app-surface border border-app-border p-3 rounded-lg shadow-xl text-xs font-mono space-y-1">
-                      <div className="font-semibold text-slate-200">
+                    <div className="bg-[#0E1726] border border-[#26364A] p-3 rounded-lg shadow-xl text-xs font-mono space-y-1">
+                      <div className="font-semibold text-[#E7EDF5]">
                         Published: {formatDateTimeUtc(p.publishTime)}
                       </div>
-                      <div className="text-accent font-bold">
+                      <div className="text-[#35B9C8] font-bold">
                         Forecast: {formatNumber(p.forecastMw)} MW
                       </div>
-                      <div className="text-muted">
-                        Lead Time: <span className="text-slate-200">{p.leadTime} hours</span>
+                      <div className="text-[#718198]">
+                        Lead Time: <span className="text-[#E7EDF5]">{p.leadTime} hours</span>
                       </div>
                       {p.revisionMw !== null && (
                         <div
                           className={`flex items-center gap-1 ${
                             p.revisionMw > 0
-                              ? 'text-emerald-400'
+                              ? 'text-[#35B98A]'
                               : p.revisionMw < 0
-                              ? 'text-rose-400'
-                              : 'text-muted'
+                              ? 'text-[#E36D73]'
+                              : 'text-[#718198]'
                           }`}
                         >
                           Step Revision: {p.revisionMw > 0 ? '+' : ''}
@@ -239,14 +239,14 @@ export const PublicationTrajectoryChart: React.FC<PublicationTrajectoryChartProp
                         <span
                           className={`px-1.5 py-0.5 rounded text-[10px] font-sans ${
                             p.isEligible
-                              ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-800'
-                              : 'bg-app-elevated text-muted'
+                              ? 'bg-[#133829] text-[#35B98A] border border-[#1C523B]'
+                              : 'bg-[#162337] text-[#718198] border border-[#26364A]'
                           }`}
                         >
                           {p.isEligible ? 'ELIGIBLE' : 'POST-CUTOFF'}
                         </span>
                         {p.isSelected && (
-                          <span className="px-1.5 py-0.5 rounded text-[10px] font-sans bg-accent/20 text-accent border border-accent/60 font-medium">
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-sans bg-[#0E2833] text-[#35B9C8] border border-[#183E4C] font-medium">
                             SELECTED D-1
                           </span>
                         )}

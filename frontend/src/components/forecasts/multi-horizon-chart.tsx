@@ -51,57 +51,57 @@ export const MultiHorizonChart: React.FC<MultiHorizonChartProps> = ({ data }) =>
   return (
     <div className="space-y-6">
       {/* Methodology & Proven Convergence Banner */}
-      <div className="bg-app-surface border border-app-border rounded-xl p-5">
+      <div className="bg-[#111C2D] border border-[#26364A] rounded-lg p-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="text-xs font-semibold uppercase tracking-wider text-accent flex items-center gap-1.5">
-                <TrendingDown className="w-4 h-4 text-accent" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#35B9C8] flex items-center gap-1.5">
+                <TrendingDown className="w-4 h-4 text-[#35B9C8]" />
                 Forecast Error Convergence Across Lead Times
               </span>
               <span
                 className={`text-[10px] px-2 py-0.5 rounded font-mono font-medium border ${
                   isMatched
-                    ? 'bg-amber-950/40 text-amber-300 border-amber-800/40'
-                    : 'bg-app-elevated text-accent border-accent/40'
+                    ? 'bg-[#3E2E14] text-[#E7AD4A] border-[#E7AD4A]/40'
+                    : 'bg-[#162337] text-[#35B9C8] border border-[#26364A]'
                 }`}
               >
                 {isMatched ? 'Strictly Matched Population (553 Common Hours)' : 'Publication-Weighted (All Forward Observations)'}
               </span>
             </div>
-            <p className="text-xs text-muted max-w-3xl leading-relaxed">
+            <p className="text-xs text-[#9AAABD] max-w-3xl leading-relaxed">
               Evaluating forecast error from Medium-Range (D-3, 48–72h) down to Very Short (0–6h).
               {isMatched ? (
-                <span className="text-amber-200/90 font-medium ml-1">
+                <span className="text-[#E7AD4A] font-medium ml-1">
                   Matched mode eliminates weather-regime sampling bias by requiring identical delivery-hour populations across all 6 horizon buckets.
                 </span>
               ) : (
-                <span className="text-accent/90 font-medium ml-1">
+                <span className="text-[#35B9C8] font-medium ml-1">
                   Publication-weighted mode analyzes all published model iterations to maximize statistical power.
                 </span>
               )}
             </p>
           </div>
 
-          <div className="flex items-center gap-4 bg-app-elevated border border-app-border p-3.5 rounded-lg shrink-0">
+          <div className="flex items-center gap-4 bg-[#162337] border border-[#26364A] p-3 rounded-lg shrink-0">
             <div>
-              <div className="text-[10px] uppercase font-mono text-muted">MAE Reduction</div>
-              <div className="text-2xl font-bold font-mono text-emerald-400">
+              <div className="text-[10px] uppercase font-mono text-[#718198]">MAE Reduction</div>
+              <div className="text-2xl font-bold font-mono text-[#35B98A]">
                 {data.proven_convergence_improvement_pct ? `${data.proven_convergence_improvement_pct}%` : 'N/A'}
               </div>
-              <div className="text-[10px] text-muted font-mono">
+              <div className="text-[10px] text-[#718198] font-mono">
                 {maeChangeMw !== null
                   ? `MAE change: −${Math.abs(maeChangeMw).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MW`
                   : (isMatched ? 'Monotonic across 6 horizons' : 'Overall horizon drop')}
               </div>
             </div>
-            <div className="h-10 w-px bg-app-border" />
+            <div className="h-10 w-px bg-[#26364A]" />
             <div>
-              <div className="text-[10px] uppercase font-mono text-muted">Evaluated Hours</div>
-              <div className="text-xl font-bold font-mono text-slate-100">
+              <div className="text-[10px] uppercase font-mono text-[#718198]">Evaluated Hours</div>
+              <div className="text-xl font-bold font-mono text-[#E7EDF5]">
                 {data.evaluated_delivery_hours}h
               </div>
-              <div className="text-[10px] text-muted">
+              <div className="text-[10px] text-[#718198]">
                 {data.overall_coverage_pct}% Period Coverage
               </div>
             </div>
@@ -110,14 +110,14 @@ export const MultiHorizonChart: React.FC<MultiHorizonChartProps> = ({ data }) =>
       </div>
 
       {/* Multi-Horizon Convergence Chart */}
-      <div className="bg-app-surface border border-app-border rounded-xl p-5">
+      <div className="bg-[#111C2D] border border-[#26364A] rounded-lg p-5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
+          <h3 className="text-sm font-semibold text-[#E7EDF5] flex items-center gap-2">
             <span>Mean Absolute Error &amp; Root Mean Squared Error Convergence</span>
-            <span className="text-xs font-normal text-muted">(Bar: MW, Line: MAPE %)</span>
+            <span className="text-xs font-normal text-[#718198]">(Bar: MW, Line: MAPE %)</span>
           </h3>
-          <div className="text-xs text-muted flex items-center gap-1 font-mono">
-            <Info className="w-3.5 h-3.5 text-accent" />
+          <div className="text-xs text-[#718198] flex items-center gap-1 font-mono">
+            <Info className="w-3.5 h-3.5 text-[#35B9C8]" />
             <span>Target Lead Times: 60h &rarr; 42h &rarr; 30h &rarr; 18h &rarr; 9h &rarr; 3h</span>
           </div>
         </div>
@@ -153,18 +153,18 @@ export const MultiHorizonChart: React.FC<MultiHorizonChartProps> = ({ data }) =>
                   if (active && payload && payload.length) {
                     const d = payload[0].payload
                     return (
-                      <div className="bg-app-surface border border-app-border p-3 rounded-lg shadow-xl text-xs font-mono space-y-1">
-                        <div className="font-semibold text-accent font-sans">{d.fullName}</div>
-                        <div className="text-[11px] text-muted">Boundary: {d.semantics}</div>
-                        <div className="text-[11px] text-muted">
+                      <div className="bg-[#0E1726] border border-[#26364A] p-3 rounded-lg shadow-xl text-xs font-mono space-y-1">
+                        <div className="font-semibold text-[#35B9C8] font-sans">{d.fullName}</div>
+                        <div className="text-[11px] text-[#718198]">Boundary: {d.semantics}</div>
+                        <div className="text-[11px] text-[#718198]">
                           Observations: {d.obsCount} ({d.uniqueHours} distinct hours, {d.coveragePct}%)
                         </div>
-                        <div className="text-accent font-bold">MAE: {formatNumber(d.mae)} MW</div>
-                        <div className="text-amber-400 font-bold">RMSE: {formatNumber(d.rmse)} MW</div>
-                        <div className="text-slate-300">
+                        <div className="text-[#35B9C8] font-bold">MAE: {formatNumber(d.mae)} MW</div>
+                        <div className="text-[#E7AD4A] font-bold">RMSE: {formatNumber(d.rmse)} MW</div>
+                        <div className="text-[#E7EDF5]">
                           Bias: {d.bias > 0 ? '+' : ''}{formatNumber(d.bias)} MW
                         </div>
-                        <div className="text-slate-200 font-bold">MAPE: {d.mape.toFixed(2)}%</div>
+                        <div className="text-[#E7EDF5] font-bold">MAPE: {d.mape.toFixed(2)}%</div>
                       </div>
                     )
                   }
@@ -212,44 +212,44 @@ export const MultiHorizonChart: React.FC<MultiHorizonChartProps> = ({ data }) =>
         {data.buckets.map((b) => (
           <div
             key={b.horizon_bucket}
-            className="bg-app-surface border border-app-border rounded-xl p-4 hover:border-slate-600 transition-colors"
+            className="bg-[#111C2D] border border-[#26364A] rounded-lg p-4 hover:border-[#374B63] transition-colors"
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="font-semibold text-sm text-slate-100">{b.horizon_bucket}</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-app-elevated border border-app-border text-muted">
+              <span className="font-semibold text-sm text-[#E7EDF5]">{b.horizon_bucket}</span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#162337] border border-[#26364A] text-[#718198]">
                 {b.boundary_semantics}
               </span>
             </div>
 
             <div className="grid grid-cols-2 gap-2 text-xs font-mono mb-3">
-              <div className="bg-app-elevated p-2 rounded border border-app-border">
-                <span className="text-[10px] text-muted block font-sans">MAE</span>
-                <span className="text-accent font-bold text-sm">{formatNumber(b.mae_mw)} MW</span>
+              <div className="bg-[#162337] p-2 rounded border border-[#26364A]">
+                <span className="text-[10px] text-[#718198] block font-sans">MAE</span>
+                <span className="text-[#35B9C8] font-bold text-sm">{formatNumber(b.mae_mw)} MW</span>
               </div>
-              <div className="bg-app-elevated p-2 rounded border border-app-border">
-                <span className="text-[10px] text-muted block font-sans">RMSE</span>
-                <span className="text-amber-400 font-bold text-sm">{formatNumber(b.rmse_mw)} MW</span>
+              <div className="bg-[#162337] p-2 rounded border border-[#26364A]">
+                <span className="text-[10px] text-[#718198] block font-sans">RMSE</span>
+                <span className="text-[#E7AD4A] font-bold text-sm">{formatNumber(b.rmse_mw)} MW</span>
               </div>
-              <div className="bg-app-elevated p-2 rounded border border-app-border">
-                <span className="text-[10px] text-muted block font-sans">Forecast Bias</span>
-                <span className={`font-bold text-sm ${b.bias_mw > 0 ? 'text-amber-400' : 'text-accent'}`}>
+              <div className="bg-[#162337] p-2 rounded border border-[#26364A]">
+                <span className="text-[10px] text-[#718198] block font-sans">Forecast Bias</span>
+                <span className={`font-bold text-sm ${b.bias_mw > 0 ? 'text-[#E7AD4A]' : 'text-[#35B9C8]'}`}>
                   {b.bias_mw > 0 ? '+' : ''}{formatNumber(b.bias_mw)} MW
                 </span>
               </div>
-              <div className="bg-app-elevated p-2 rounded border border-app-border">
-                <span className="text-[10px] text-muted block font-sans">MAPE</span>
-                <span className="text-slate-200 font-bold text-sm">
+              <div className="bg-[#162337] p-2 rounded border border-[#26364A]">
+                <span className="text-[10px] text-[#718198] block font-sans">MAPE</span>
+                <span className="text-[#E7EDF5] font-bold text-sm">
                   {b.mape_pct !== null ? `${b.mape_pct.toFixed(2)}%` : 'N/A'}
                 </span>
               </div>
             </div>
 
-            <div className="text-[11px] text-muted flex items-center justify-between border-t border-app-border pt-2">
+            <div className="text-[11px] text-[#718198] flex items-center justify-between border-t border-[#26364A] pt-2">
               <span>
-                Observations: <strong className="text-slate-200">{b.observation_count}</strong> ({b.unique_delivery_hours}h)
+                Observations: <strong className="text-[#E7EDF5]">{b.observation_count}</strong> ({b.unique_delivery_hours}h)
               </span>
               <span>
-                Target: <strong className="text-accent font-mono">{b.target_lead_time_hours}h</strong>
+                Target: <strong className="text-[#35B9C8] font-mono">{b.target_lead_time_hours}h</strong>
               </span>
             </div>
           </div>
