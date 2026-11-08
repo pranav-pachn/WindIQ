@@ -1,7 +1,7 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
 
-export type BadgeVariant = 'success' | 'warning' | 'danger' | 'info' | 'neutral'
+export type BadgeVariant = 'success' | 'warning' | 'danger' | 'info' | 'neutral' | 'outline'
 
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: BadgeVariant
@@ -17,26 +17,23 @@ export function Badge({
   ...props
 }: BadgeProps) {
   const variantStyles: Record<BadgeVariant, string> = {
-    success:
-      'bg-emerald-950/60 text-emerald-300 border-emerald-800/60 ring-1 ring-emerald-500/20',
-    warning:
-      'bg-amber-950/60 text-amber-300 border-amber-800/60 ring-1 ring-amber-500/20',
-    danger:
-      'bg-rose-950/60 text-rose-300 border-rose-800/60 ring-1 ring-rose-500/20',
-    info: 'bg-cyan-950/60 text-cyan-300 border-cyan-800/60 ring-1 ring-cyan-500/20',
-    neutral:
-      'bg-slate-800/70 text-slate-300 border-slate-700/60 ring-1 ring-slate-600/20',
+    success: 'bg-[#133829] text-[#35B98A] border-[#1C523B]',
+    warning: 'bg-[#3E2E14] text-[#E7AD4A] border-[#5A431D]',
+    danger: 'bg-[#3E1A1D] text-[#E36D73] border-[#5E262B]',
+    info: 'bg-[#0E2833] text-[#35B9C8] border-[#183E4C]',
+    neutral: 'bg-[#162337] text-[#9AAABD] border-[#26364A]',
+    outline: 'bg-transparent text-[#9AAABD] border-[#26364A]',
   }
 
   const sizeStyles = {
-    sm: 'text-[10px] px-1.5 py-0.5 tracking-tight',
-    md: 'text-xs px-2 py-0.5 tracking-normal',
+    sm: 'text-[10px] font-mono px-1.5 py-0.5 tracking-tight',
+    md: 'text-xs font-mono px-2 py-0.5 tracking-normal',
   }
 
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 font-medium rounded border transition-colors',
+        'inline-flex items-center gap-1 font-medium rounded border',
         sizeStyles[size],
         variantStyles[variant],
         className
@@ -47,4 +44,3 @@ export function Badge({
     </span>
   )
 }
-

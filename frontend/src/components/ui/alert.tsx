@@ -24,24 +24,24 @@ export function Alert({
 }: AlertProps) {
   const config = {
     danger: {
-      container: 'bg-rose-950/40 border-rose-900/60 text-rose-200',
+      container: 'bg-[#3E1A1D] border-[#5E262B] text-[#E36D73]',
       icon: AlertCircle,
-      iconColor: 'text-rose-400',
+      iconColor: 'text-[#E36D73]',
     },
     warning: {
-      container: 'bg-amber-950/40 border-amber-900/60 text-amber-200',
+      container: 'bg-[#3E2E14] border-[#5A431D] text-[#E7AD4A]',
       icon: AlertTriangle,
-      iconColor: 'text-amber-400',
+      iconColor: 'text-[#E7AD4A]',
     },
     success: {
-      container: 'bg-emerald-950/40 border-emerald-900/60 text-emerald-200',
+      container: 'bg-[#133829] border-[#1C523B] text-[#35B98A]',
       icon: CheckCircle2,
-      iconColor: 'text-emerald-400',
+      iconColor: 'text-[#35B98A]',
     },
     info: {
-      container: 'bg-slate-900/70 border-slate-800 text-slate-300',
+      container: 'bg-[#111C2D] border-[#26364A] text-[#9AAABD]',
       icon: Info,
-      iconColor: 'text-cyan-400',
+      iconColor: 'text-[#35B9C8]',
     },
   }[variant]
 
@@ -51,15 +51,15 @@ export function Alert({
     <div
       role="alert"
       className={cn(
-        'flex items-start gap-3 p-4 rounded-lg border text-xs leading-relaxed backdrop-blur-sm',
+        'flex items-start gap-3 p-3.5 rounded-lg border text-xs leading-relaxed',
         config.container,
         className
       )}
     >
       <IconComponent className={cn('w-4 h-4 mt-0.5 shrink-0', config.iconColor)} />
-      <div className="flex-1 space-y-1">
-        {title && <div className="font-semibold text-slate-100">{title}</div>}
-        <div>{children}</div>
+      <div className="flex-1 space-y-0.5">
+        {title && <div className="font-semibold text-[#E7EDF5]">{title}</div>}
+        <div className="text-[11px] opacity-90">{children}</div>
       </div>
       {onRetry && (
         <Button
@@ -76,4 +76,3 @@ export function Alert({
     </div>
   )
 }
-

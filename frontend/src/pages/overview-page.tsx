@@ -1,8 +1,6 @@
 import { lazy, Suspense } from 'react'
 import { AlertTriangle, RefreshCw } from 'lucide-react'
-import {
-  PeriodSelector,
-} from '@/components/dashboard/period-selector'
+import { PeriodSelector } from '@/components/dashboard/period-selector'
 import { KpiGrid } from '@/components/dashboard/kpi-grid'
 import { ForecastDirectionCard } from '@/components/dashboard/forecast-direction-card'
 import { DataFreshnessCard } from '@/components/dashboard/data-freshness-card'
@@ -38,7 +36,7 @@ function ChartSkeleton({ height = 280 }: { height?: number }) {
   return (
     <div
       style={{ height }}
-      className="w-full rounded-lg bg-slate-900/60 animate-pulse border border-slate-800 flex items-center justify-center text-xs text-slate-500 font-mono"
+      className="w-full rounded-lg bg-[#111C2D] border border-[#26364A] animate-pulse flex items-center justify-center text-xs text-[#718198] font-mono"
     >
       Loading chart telemetry...
     </div>
@@ -79,7 +77,7 @@ export function OverviewPage() {
     overviewQuery.data?.evaluation_period?.delivery_end_date || '2026-11-04'
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-4 pb-12">
       {/* 1. Evaluation Period Filter & Market Cutoff Rules */}
       <PeriodSelector
         currentPeriod={period}
@@ -92,7 +90,7 @@ export function OverviewPage() {
       {isError && (
         <Alert
           variant="danger"
-          title="Failed to Load Forecast Accuracy Data"
+          title="Analytics Service Temporarily Unavailable"
           onRetry={handleRetryAll}
           isRetrying={summaryQuery.isFetching || dailyQuery.isFetching}
         >
@@ -104,19 +102,19 @@ export function OverviewPage() {
 
       {/* Loading Skeletons */}
       {isPending && !isError && (
-        <div className="space-y-6">
+        <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
             {Array.from({ length: 6 }).map((_, i) => (
               <CardSkeleton key={i} />
             ))}
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div className="h-64 rounded-lg bg-slate-900/60 animate-pulse border border-slate-800" />
-            <div className="h-64 rounded-lg bg-slate-900/60 animate-pulse border border-slate-800" />
+            <div className="h-64 rounded-lg bg-[#111C2D] border border-[#26364A] animate-pulse" />
+            <div className="h-64 rounded-lg bg-[#111C2D] border border-[#26364A] animate-pulse" />
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div className="h-80 rounded-lg bg-slate-900/60 animate-pulse border border-slate-800" />
-            <div className="h-80 rounded-lg bg-slate-900/60 animate-pulse border border-slate-800" />
+            <div className="h-72 rounded-lg bg-[#111C2D] border border-[#26364A] animate-pulse" />
+            <div className="h-72 rounded-lg bg-[#111C2D] border border-[#26364A] animate-pulse" />
           </div>
         </div>
       )}
@@ -126,12 +124,12 @@ export function OverviewPage() {
         <>
           {/* Empty State */}
           {summaryQuery.data.metrics.valid_comparisons === 0 ? (
-            <div className="rounded-lg border border-slate-800 bg-[#0f172a]/60 p-8 text-center space-y-3">
-              <AlertTriangle className="w-8 h-8 text-amber-400 mx-auto" />
-              <h3 className="text-sm font-semibold text-slate-100">
+            <div className="rounded-lg border border-[#26364A] bg-[#111C2D] p-8 text-center space-y-3">
+              <AlertTriangle className="w-8 h-8 text-[#E7AD4A] mx-auto" />
+              <h3 className="text-sm font-semibold text-[#E7EDF5]">
                 No Forecast Evaluations in Selected Date Range
               </h3>
-              <p className="text-xs text-slate-400 max-w-md mx-auto">
+              <p className="text-xs text-[#9AAABD] max-w-md mx-auto">
                 No valid day-ahead forecast and actual generation pairs were found for{' '}
                 {period.deliveryDateFrom} to {period.deliveryDateTo}.
               </p>
@@ -151,8 +149,8 @@ export function OverviewPage() {
                 isBenchmarkPreset={period.isBenchmarkPreset}
               />
 
-              {/* 3. Operational Analysis Split: Direction Ratio & Pipeline Freshness */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {/* 3. Operational Analysis Split: Direction Ratio & Ingestion Audit */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                 <ForecastDirectionCard
                   overforecastHours={summaryQuery.data.metrics.overforecast_count}
                   underforecastHours={summaryQuery.data.metrics.underforecast_count}
@@ -173,10 +171,10 @@ export function OverviewPage() {
                 <PerformanceExtremes summary={dailyQuery.data.summary} />
               )}
 
-              {/* 5. Daily Visualizations: Error Trends & Generation Baseline (Code-split) */}
+              {/* 5. Daily Visualizations: Error Trends & Generation Baseline */}
               {dailyQuery.data && dailyQuery.data.items.length > 0 && (
                 <>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                     <Suspense fallback={<ChartSkeleton height={280} />}>
                       <DailyAccuracyChart items={dailyQuery.data.items} />
                     </Suspense>
@@ -197,25 +195,25 @@ export function OverviewPage() {
       )}
 
       {/* Manual Refresh Action in Footer */}
-      <div className="pt-4 border-t border-slate-800/60 flex items-center justify-between text-xs text-slate-400">
+      <div className="pt-3 border-t border-[#1E2B3E] flex items-center justify-between text-xs text-[#718198]">
         <span className="font-mono text-[11px]">
-          WindIQ Engine: Modular Monolith v2.1 • GB BMRS WINDFOR & FUELHH
+          WindIQ Engine v2.1 • Elexon BMRS WINDFOR &amp; FUELHH
         </span>
         <Button
           variant="ghost"
           size="sm"
           onClick={handleRetryAll}
           disabled={summaryQuery.isFetching || dailyQuery.isFetching}
-          className="text-slate-400 hover:text-slate-200"
+          className="text-[#9AAABD] hover:text-[#E7EDF5]"
         >
           <RefreshCw
             className={`w-3.5 h-3.5 mr-1.5 ${
               summaryQuery.isFetching || dailyQuery.isFetching
-                ? 'animate-spin text-cyan-400'
+                ? 'animate-spin text-[#35B9C8]'
                 : ''
             }`}
           />
-          <span>Refresh Analytics</span>
+          <span>Refresh Data</span>
         </Button>
       </div>
     </div>

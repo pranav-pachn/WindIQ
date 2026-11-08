@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode
-  variant?: 'default' | 'surface' | 'highlight'
+  variant?: 'default' | 'elevated' | 'panel' | 'surface'
 }
 
 export function Card({
@@ -13,15 +13,16 @@ export function Card({
   ...props
 }: CardProps) {
   const variantStyles = {
-    default: 'bg-[#0f172a]/80 border-slate-800/80',
-    surface: 'bg-[#0b1120] border-slate-800',
-    highlight: 'bg-[#101b33] border-cyan-900/40',
+    default: 'bg-[#111C2D] border-[#26364A]',
+    elevated: 'bg-[#162337] border-[#26364A]',
+    panel: 'bg-[#0E1726] border-[#1E2B3E]',
+    surface: 'bg-[#0E1726] border-[#1E2B3E]',
   }
 
   return (
     <div
       className={cn(
-        'rounded-lg border shadow-sm backdrop-blur-sm transition-colors',
+        'rounded-lg border text-[#E7EDF5] transition-colors',
         variantStyles[variant],
         className
       )}
@@ -39,7 +40,7 @@ export function CardHeader({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn('flex flex-col space-y-1.5 p-5 pb-3', className)}
+      className={cn('flex flex-col space-y-1.5 p-4 sm:p-5 pb-3', className)}
       {...props}
     >
       {children}
@@ -55,7 +56,7 @@ export function CardTitle({
   return (
     <h3
       className={cn(
-        'text-sm font-semibold tracking-wide text-slate-100 flex items-center gap-2',
+        'text-xs font-semibold uppercase tracking-wider text-[#9AAABD] flex items-center gap-2',
         className
       )}
       {...props}
@@ -71,7 +72,7 @@ export function CardDescription({
   ...props
 }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
-    <p className={cn('text-xs text-slate-400', className)} {...props}>
+    <p className={cn('text-xs text-[#718198] leading-relaxed', className)} {...props}>
       {children}
     </p>
   )
@@ -83,7 +84,7 @@ export function CardContent({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn('p-5 pt-0', className)} {...props}>
+    <div className={cn('p-4 sm:p-5 pt-0', className)} {...props}>
       {children}
     </div>
   )
@@ -96,11 +97,10 @@ export function CardFooter({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn('flex items-center p-5 pt-0 text-xs text-slate-400', className)}
+      className={cn('flex items-center p-4 sm:p-5 pt-0 text-xs text-[#718198] border-t border-[#1E2B3E] mt-3', className)}
       {...props}
     >
       {children}
     </div>
   )
 }
-

@@ -34,7 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     async function restoreSession() {
       try {
-        const tokenRes = await api.refreshSession();
+        await api.refreshSession();
         if (isMounted) {
           const profile = await api.getCurrentUser();
           setUser(profile);
@@ -61,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = useCallback(async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      const res = await api.login({ email, password });
+      await api.login({ email, password });
       const profile = await api.getCurrentUser();
       setUser(profile);
       await queryClient.invalidateQueries();

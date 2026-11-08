@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Calendar, Filter, Info, ShieldCheck } from 'lucide-react'
+import { Calendar, Filter, Info, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { formatDate } from '@/lib/formatters'
@@ -69,52 +69,48 @@ export function PeriodSelector({
   }
 
   return (
-    <div className="bg-[#0f172a]/90 border border-slate-800 rounded-lg p-4 sm:p-5 shadow-sm space-y-4">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        {/* Active Window Summary */}
-        <div className="space-y-1">
+    <div className="bg-[#111C2D] border border-[#26364A] rounded-lg p-3.5 sm:p-4 space-y-3">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+        {/* Active Window Metadata */}
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs">
           <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-cyan-400" />
-            <h2 className="text-sm font-semibold text-slate-100 tracking-wide">
+            <Calendar className="w-4 h-4 text-[#35B9C8]" />
+            <span className="font-semibold text-[#E7EDF5] text-xs">
               Market Evaluation Window
-            </h2>
-            {currentPeriod.isBenchmarkPreset ? (
-              <Badge variant="success" size="sm">
-                <ShieldCheck className="w-3 h-3 text-emerald-400" />
-                <span>Verified Jan 2026 Benchmark</span>
-              </Badge>
-            ) : (
-              <Badge variant="neutral" size="sm">
-                <span>Custom Date Window</span>
-              </Badge>
-            )}
+            </span>
+            <span className="font-mono text-xs text-[#35B9C8] font-medium tabular-nums">
+              {formatDate(currentPeriod.deliveryDateFrom)} – {formatDate(currentPeriod.deliveryDateTo)}
+            </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-300">
-            <div>
-              <span className="text-slate-400">Delivery Period: </span>
-              <span className="font-mono text-cyan-300 font-semibold">
-                {formatDate(currentPeriod.deliveryDateFrom)} – {formatDate(currentPeriod.deliveryDateTo)}
-              </span>
-            </div>
-            <div className="hidden sm:inline text-slate-600">•</div>
-            <div>
-              <span className="text-slate-400">Day-Ahead Decision: </span>
-              <span className="font-mono text-slate-300">
-                1 day prior (09:00 UK cutoff)
-              </span>
-            </div>
+          <div className="flex items-center gap-1.5 text-[#718198]">
+            <span>•</span>
+            <span>Methodology:</span>
+            <span className="font-mono text-[#9AAABD]">
+              09:00 UK decision cutoff
+            </span>
           </div>
+
+          {currentPeriod.isBenchmarkPreset ? (
+            <Badge variant="success" size="sm">
+              <Check className="w-3 h-3 text-[#35B98A]" />
+              <span>Verified Jan 2026 Benchmark</span>
+            </Badge>
+          ) : (
+            <Badge variant="neutral" size="sm">
+              <span>Custom Window</span>
+            </Badge>
+          )}
         </div>
 
-        {/* Preset Selector Buttons */}
-        <div className="flex flex-wrap items-center gap-2">
+        {/* Preset & Custom Actions */}
+        <div className="flex items-center gap-1.5 shrink-0">
           <Button
             variant={currentPeriod.isBenchmarkPreset ? 'primary' : 'secondary'}
             size="sm"
             onClick={handleSelectJanuary}
           >
-            January 2026 (744h)
+            Jan 2026 (744h)
           </Button>
 
           <Button
@@ -127,7 +123,7 @@ export function PeriodSelector({
             size="sm"
             onClick={handleSelectFull}
           >
-            Full Period ({formatDate(availableMaxDate)})
+            Full Period
           </Button>
 
           <Button
@@ -135,22 +131,22 @@ export function PeriodSelector({
             size="sm"
             onClick={() => setIsCustomOpen(!isCustomOpen)}
           >
-            <Filter className="w-3.5 h-3.5" />
+            <Filter className="w-3 h-3 mr-1" />
             <span>Custom Dates</span>
           </Button>
         </div>
       </div>
 
-      {/* Custom Date Form */}
+      {/* Custom Date Form Dropdown */}
       {isCustomOpen && (
         <form
           onSubmit={handleApplyCustom}
-          className="pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row sm:items-end gap-3 text-xs"
+          className="pt-3 border-t border-[#1E2B3E] flex flex-col sm:flex-row sm:items-end gap-3 text-xs"
         >
           <div>
             <label
               htmlFor="date-from"
-              className="block text-[11px] font-medium text-slate-400 mb-1"
+              className="block text-[11px] font-medium text-[#9AAABD] mb-1 font-mono"
             >
               Delivery Date From (YYYY-MM-DD)
             </label>
@@ -161,14 +157,14 @@ export function PeriodSelector({
               onChange={(e) => setCustomFrom(e.target.value)}
               min={availableMinDate}
               max={availableMaxDate}
-              className="px-3 py-1.5 rounded bg-slate-900 border border-slate-700 text-slate-100 font-mono text-xs focus:ring-1 focus:ring-cyan-500 focus:outline-none"
+              className="px-2.5 py-1 rounded bg-[#0E1726] border border-[#26364A] text-[#E7EDF5] font-mono text-xs focus:border-[#35B9C8] focus:outline-none"
             />
           </div>
 
           <div>
             <label
               htmlFor="date-to"
-              className="block text-[11px] font-medium text-slate-400 mb-1"
+              className="block text-[11px] font-medium text-[#9AAABD] mb-1 font-mono"
             >
               Delivery Date To (YYYY-MM-DD)
             </label>
@@ -179,7 +175,7 @@ export function PeriodSelector({
               onChange={(e) => setCustomTo(e.target.value)}
               min={availableMinDate}
               max={availableMaxDate}
-              className="px-3 py-1.5 rounded bg-slate-900 border border-slate-700 text-slate-100 font-mono text-xs focus:ring-1 focus:ring-cyan-500 focus:outline-none"
+              className="px-2.5 py-1 rounded bg-[#0E1726] border border-[#26364A] text-[#E7EDF5] font-mono text-xs focus:border-[#35B9C8] focus:outline-none"
             />
           </div>
 
@@ -197,20 +193,16 @@ export function PeriodSelector({
             </Button>
           </div>
 
-          {error && <span className="text-rose-400 text-xs mt-1">{error}</span>}
+          {error && <span className="text-[#E36D73] text-xs font-mono">{error}</span>}
         </form>
       )}
 
-      {/* Date Domain Explanation */}
-      <div className="bg-[#0b1120] rounded p-2.5 border border-slate-800/80 flex items-start gap-2 text-[11px] text-slate-400">
-        <Info className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
-        <div className="space-y-0.5">
-          <span className="font-semibold text-slate-300">Timezone & Market Cutoff Rigor: </span>
-          <span>
-            Dates refer to <strong className="text-slate-200">Delivery Dates</strong> in Great Britain local time (<code className="text-cyan-300 font-mono">Europe/London</code>).
-            Each delivery day is evaluated against the latest forecast published at or before the day-ahead <strong className="text-slate-200">09:00 UK decision cutoff</strong>.
-          </span>
-        </div>
+      {/* Methodology Statement */}
+      <div className="bg-[#0E1726] rounded px-3 py-2 border border-[#1E2B3E] flex items-center gap-2 text-[11px] text-[#718198]">
+        <Info className="w-3.5 h-3.5 text-[#35B9C8] shrink-0" />
+        <p className="leading-tight">
+          <strong className="text-[#9AAABD] font-medium">Evaluation Methodology:</strong> Delivery dates in Great Britain (<code className="text-[#35B9C8] font-mono text-[10px]">Europe/London</code>). Each day is evaluated against the latest BMRS WINDFOR publication available at the configured <span className="text-[#E7EDF5] font-mono">09:00 UK day-ahead cutoff</span>.
+        </p>
       </div>
     </div>
   )

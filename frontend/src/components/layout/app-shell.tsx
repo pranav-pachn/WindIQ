@@ -25,7 +25,7 @@ export function AppShell() {
     try {
       await login('analyst@windiq.local', 'AnalystPass123!#')
     } catch (err: any) {
-      setBannerError(err?.message || 'Login failed. Please check backend connection.')
+      setBannerError(err?.message || 'Login failed. Please verify API connectivity.')
     } finally {
       setIsBannerLoggingIn(false)
     }
@@ -43,22 +43,12 @@ export function AppShell() {
       case '/accuracy':
         return {
           title: 'Forecast Accuracy Analysis',
-          subtitle: 'Granular evaluation metrics and error trends',
+          subtitle: 'Granular evaluation metrics, diurnal distributions, and error trends',
         }
       case '/forecasts':
         return {
           title: 'Forecast Explorer',
-          subtitle: 'WINDFOR publication cycle traceability & cutoff audit',
-        }
-      case '/data-health':
-        return {
-          title: 'Data Health & Pipeline Audit',
-          subtitle: 'Stream ingestion, scheduler state & data quality logs',
-        }
-      case '/settings':
-        return {
-          title: 'System Settings',
-          subtitle: 'Market cutoff parameters & platform configuration',
+          subtitle: 'WINDFOR publication cycle traceability, horizon convergence & cutoff audit',
         }
       default:
         return {
@@ -79,7 +69,7 @@ export function AppShell() {
     : undefined
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#080d1a] text-slate-100">
+    <div className="flex h-screen w-screen overflow-hidden bg-[#0B1220] text-[#E7EDF5]">
       <Sidebar
         collapsed={collapsed}
         onToggleCollapse={() => setCollapsed(!collapsed)}
@@ -98,18 +88,16 @@ export function AppShell() {
           onOpenMobileSidebar={() => setIsMobileOpen(true)}
         />
 
+        {/* Guest Demo Prompt Banner */}
         {!isAuthenticated && !isLoading && !isBannerDismissed && (
-          <div className="bg-gradient-to-r from-cyan-950/90 via-slate-900/90 to-amber-950/40 border-b border-cyan-800/50 px-4 py-2.5 sm:px-6 shrink-0">
+          <div className="bg-[#111C2D] border-b border-[#26364A] px-4 py-2 sm:px-6 shrink-0">
             <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs">
-              <div className="flex items-center gap-2.5 text-slate-200">
-                <span className="flex h-2.5 w-2.5 relative shrink-0">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500"></span>
-                </span>
+              <div className="flex items-center gap-2 text-[#9AAABD]">
+                <span className="w-2 h-2 rounded-full bg-[#35B9C8] shrink-0" />
                 <div>
-                  <span className="font-bold text-slate-100">Live Demo Mode: </span>
-                  <span className="text-slate-300">
-                    Viewing as Guest. Switch to <strong className="text-cyan-300 font-semibold">Analyst</strong> to explore all 744 benchmark evaluation hours, multi-horizon error convergence, and publication audits.
+                  <span className="font-semibold text-[#E7EDF5]">Demonstration Mode: </span>
+                  <span>
+                    Viewing as Guest. Switch to <strong className="text-[#35B9C8] font-medium">Analyst</strong> to explore all 744 benchmark evaluation hours, multi-horizon error curves, and settlement lineage.
                   </span>
                 </div>
               </div>
@@ -118,7 +106,7 @@ export function AppShell() {
                   type="button"
                   disabled={isBannerLoggingIn}
                   onClick={handleInstantLogin}
-                  className="px-3 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-all shadow-sm shadow-cyan-500/30 disabled:opacity-60"
+                  className="px-2.5 py-1 rounded bg-[#35B9C8] hover:bg-[#2DA4B2] text-[#0A101C] font-semibold text-xs flex items-center gap-1.5 transition-colors disabled:opacity-60"
                 >
                   {isBannerLoggingIn ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -130,7 +118,7 @@ export function AppShell() {
                 <button
                   type="button"
                   onClick={() => setIsBannerDismissed(true)}
-                  className="px-2 py-1 text-slate-400 hover:text-slate-200 text-xs"
+                  className="px-1.5 py-1 text-[#718198] hover:text-[#E7EDF5] text-xs"
                   title="Dismiss banner"
                 >
                   ✕
@@ -138,13 +126,13 @@ export function AppShell() {
               </div>
             </div>
             {bannerError && (
-              <div className="max-w-7xl mx-auto mt-2 p-2 rounded-lg bg-rose-950/90 border border-rose-800 text-rose-200 text-xs flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
-                <span className="flex-1 font-mono">{bannerError}</span>
+              <div className="max-w-7xl mx-auto mt-2 p-2 rounded bg-[#3E1A1D] border border-[#5E262B] text-[#E36D73] text-xs flex items-center gap-2">
+                <AlertCircle className="w-3.5 h-3.5 text-[#E36D73] shrink-0" />
+                <span className="flex-1 font-mono text-[11px]">{bannerError}</span>
                 <button
                   type="button"
                   onClick={() => setBannerError(null)}
-                  className="text-rose-400 hover:text-rose-200 text-xs"
+                  className="text-[#E36D73] hover:text-[#E7EDF5] text-xs"
                 >
                   ✕
                 </button>
@@ -153,7 +141,7 @@ export function AppShell() {
           </div>
         )}
 
-        <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 overflow-y-auto px-4 py-5 sm:px-6 lg:px-8 max-w-7xl w-full mx-auto">
           <Outlet />
         </main>
       </div>

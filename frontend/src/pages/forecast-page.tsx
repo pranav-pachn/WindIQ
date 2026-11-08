@@ -83,25 +83,17 @@ export function ForecastPage() {
   return (
     <div className="space-y-6 pb-12">
       {/* Page Title & Status Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-app-border">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-cyan-950/80 border border-cyan-800/60 text-cyan-400">
-              <Compass className="w-6 h-6" />
+            <div className="p-2 rounded-lg bg-app-elevated border border-app-border text-accent">
+              <Compass className="w-5 h-5" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl font-bold tracking-tight text-slate-100">
-                  Forecast Explorer &amp; Multi-Horizon Analysis
-                </h1>
-                <Badge
-                  variant="outline"
-                  className="border-cyan-800/80 bg-cyan-950/40 text-cyan-300 font-mono text-[10px]"
-                >
-                  Phase 3.3
-                </Badge>
-              </div>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <h1 className="text-xl font-bold tracking-tight text-slate-100">
+                Forecast Explorer &amp; Multi-Horizon Analysis
+              </h1>
+              <p className="text-xs text-muted mt-0.5">
                 Multi-cycle BMRS WINDFOR publication history, horizon error convergence, and forward revision trajectory analytics.
               </p>
             </div>
@@ -109,8 +101,8 @@ export function ForecastPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="border-slate-800 text-slate-400 text-xs py-1 px-2.5">
-            <Clock className="w-3.5 h-3.5 text-slate-400 mr-1.5" />
+          <Badge variant="outline" className="border-app-border bg-app-elevated text-muted text-xs py-1 px-2.5 font-mono">
+            <Clock className="w-3.5 h-3.5 text-muted mr-1.5" />
             Window: {deliveryDateFrom} to {deliveryDateTo}
           </Badge>
         </div>

@@ -5,29 +5,43 @@
 @layer base {
   :root {
     color-scheme: dark;
+    --app-bg: #0B1220;
+    --app-sidebar: #0A101C;
+    --app-surface: #111C2D;
+    --app-elevated: #162337;
+    --app-border: #26364A;
+    --app-text: #E7EDF5;
+    --app-text-muted: #718198;
+    --app-accent: #35B9C8;
   }
 
   body {
-    @apply bg-[#080d1a] text-slate-100 antialiased selection:bg-cyan-500/20 selection:text-cyan-200;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    @apply bg-app-bg text-app-text antialiased selection:bg-accent/20 selection:text-accent font-sans;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11", "tnum";
+    letter-spacing: -0.011em;
   }
 
-  /* Custom subtle scrollbars */
+  /* Professional refined data-dense scrollbars */
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
   }
 
   ::-webkit-scrollbar-track {
-    background: #0b1120;
+    background: #0A101C;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #1e293b;
-    border-radius: 3px;
+    background: #1E2B3E;
+    border-radius: 2px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #334155;
+    background: #2D3E56;
   }
+}
+
+/* Tabular figures for financial and analytical numeric tables */
+.tabular-numbers {
+  font-variant-numeric: tabular-nums;
 }

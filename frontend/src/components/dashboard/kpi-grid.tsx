@@ -35,12 +35,12 @@ export function KpiGrid({ metrics, isBenchmarkPreset = false }: KpiGridProps) {
       {/* Precision Toggle Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Activity className="w-4 h-4 text-cyan-400" />
-          <h2 className="text-sm font-semibold tracking-wide text-slate-100">
-            Forecast Accuracy Core Metrics
+          <Activity className="w-4 h-4 text-[#35B9C8]" />
+          <h2 className="text-xs font-semibold tracking-wider uppercase text-[#9AAABD] font-mono">
+            Core Forecast Accuracy Metrics
           </h2>
           {isBenchmarkPreset && (
-            <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-800/50 text-emerald-300">
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#133829] border border-[#1C523B] text-[#35B98A]">
               Validated January 2026 Benchmark
             </span>
           )}
@@ -50,17 +50,17 @@ export function KpiGrid({ metrics, isBenchmarkPreset = false }: KpiGridProps) {
           variant="outline"
           size="sm"
           onClick={() => setHighPrecision(!highPrecision)}
-          className="text-[11px] h-7 px-2.5 text-slate-300 hover:text-white border-slate-700"
-          title="Toggle between 2 decimal places and 4 decimal places (high precision audit mode)"
+          className="text-[11px] h-7 px-2.5 text-[#9AAABD] hover:text-[#E7EDF5]"
+          title="Toggle between 2 decimal places and 4 decimal places"
         >
-          <SlidersHorizontal className="w-3 h-3 text-cyan-400 mr-1" />
+          <SlidersHorizontal className="w-3 h-3 text-[#35B9C8] mr-1" />
           <span>{highPrecision ? 'Standard (2 Decimals)' : 'Audit (4 Decimals)'}</span>
         </Button>
       </div>
 
-      {/* Grid of 6 Main Cards */}
+      {/* Grid of 6 Core KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
-        {/* 1. Valid Comparisons */}
+        {/* 1. Evaluated Hours */}
         <KpiCard
           title="Evaluated Hours"
           value={metrics.valid_comparisons.toLocaleString()}
@@ -91,7 +91,7 @@ export function KpiGrid({ metrics, isBenchmarkPreset = false }: KpiGridProps) {
           badgeText="RMSE"
           icon={TrendingUp}
           tooltip={METRIC_DESCRIPTIONS.rmse.description}
-          subtitle="Heavily penalizes large forecast deviations"
+          subtitle="Heavily penalizes large hourly deviations"
           trend="neutral"
         />
 
@@ -125,7 +125,7 @@ export function KpiGrid({ metrics, isBenchmarkPreset = false }: KpiGridProps) {
           trend={metrics.forecast_bias_mw > 0 ? 'negative' : 'positive'}
         />
 
-        {/* 6. Direction Balance */}
+        {/* 6. Over vs Under */}
         <KpiCard
           title="Over vs Under"
           value={`${metrics.overforecast_count} : ${metrics.underforecast_count}`}
@@ -136,43 +136,53 @@ export function KpiGrid({ metrics, isBenchmarkPreset = false }: KpiGridProps) {
               : undefined
           }
           icon={metrics.overforecast_count > metrics.underforecast_count ? ArrowUpRight : ArrowDownRight}
-          tooltip="Count of hours where forecast was higher than actual vs hours where forecast was lower than actual"
-          subtitle={`${metrics.overforecast_count} overforecast vs ${metrics.underforecast_count} underforecast hours`}
+          tooltip="Count of hours where forecast exceeded actuals vs actuals exceeded forecast"
+          subtitle={`${metrics.overforecast_count} overforecast vs ${metrics.underforecast_count} underforecast`}
           trend={metrics.overforecast_count > metrics.underforecast_count ? 'negative' : 'positive'}
         />
       </div>
 
-      {/* Average Power Generation Context Bar */}
-      {(metrics.avg_forecast_mw !== null && metrics.avg_actual_mw !== null && metrics.avg_forecast_mw !== undefined && metrics.avg_actual_mw !== undefined) && (
-        <div className="bg-[#0b1120] border border-slate-800/80 rounded-lg px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-300">
-          <div className="flex items-center gap-2">
-            <span className="text-slate-400">Average Generation Baseline:</span>
-            <span className="font-semibold text-slate-200">
-              Forecast: <span className="font-mono text-cyan-300">{formatNumber(metrics.avg_forecast_mw, 1)} MW</span>
-            </span>
-            <span className="text-slate-600">vs</span>
-            <span className="font-semibold text-slate-200">
-              Actual: <span className="font-mono text-emerald-300">{formatNumber(metrics.avg_actual_mw, 1)} MW</span>
-            </span>
-          </div>
+      {/* Generation Baseline Financial Comparison Component */}
+      {metrics.avg_forecast_mw !== null &&
+        metrics.avg_actual_mw !== null &&
+        metrics.avg_forecast_mw !== undefined &&
+        metrics.avg_actual_mw !== undefined && (
+          <div className="bg-[#162337] border border-[#26364A] rounded-lg p-3.5 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[#718198] font-semibold">
+                Generation Baseline:
+              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[#9AAABD]">Forecast:</span>
+                <span className="font-mono text-[#35B9C8] font-semibold tabular-nums">
+                  {formatNumber(metrics.avg_forecast_mw, 1)} MW
+                </span>
+                <span className="text-[#718198]">vs</span>
+                <span className="text-[#9AAABD]">Actual:</span>
+                <span className="font-mono text-[#E7EDF5] font-semibold tabular-nums">
+                  {formatNumber(metrics.avg_actual_mw, 1)} MW
+                </span>
+              </div>
+            </div>
 
-          <div className="flex items-center gap-4 text-[11px] text-slate-400">
-            <span>
-              Delta:{' '}
-              <span className="font-mono font-medium text-slate-200">
-                {formatNumber((metrics.avg_forecast_mw || 0) - (metrics.avg_actual_mw || 0), 1)} MW
-              </span>
-            </span>
-            <span>
-              Forecast Ratio:{' '}
-              <span className="font-mono font-medium text-slate-200">
-                {metrics.avg_actual_mw ? ((metrics.avg_forecast_mw / metrics.avg_actual_mw) * 100).toFixed(1) : 0}% of actual
-              </span>
-            </span>
+            <div className="flex items-center gap-5 text-[11px] text-[#9AAABD]">
+              <div>
+                <span>Absolute Difference: </span>
+                <span className="font-mono text-[#E7EDF5] font-semibold tabular-nums">
+                  {formatNumber((metrics.avg_forecast_mw || 0) - (metrics.avg_actual_mw || 0), 1)} MW
+                </span>
+              </div>
+              <div className="border-l border-[#26364A] pl-5">
+                <span>Forecast-to-Actual Ratio: </span>
+                <span className="font-mono text-[#E7EDF5] font-semibold tabular-nums">
+                  {metrics.avg_actual_mw
+                    ? ((metrics.avg_forecast_mw / metrics.avg_actual_mw) * 100).toFixed(1)
+                    : 0}%
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   )
 }
-

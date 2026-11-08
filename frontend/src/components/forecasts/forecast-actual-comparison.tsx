@@ -112,7 +112,7 @@ export const ForecastActualComparison: React.FC<ForecastActualComparisonProps> =
             variant={selectedDay === '' ? 'default' : 'outline'}
             onClick={() => setSelectedDay('')}
             className={`text-xs h-7 px-2.5 ${
-              selectedDay === '' ? 'bg-cyan-600 hover:bg-cyan-500 text-white' : 'border-slate-700 text-slate-300'
+              selectedDay === '' ? 'bg-app-elevated text-accent border border-accent/40 font-medium' : 'border-app-border text-muted hover:text-slate-200'
             }`}
           >
             All Month ({validItems.length}h)
@@ -122,7 +122,7 @@ export const ForecastActualComparison: React.FC<ForecastActualComparisonProps> =
             variant={selectedDay === '2026-01-19' ? 'default' : 'outline'}
             onClick={() => setSelectedDay('2026-01-19')}
             className={`text-xs h-7 px-2.5 ${
-              selectedDay === '2026-01-19' ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'border-slate-700 text-emerald-400'
+              selectedDay === '2026-01-19' ? 'bg-emerald-950/60 border border-emerald-800/80 text-emerald-300 font-medium' : 'border-app-border text-emerald-400'
             }`}
           >
             Best Day (19 Jan)
@@ -132,7 +132,7 @@ export const ForecastActualComparison: React.FC<ForecastActualComparisonProps> =
             variant={selectedDay === '2026-01-28' ? 'default' : 'outline'}
             onClick={() => setSelectedDay('2026-01-28')}
             className={`text-xs h-7 px-2.5 ${
-              selectedDay === '2026-01-28' ? 'bg-rose-600 hover:bg-rose-500 text-white' : 'border-slate-700 text-rose-400'
+              selectedDay === '2026-01-28' ? 'bg-rose-950/60 border border-rose-800/80 text-rose-300 font-medium' : 'border-app-border text-rose-400'
             }`}
           >
             Worst Day (28 Jan)
@@ -140,11 +140,11 @@ export const ForecastActualComparison: React.FC<ForecastActualComparisonProps> =
 
           {/* Day dropdown */}
           <div className="flex items-center gap-1 ml-1">
-            <Calendar className="h-3.5 w-3.5 text-slate-400" />
+            <Calendar className="h-3.5 w-3.5 text-muted" />
             <select
               value={selectedDay}
               onChange={(e) => setSelectedDay(e.target.value)}
-              className="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded px-2 py-1 outline-none focus:border-cyan-500 font-mono"
+              className="bg-app-bg border border-app-border text-slate-200 text-xs rounded px-2 py-1 outline-none focus:border-accent font-mono"
             >
               <option value="">Jump to specific day...</option>
               {uniqueDays.map((day) => (
@@ -160,86 +160,86 @@ export const ForecastActualComparison: React.FC<ForecastActualComparisonProps> =
       {/* Summary KPI Ribbon */}
       {summary && (
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-          <Card className="bg-slate-900 border-slate-800">
+          <Card className="bg-app-surface border-app-border">
             <CardContent className="p-3">
-              <div className="text-xs text-slate-400 mb-1">Window Sample</div>
+              <div className="text-xs text-muted mb-1">Window Sample</div>
               <div className="text-lg font-bold text-white font-mono">
                 {summary.count} Hours
               </div>
-              <div className="text-[10px] text-slate-500">
+              <div className="text-[10px] text-muted">
                 {selectedDay ? selectedDay : 'Full January 2026'}
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-slate-900 border-slate-800">
+          <Card className="bg-app-surface border-app-border">
             <CardContent className="p-3">
-              <div className="text-xs text-slate-400 mb-1">Mean Forecast</div>
-              <div className="text-lg font-bold text-cyan-400 font-mono">
+              <div className="text-xs text-muted mb-1">Mean Forecast</div>
+              <div className="text-lg font-bold text-accent font-mono">
                 {formatMw(summary.avgForecast, 1)}
               </div>
-              <div className="text-[10px] text-slate-500">Day-Ahead selected</div>
+              <div className="text-[10px] text-muted">Day-Ahead selected</div>
             </CardContent>
           </Card>
 
-          <Card className="bg-slate-900 border-slate-800">
+          <Card className="bg-app-surface border-app-border">
             <CardContent className="p-3">
-              <div className="text-xs text-slate-400 mb-1">Mean Actual</div>
-              <div className="text-lg font-bold text-emerald-400 font-mono">
+              <div className="text-xs text-muted mb-1">Mean Actual</div>
+              <div className="text-lg font-bold text-slate-100 font-mono">
                 {formatMw(summary.avgActual, 1)}
               </div>
-              <div className="text-[10px] text-slate-500">Settled outturn</div>
+              <div className="text-[10px] text-muted">Settled outturn</div>
             </CardContent>
           </Card>
 
-          <Card className="bg-slate-900 border-slate-800">
+          <Card className="bg-app-surface border-app-border">
             <CardContent className="p-3">
-              <div className="text-xs text-slate-400 mb-1">Window MAE</div>
+              <div className="text-xs text-muted mb-1">Window MAE</div>
               <div className="text-lg font-bold text-amber-300 font-mono">
                 {formatMw(summary.mae, 1)}
               </div>
-              <div className="text-[10px] text-slate-500">Mean absolute error</div>
+              <div className="text-[10px] text-muted">Mean absolute error</div>
             </CardContent>
           </Card>
 
-          <Card className="bg-slate-900 border-slate-800">
+          <Card className="bg-app-surface border-app-border">
             <CardContent className="p-3">
-              <div className="text-xs text-slate-400 mb-1">Window Net Bias</div>
+              <div className="text-xs text-muted mb-1">Window Net Bias</div>
               <div
                 className={`text-lg font-bold font-mono ${
                   biasFormatted.direction === 'positive'
-                    ? 'text-rose-400'
+                    ? 'text-amber-400'
                     : biasFormatted.direction === 'negative'
-                      ? 'text-blue-400'
+                      ? 'text-accent'
                       : 'text-slate-300'
                 }`}
               >
                 {biasFormatted.text}
               </div>
-              <div className="text-[10px] text-slate-500">Signed forecast bias</div>
+              <div className="text-[10px] text-muted">Signed forecast bias</div>
             </CardContent>
           </Card>
         </div>
       )}
 
       {/* Main Chart */}
-      <Card className="bg-slate-900 border-slate-800">
+      <Card className="bg-app-surface border-app-border">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <CardTitle className="text-sm font-semibold text-slate-200">
-              Generation Profile & Forecast Error Envelope
+              Generation Profile &amp; Forecast Error Envelope
             </CardTitle>
-            <div className="flex items-center gap-3 text-xs">
+            <div className="flex items-center gap-3 text-xs text-muted">
               <div className="flex items-center gap-1.5">
-                <span className="w-3 h-0.5 bg-emerald-400 inline-block" />
+                <span className="w-3 h-0.5 bg-slate-300 inline-block" />
                 <span className="text-slate-300">Actual Outturn</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="w-3 h-0.5 bg-cyan-400 border-t border-dashed border-cyan-400 inline-block" />
+                <span className="w-3 h-0.5 bg-accent border-t border-dashed border-accent inline-block" />
                 <span className="text-slate-300">Day-Ahead Forecast</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 bg-rose-500/40 inline-block rounded-xs" />
+                <span className="w-2.5 h-2.5 bg-amber-400/50 inline-block rounded-xs" />
                 <span className="text-slate-300">Signed Error (MW)</span>
               </div>
             </div>
@@ -252,17 +252,17 @@ export const ForecastActualComparison: React.FC<ForecastActualComparisonProps> =
                 data={chartData}
                 margin={{ top: 10, right: 30, left: 15, bottom: 20 }}
               >
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.4} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#26364A" opacity={0.6} />
                 <XAxis
                   dataKey="timeLabel"
-                  stroke="#94a3b8"
+                  stroke="#718198"
                   fontSize={10}
                   tickMargin={8}
                   interval={selectedDay ? 1 : 24}
                 />
                 <YAxis
                   yAxisId="generation"
-                  stroke="#94a3b8"
+                  stroke="#718198"
                   fontSize={10}
                   tickFormatter={(val: number) => `${Math.round(val).toLocaleString()} MW`}
                   domain={[0, 'auto']}
@@ -270,7 +270,7 @@ export const ForecastActualComparison: React.FC<ForecastActualComparisonProps> =
                 <YAxis
                   yAxisId="error"
                   orientation="right"
-                  stroke="#94a3b8"
+                  stroke="#718198"
                   fontSize={10}
                   tickFormatter={(val: number) => `${val > 0 ? '+' : ''}${Math.round(val)} MW`}
                   domain={[-6000, 6000]}
@@ -280,41 +280,41 @@ export const ForecastActualComparison: React.FC<ForecastActualComparisonProps> =
                     if (!active || !payload || !payload.length) return null
                     const d = payload[0].payload
                     return (
-                      <div className="bg-slate-950 border border-slate-800 p-3 rounded-lg shadow-xl text-xs space-y-1.5 min-w-[220px]">
-                        <div className="font-semibold text-white border-b border-slate-800 pb-1">
+                      <div className="bg-app-surface border border-app-border p-3 rounded-lg shadow-xl text-xs space-y-1.5 min-w-[220px]">
+                        <div className="font-semibold text-white border-b border-app-border pb-1">
                           {d.timeLabel}
                         </div>
-                        <div className="flex justify-between items-center text-emerald-400">
+                        <div className="flex justify-between items-center text-slate-200">
                           <span>Actual Generation:</span>
-                          <span className="font-mono font-bold">{formatMw(d.actual_mw, 1)}</span>
+                          <span className="font-mono font-medium">{formatMw(d.actual_mw, 1)}</span>
                         </div>
-                        <div className="flex justify-between items-center text-cyan-400">
+                        <div className="flex justify-between items-center text-accent">
                           <span>Day-Ahead Forecast:</span>
-                          <span className="font-mono font-bold">{formatMw(d.forecast_mw, 1)}</span>
+                          <span className="font-mono font-medium">{formatMw(d.forecast_mw, 1)}</span>
                         </div>
-                        <div className="flex justify-between items-center text-rose-400">
+                        <div className="flex justify-between items-center text-amber-300">
                           <span>Signed Error:</span>
-                          <span className="font-mono font-bold">
+                          <span className="font-mono font-medium">
                             {d.error_mw > 0 ? '+' : ''}
                             {formatMw(d.error_mw, 1)}
                           </span>
                         </div>
-                        <div className="flex justify-between items-center text-amber-300">
+                        <div className="flex justify-between items-center text-slate-300">
                           <span>Absolute Error:</span>
-                          <span className="font-mono font-bold">{formatMw(d.abs_error_mw, 1)}</span>
+                          <span className="font-mono font-medium">{formatMw(d.abs_error_mw, 1)}</span>
                         </div>
                         {d.ape_pct !== null && (
-                          <div className="flex justify-between items-center text-slate-400">
+                          <div className="flex justify-between items-center text-muted">
                             <span>APE (%):</span>
-                            <span className="font-mono">{formatPct(d.ape_pct, 1)}</span>
+                            <span className="font-mono text-slate-200">{formatPct(d.ape_pct, 1)}</span>
                           </div>
                         )}
                         {onSelectDeliveryHour && (
-                          <div className="pt-2 border-t border-slate-800/80">
+                          <div className="pt-2 border-t border-app-border">
                             <button
                               type="button"
                               onClick={() => onSelectDeliveryHour(d.delivery_hour_utc)}
-                              className="w-full text-center text-blue-400 hover:text-blue-300 hover:underline text-[11px] font-sans flex items-center justify-center gap-1"
+                              className="w-full text-center text-accent hover:underline text-[11px] font-sans flex items-center justify-center gap-1"
                             >
                               <span>Inspect in Publication Trajectory</span>
                               <ArrowRight className="h-3 w-3" />
@@ -325,14 +325,14 @@ export const ForecastActualComparison: React.FC<ForecastActualComparisonProps> =
                     )
                   }}
                 />
-                <ReferenceLine yAxisId="error" y={0} stroke="#475569" strokeDasharray="2 2" />
+                <ReferenceLine yAxisId="error" y={0} stroke="#26364A" strokeDasharray="2 2" />
 
                 {/* Error Bars on secondary axis */}
                 <Bar
                   yAxisId="error"
                   dataKey="error_mw"
-                  fill="#f43f5e"
-                  opacity={0.3}
+                  fill="#E7AD4A"
+                  opacity={0.4}
                   name="Forecast Error (MW)"
                 />
 
@@ -341,7 +341,7 @@ export const ForecastActualComparison: React.FC<ForecastActualComparisonProps> =
                   yAxisId="generation"
                   type="monotone"
                   dataKey="actual_mw"
-                  stroke="#10b981"
+                  stroke="#CBD5E1"
                   strokeWidth={2}
                   dot={false}
                   name="Actual (MW)"
@@ -352,7 +352,7 @@ export const ForecastActualComparison: React.FC<ForecastActualComparisonProps> =
                   yAxisId="generation"
                   type="monotone"
                   dataKey="forecast_mw"
-                  stroke="#38bdf8"
+                  stroke="#35B9C8"
                   strokeWidth={1.75}
                   strokeDasharray="4 4"
                   dot={false}

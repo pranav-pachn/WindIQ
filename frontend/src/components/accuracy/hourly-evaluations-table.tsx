@@ -31,12 +31,12 @@ export function HourlyEvaluationsTable({
 }: HourlyEvaluationsTableProps) {
   const renderSortIcon = (column: string) => {
     if (sortBy !== column) {
-      return <ArrowUpDown className="w-3 h-3 text-slate-500 opacity-60" />;
+      return <ArrowUpDown className="w-3 h-3 text-muted opacity-50" />;
     }
     return order === "asc" ? (
-      <ArrowUp className="w-3.5 h-3.5 text-cyan-400 font-bold" />
+      <ArrowUp className="w-3.5 h-3.5 text-accent font-bold" />
     ) : (
-      <ArrowDown className="w-3.5 h-3.5 text-cyan-400 font-bold" />
+      <ArrowDown className="w-3.5 h-3.5 text-accent font-bold" />
     );
   };
 
@@ -44,24 +44,24 @@ export function HourlyEvaluationsTable({
   const endRecord = Math.min(pagination.page * pagination.page_size, pagination.total_items);
 
   return (
-    <div className="rounded-xl bg-slate-900/60 border border-slate-800 p-4 space-y-4">
+    <div className="rounded-xl bg-app-surface border border-app-border p-4 space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h3 className="text-sm font-semibold text-slate-100 flex items-center gap-2">
             Granular Hourly Forecast vs Actual Evaluations
           </h3>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-muted">
             Traceable to Elexon BMRS WINDFOR day-ahead publications and FUELHH settlement readings
           </p>
         </div>
 
         {/* Page size selection */}
-        <div className="flex items-center gap-2 text-xs text-slate-400">
+        <div className="flex items-center gap-2 text-xs text-muted">
           <span>Rows per page:</span>
           <select
             value={pagination.page_size}
             onChange={(e) => onPageSizeChange(Number(e.target.value))}
-            className="rounded bg-slate-950 border border-slate-700 px-2 py-1 text-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-cyan-500"
+            className="rounded bg-app-bg border border-app-border px-2 py-1 text-slate-200 text-xs focus:outline-none focus:border-accent font-mono"
           >
             <option value={25}>25</option>
             <option value={50}>50</option>
@@ -71,10 +71,10 @@ export function HourlyEvaluationsTable({
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-slate-800">
+      <div className="overflow-x-auto rounded-lg border border-app-border">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
-            <tr className="bg-slate-950/80 border-b border-slate-800 text-slate-400">
+            <tr className="bg-[#0E1726] border-b border-app-border text-muted">
               <th
                 onClick={() => onSortChange("delivery_hour_utc")}
                 className="py-2.5 px-3 font-semibold cursor-pointer hover:text-slate-200 select-none whitespace-nowrap"
@@ -131,16 +131,16 @@ export function HourlyEvaluationsTable({
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800/60 font-mono">
+          <tbody className="divide-y divide-app-border/40 font-mono">
             {isLoading ? (
               <tr>
-                <td colSpan={8} className="py-12 text-center text-slate-500 text-xs italic font-sans">
+                <td colSpan={8} className="py-12 text-center text-muted text-xs italic font-sans">
                   Loading evaluations...
                 </td>
               </tr>
             ) : items.length === 0 ? (
               <tr>
-                <td colSpan={8} className="py-12 text-center text-slate-500 text-xs italic font-sans">
+                <td colSpan={8} className="py-12 text-center text-muted text-xs italic font-sans">
                   No hourly forecast evaluations match the active filter criteria.
                 </td>
               </tr>
@@ -153,32 +153,32 @@ export function HourlyEvaluationsTable({
                 return (
                   <tr
                     key={item.delivery_hour_utc}
-                    className={`hover:bg-slate-800/40 transition-colors ${
-                      isSelected ? "bg-cyan-950/40 border-l-2 border-cyan-400" : ""
+                    className={`hover:bg-app-elevated/60 transition-colors ${
+                      isSelected ? "bg-app-elevated border-l-2 border-accent" : ""
                     }`}
                   >
                     <td className="py-2.5 px-3 whitespace-nowrap">
                       <div className="font-semibold text-slate-200">
                         {formatLondonWithDstOffset(item.delivery_hour_utc)}
                       </div>
-                      <div className="text-[10px] text-slate-400">
+                      <div className="text-[10px] text-muted">
                         UTC: {item.delivery_hour_utc.substring(0, 19).replace("T", " ")}
                       </div>
                     </td>
-                    <td className="py-2.5 px-3 text-right font-medium text-cyan-300">
+                    <td className="py-2.5 px-3 text-right font-medium text-accent">
                       {formatMw(item.forecast_generation_mw)}
                     </td>
-                    <td className="py-2.5 px-3 text-right font-medium text-emerald-400">
+                    <td className="py-2.5 px-3 text-right font-medium text-slate-200">
                       {formatMw(item.actual_generation_mw)}
                     </td>
-                    <td className={`py-2.5 px-3 text-right font-semibold ${isOver ? "text-amber-400" : isUnder ? "text-emerald-400" : "text-slate-400"}`}>
+                    <td className={`py-2.5 px-3 text-right font-medium ${isOver ? "text-amber-400" : isUnder ? "text-accent" : "text-muted"}`}>
                       {isOver ? "+" : ""}
                       {formatMw(item.forecast_error_mw)}
                     </td>
                     <td className="py-2.5 px-3 text-right text-slate-200">
                       {formatMw(item.absolute_error_mw)}
                     </td>
-                    <td className="py-2.5 px-3 text-right text-slate-300">
+                    <td className="py-2.5 px-3 text-right text-muted">
                       {item.absolute_percentage_error !== null && item.absolute_percentage_error !== undefined
                         ? formatPct(item.absolute_percentage_error)
                         : "—"}
@@ -202,7 +202,7 @@ export function HourlyEvaluationsTable({
                       <button
                         type="button"
                         onClick={() => onInspectLineage(item)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold rounded bg-cyan-950/70 hover:bg-cyan-900 border border-cyan-800/70 text-cyan-300 transition-colors focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                        className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded bg-app-elevated hover:bg-app-surface border border-app-border text-accent transition-colors focus:outline-none focus:border-accent"
                         title="Audit selected forecast publication and half-hour settlement pairs"
                       >
                         <ShieldCheck className="w-3.5 h-3.5" />
@@ -219,7 +219,7 @@ export function HourlyEvaluationsTable({
 
       {/* Pagination Footer */}
       {pagination.total_items > 0 && (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 text-xs text-slate-400">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 text-xs text-muted">
           <div>
             Showing <span className="font-mono text-slate-200 font-semibold">{startRecord}</span> to{" "}
             <span className="font-mono text-slate-200 font-semibold">{endRecord}</span> of{" "}
@@ -231,7 +231,7 @@ export function HourlyEvaluationsTable({
               type="button"
               disabled={!pagination.has_previous || isLoading}
               onClick={() => onPageChange(pagination.page - 1)}
-              className="p-1.5 rounded bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:hover:bg-slate-800 text-slate-300 focus:outline-none"
+              className="p-1.5 rounded bg-app-elevated hover:bg-app-surface border border-app-border disabled:opacity-40 text-slate-300 focus:outline-none transition-colors"
               aria-label="Previous page"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -243,7 +243,7 @@ export function HourlyEvaluationsTable({
               type="button"
               disabled={!pagination.has_next || isLoading}
               onClick={() => onPageChange(pagination.page + 1)}
-              className="p-1.5 rounded bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:hover:bg-slate-800 text-slate-300 focus:outline-none"
+              className="p-1.5 rounded bg-app-elevated hover:bg-app-surface border border-app-border disabled:opacity-40 text-slate-300 focus:outline-none transition-colors"
               aria-label="Next page"
             >
               <ChevronRight className="w-4 h-4" />

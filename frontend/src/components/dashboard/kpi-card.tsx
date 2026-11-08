@@ -28,75 +28,56 @@ export function KpiCard({
   icon: Icon,
   className,
 }: KpiCardProps) {
-  const trendConfig: Record<KpiTrend, { border: string; valueColor: string; bgBadge: string }> = {
-    positive: {
-      border: 'border-emerald-800/40 hover:border-emerald-700/60',
-      valueColor: 'text-emerald-400',
-      bgBadge: 'bg-emerald-950/60 text-emerald-300 border-emerald-800/40',
-    },
-    negative: {
-      border: 'border-amber-800/40 hover:border-amber-700/60',
-      valueColor: 'text-amber-400',
-      bgBadge: 'bg-amber-950/60 text-amber-300 border-amber-800/40',
-    },
-    accent: {
-      border: 'border-cyan-800/50 hover:border-cyan-700/70',
-      valueColor: 'text-cyan-300',
-      bgBadge: 'bg-cyan-950/60 text-cyan-300 border-cyan-800/40',
-    },
-    neutral: {
-      border: 'border-slate-800 hover:border-slate-700',
-      valueColor: 'text-slate-100',
-      bgBadge: 'bg-slate-800/60 text-slate-300 border-slate-700/40',
-    },
+  // Restrained professional color language: value color emphasizes key metrics without garish backgrounds
+  const valueColorMap: Record<KpiTrend, string> = {
+    positive: 'text-[#35B98A]',
+    negative: 'text-[#E7AD4A]',
+    accent: 'text-[#35B9C8]',
+    neutral: 'text-[#E7EDF5]',
   }
-
-  const currentTrend = trendConfig[trend]
 
   return (
     <Card
       className={cn(
-        'p-4 transition-all duration-150',
-        currentTrend.border,
+        'p-3.5 sm:p-4 flex flex-col justify-between h-full bg-[#111C2D] border-[#26364A] hover:border-[#374B63] transition-colors',
         className
       )}
     >
-      <div className="flex items-center justify-between gap-2 mb-2">
-        <span className="text-xs font-medium text-slate-400 flex items-center gap-1.5">
-          {Icon && <Icon className="w-3.5 h-3.5 text-slate-400" />}
-          <span>{title}</span>
-          {tooltip && <Tooltip title={title} content={tooltip} />}
-        </span>
-
-        {badgeText && (
-          <span
-            className={cn(
-              'text-[10px] font-mono px-1.5 py-0.5 rounded border',
-              currentTrend.bgBadge
-            )}
-          >
-            {badgeText}
+      <div>
+        {/* Metric Header */}
+        <div className="flex items-center justify-between gap-1.5 mb-2">
+          <span className="text-[11px] font-medium text-[#9AAABD] uppercase tracking-wider flex items-center gap-1.5 truncate">
+            {Icon && <Icon className="w-3.5 h-3.5 text-[#718198] shrink-0" />}
+            <span className="truncate">{title}</span>
+            {tooltip && <Tooltip title={title} content={tooltip} />}
           </span>
-        )}
+
+          {badgeText && (
+            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#162337] border border-[#26364A] text-[#718198] shrink-0">
+              {badgeText}
+            </span>
+          )}
+        </div>
+
+        {/* Metric Value & Unit */}
+        <div className="flex items-baseline gap-1.5 my-1">
+          <span className={cn('text-2xl font-bold font-mono tracking-tight tabular-nums', valueColorMap[trend])}>
+            {value}
+          </span>
+          {unit && (
+            <span className="text-xs font-semibold text-[#718198] font-mono">
+              {unit}
+            </span>
+          )}
+        </div>
       </div>
 
-      <div className="flex items-baseline gap-1.5 mt-1">
-        <span className={cn('text-2xl font-bold font-mono tracking-tight', currentTrend.valueColor)}>
-          {value}
-        </span>
-        {unit && (
-          <span className="text-xs font-semibold text-slate-400 font-mono">
-            {unit}
-          </span>
-        )}
-      </div>
-
+      {/* Metric Explanation Subtitle */}
       {subtitle && (
-        <p className="mt-2 text-[11px] text-slate-400 leading-tight">
+        <p className="mt-2 text-[11px] text-[#718198] leading-snug border-t border-[#1E2B3E] pt-2">
           {subtitle}
         </p>
       )}
     </Card>
   )
 }
-

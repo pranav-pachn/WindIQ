@@ -15,6 +15,7 @@ export function useApiHealth() {
     queryFn: async () => {
       const start = performance.now()
       try {
+        // 1. Try full readiness (DB + Redis)
         const readyData = await api.checkReadiness()
         const latencyMs = Math.round(performance.now() - start)
         return {
@@ -25,15 +26,27 @@ export function useApiHealth() {
           version: readyData.version,
         }
       } catch {
-        return {
-          isConnected: false,
-          isDbReady: false,
-          latencyMs: null,
-          lastChecked: new Date(),
+        // 2. Fall back to liveness check before claiming offline
+        try {
+          await api.checkLiveness()
+          const latencyMs = Math.round(performance.now() - start)
+          return {
+            isConnected: true,
+            isDbReady: false,
+            latencyMs,
+            lastChecked: new Date(),
+          }
+        } catch {
+          return {
+            isConnected: false,
+            isDbReady: false,
+            latencyMs: null,
+            lastChecked: new Date(),
+          }
         }
       }
     },
     refetchInterval: 30000, // Check every 30 seconds
+    retry: 1,
   })
 }
-

@@ -12,6 +12,7 @@ import {
 import { formatNumber, formatDateTimeUtc } from '@/lib/formatters'
 import type { SingleDeliveryHourPublicationResponse, PublicationVersion } from '@/types/api'
 import { ShieldCheck, Target, Zap, AlertTriangle } from 'lucide-react'
+import { CHART_THEME } from '@/lib/chart-theme'
 
 interface PublicationTrajectoryChartProps {
   data: SingleDeliveryHourPublicationResponse
@@ -43,47 +44,47 @@ export const PublicationTrajectoryChart: React.FC<PublicationTrajectoryChartProp
   }))
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 mb-6 shadow-sm">
+    <div className="bg-app-surface border border-app-border rounded-xl p-5 mb-6">
       {/* KPI Cards Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-3.5">
-          <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+        <div className="bg-app-elevated border border-app-border rounded-lg p-3.5">
+          <div className="flex items-center justify-between text-xs text-muted mb-1">
             <span className="flex items-center gap-1.5">
-              <Target className="w-3.5 h-3.5 text-cyan-400" />
+              <Target className="w-3.5 h-3.5 text-accent" />
               Selected D-1 Forecast
             </span>
-            <span className="text-[10px] font-mono px-1.5 py-0.2 bg-cyan-950/60 text-cyan-300 border border-cyan-800/50 rounded">
+            <span className="text-[10px] font-mono px-1.5 py-0.2 bg-app-bg text-accent border border-app-border rounded">
               09:00 Cutoff
             </span>
           </div>
-          <div className="text-xl font-bold font-mono text-cyan-300">
+          <div className="text-xl font-bold font-mono text-accent">
             {selectedPub ? `${formatNumber(selectedPub.forecast_mw)} MW` : 'N/A'}
           </div>
-          <div className="text-[11px] text-slate-400 mt-1">
+          <div className="text-[11px] text-muted mt-1">
             Lead time: <span className="font-mono text-slate-300">{selectedPub?.lead_time_hours}h</span>
           </div>
         </div>
 
-        <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-3.5">
-          <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+        <div className="bg-app-elevated border border-app-border rounded-lg p-3.5">
+          <div className="flex items-center justify-between text-xs text-muted mb-1">
             <span className="flex items-center gap-1.5">
               <Zap className="w-3.5 h-3.5 text-emerald-400" />
               Actual Generation
             </span>
-            <span className="text-[10px] font-mono px-1.5 py-0.2 bg-emerald-950/60 text-emerald-300 border border-emerald-800/50 rounded">
+            <span className="text-[10px] font-mono px-1.5 py-0.2 bg-app-bg text-emerald-300 border border-app-border rounded">
               2 x FUELHH
             </span>
           </div>
-          <div className="text-xl font-bold font-mono text-emerald-300">
+          <div className="text-xl font-bold font-mono text-slate-100">
             {actualMw !== null ? `${formatNumber(actualMw)} MW` : 'Missing'}
           </div>
-          <div className="text-[11px] text-slate-400 mt-1">
+          <div className="text-[11px] text-muted mt-1">
             Status: <span className="text-emerald-400 font-medium">{data.actual_data_status}</span>
           </div>
         </div>
 
-        <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-3.5">
-          <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+        <div className="bg-app-elevated border border-app-border rounded-lg p-3.5">
+          <div className="flex items-center justify-between text-xs text-muted mb-1">
             <span className="flex items-center gap-1.5">
               <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
               Day-Ahead Error
@@ -91,8 +92,8 @@ export const PublicationTrajectoryChart: React.FC<PublicationTrajectoryChartProp
             <span
               className={`text-[10px] font-mono px-1.5 py-0.2 rounded border ${
                 errorMw !== null && errorMw > 0
-                  ? 'bg-rose-950/60 text-rose-300 border-rose-800/50'
-                  : 'bg-emerald-950/60 text-emerald-300 border-emerald-800/50'
+                  ? 'bg-amber-950/40 text-amber-300 border-amber-800/40'
+                  : 'bg-accent/10 text-accent border-accent/40'
               }`}
             >
               {errorMw !== null && errorMw > 0 ? 'Overforecast' : 'Underforecast'}
@@ -100,14 +101,14 @@ export const PublicationTrajectoryChart: React.FC<PublicationTrajectoryChartProp
           </div>
           <div
             className={`text-xl font-bold font-mono ${
-              errorMw !== null && errorMw > 0 ? 'text-rose-300' : 'text-emerald-300'
+              errorMw !== null && errorMw > 0 ? 'text-amber-300' : 'text-accent'
             }`}
           >
             {errorMw !== null
               ? `${errorMw > 0 ? '+' : ''}${formatNumber(errorMw)} MW`
               : 'N/A'}
           </div>
-          <div className="text-[11px] text-slate-400 mt-1">
+          <div className="text-[11px] text-muted mt-1">
             Abs Error:{' '}
             <span className="font-mono text-slate-200">
               {errorMw !== null ? `${formatNumber(Math.abs(errorMw))} MW` : 'N/A'}
@@ -115,23 +116,23 @@ export const PublicationTrajectoryChart: React.FC<PublicationTrajectoryChartProp
           </div>
         </div>
 
-        <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-3.5">
-          <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+        <div className="bg-app-elevated border border-app-border rounded-lg p-3.5">
+          <div className="flex items-center justify-between text-xs text-muted mb-1">
             <span className="flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
+              <ShieldCheck className="w-3.5 h-3.5 text-accent" />
               Publication Versions
             </span>
             {onOpenAuditModal ? (
               <button
                 type="button"
                 onClick={onOpenAuditModal}
-                className="text-[10px] font-mono px-1.5 py-0.5 bg-cyan-950/80 text-cyan-300 border border-cyan-800/60 rounded hover:bg-cyan-900 cursor-pointer transition-colors"
+                className="text-[10px] font-mono px-1.5 py-0.5 bg-app-bg text-accent border border-app-border rounded hover:bg-app-surface cursor-pointer transition-colors"
                 title="Inspect decision cutoff and settlement lineage"
               >
                 Audit Lineage
               </button>
             ) : (
-              <span className="text-[10px] font-mono px-1.5 py-0.2 bg-slate-800 text-slate-300 rounded">
+              <span className="text-[10px] font-mono px-1.5 py-0.2 bg-app-bg text-muted rounded">
                 Rolling 3-Day
               </span>
             )}
@@ -139,8 +140,8 @@ export const PublicationTrajectoryChart: React.FC<PublicationTrajectoryChartProp
           <div className="text-xl font-bold font-mono text-slate-100">
             {data.total_publications}
           </div>
-          <div className="text-[11px] text-slate-400 mt-1">
-            Eligible: <span className="text-cyan-400 font-semibold">{data.eligible_publications}</span> | Forward:{' '}
+          <div className="text-[11px] text-muted mt-1">
+            Eligible: <span className="text-accent font-medium">{data.eligible_publications}</span> | Forward:{' '}
             <span className="text-slate-300">{data.forward_publications}</span>
           </div>
         </div>
@@ -150,21 +151,21 @@ export const PublicationTrajectoryChart: React.FC<PublicationTrajectoryChartProp
       <div className="mb-2 flex items-center justify-between">
         <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
           <span>Forecast Evolution Across Lead Times</span>
-          <span className="text-xs text-slate-500 font-normal">
+          <span className="text-xs text-muted font-normal">
             (Target Delivery: {formatDateTimeUtc(data.delivery_hour_utc)})
           </span>
         </h3>
         <div className="flex items-center gap-4 text-xs">
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-0.5 bg-cyan-400 inline-block" />
+            <span className="w-3 h-0.5 bg-accent inline-block" />
             <span className="text-slate-300">WINDFOR Evolution</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-0.5 bg-emerald-400 border-dashed inline-block" />
+            <span className="w-3 h-0.5 bg-slate-300 border-dashed inline-block" />
             <span className="text-slate-300">Actual ({formatNumber(actualMw ?? 0)} MW)</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-0.5 bg-amber-400 inline-block" />
+            <span className="w-3 h-0.5 bg-[#E7AD4A] inline-block" />
             <span className="text-amber-300 font-medium">09:00 D-1 Cutoff</span>
           </div>
         </div>
@@ -184,23 +185,23 @@ export const PublicationTrajectoryChart: React.FC<PublicationTrajectoryChartProp
               }
             }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.5} />
+            <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} opacity={0.6} />
             <XAxis
               dataKey="leadTime"
-              stroke="#94a3b8"
+              stroke={CHART_THEME.axes}
               fontSize={11}
               tickFormatter={(v) => `${v}h`}
               reversed
               label={{
-                value: '← Gate Closure (Real-Time 0h) | Lead Time Before Delivery (hours) | Early D-3 →',
+                value: '← Real-Time Delivery (0h) | Lead Time Before Delivery (hours) | Early D-3 →',
                 position: 'insideBottom',
                 offset: -15,
-                fill: '#64748b',
+                fill: CHART_THEME.axes,
                 fontSize: 10,
               }}
             />
             <YAxis
-              stroke="#94a3b8"
+              stroke={CHART_THEME.axes}
               fontSize={11}
               tickFormatter={(v) => `${Math.round(v)} MW`}
               domain={['auto', 'auto']}
@@ -210,14 +211,14 @@ export const PublicationTrajectoryChart: React.FC<PublicationTrajectoryChartProp
                 if (active && payload && payload.length) {
                   const p = payload[0].payload
                   return (
-                    <div className="bg-slate-950 border border-slate-700 p-3 rounded-lg shadow-xl text-xs font-mono space-y-1">
+                    <div className="bg-app-surface border border-app-border p-3 rounded-lg shadow-xl text-xs font-mono space-y-1">
                       <div className="font-semibold text-slate-200">
                         Published: {formatDateTimeUtc(p.publishTime)}
                       </div>
-                      <div className="text-cyan-400 font-bold">
+                      <div className="text-accent font-bold">
                         Forecast: {formatNumber(p.forecastMw)} MW
                       </div>
-                      <div className="text-slate-400">
+                      <div className="text-muted">
                         Lead Time: <span className="text-slate-200">{p.leadTime} hours</span>
                       </div>
                       {p.revisionMw !== null && (
@@ -227,7 +228,7 @@ export const PublicationTrajectoryChart: React.FC<PublicationTrajectoryChartProp
                               ? 'text-emerald-400'
                               : p.revisionMw < 0
                               ? 'text-rose-400'
-                              : 'text-slate-400'
+                              : 'text-muted'
                           }`}
                         >
                           Step Revision: {p.revisionMw > 0 ? '+' : ''}
@@ -239,13 +240,13 @@ export const PublicationTrajectoryChart: React.FC<PublicationTrajectoryChartProp
                           className={`px-1.5 py-0.5 rounded text-[10px] font-sans ${
                             p.isEligible
                               ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-800'
-                              : 'bg-slate-800 text-slate-400'
+                              : 'bg-app-elevated text-muted'
                           }`}
                         >
                           {p.isEligible ? 'ELIGIBLE' : 'POST-CUTOFF'}
                         </span>
                         {p.isSelected && (
-                          <span className="px-1.5 py-0.5 rounded text-[10px] font-sans bg-cyan-900 text-cyan-200 border border-cyan-700 font-bold">
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-sans bg-accent/20 text-accent border border-accent/60 font-medium">
                             SELECTED D-1
                           </span>
                         )}
@@ -261,13 +262,13 @@ export const PublicationTrajectoryChart: React.FC<PublicationTrajectoryChartProp
             {actualMw !== null && (
               <ReferenceLine
                 y={actualMw}
-                stroke="#10b981"
+                stroke={CHART_THEME.actual}
                 strokeDasharray="4 4"
-                strokeWidth={2}
+                strokeWidth={1.5}
                 label={{
                   value: `Actual: ${formatNumber(actualMw)} MW`,
                   position: 'insideTopLeft',
-                  fill: '#10b981',
+                  fill: CHART_THEME.actual,
                   fontSize: 10,
                 }}
               />
@@ -277,13 +278,13 @@ export const PublicationTrajectoryChart: React.FC<PublicationTrajectoryChartProp
             {selectedPub?.lead_time_hours !== undefined && (
               <ReferenceLine
                 x={selectedPub.lead_time_hours}
-                stroke="#f59e0b"
+                stroke={CHART_THEME.warning}
                 strokeWidth={1.5}
                 strokeDasharray="3 3"
                 label={{
                   value: '09:00 D-1 Cutoff Winner',
                   position: 'insideTopRight',
-                  fill: '#f59e0b',
+                  fill: CHART_THEME.warning,
                   fontSize: 10,
                 }}
               />
@@ -293,18 +294,18 @@ export const PublicationTrajectoryChart: React.FC<PublicationTrajectoryChartProp
             <Line
               type="stepAfter"
               dataKey="forecastMw"
-              stroke="#06b6d4"
-              strokeWidth={2.5}
+              stroke={CHART_THEME.forecast}
+              strokeWidth={2}
               dot={(props) => {
                 const { cx, cy, payload } = props
                 if (payload.isSelected) {
                   return (
                     <polygon
                       key={`diamond-${payload.id}`}
-                      points={`${cx},${cy - 8} ${cx + 8},${cy} ${cx},${cy + 8} ${cx - 8},${cy}`}
-                      fill="#f59e0b"
-                      stroke="#ffffff"
-                      strokeWidth={2}
+                      points={`${cx},${cy - 7} ${cx + 7},${cy} ${cx},${cy + 7} ${cx - 7},${cy}`}
+                      fill={CHART_THEME.warning}
+                      stroke="#0B1220"
+                      strokeWidth={1.5}
                     />
                   )
                 }
@@ -314,13 +315,13 @@ export const PublicationTrajectoryChart: React.FC<PublicationTrajectoryChartProp
                     cx={cx}
                     cy={cy}
                     r={payload.isEligible ? 3 : 2}
-                    fill={payload.isEligible ? '#06b6d4' : '#64748b'}
-                    stroke="#0f172a"
+                    fill={payload.isEligible ? CHART_THEME.forecast : '#718198'}
+                    stroke="#0B1220"
                     strokeWidth={1}
                   />
                 )
               }}
-              activeDot={{ r: 6, fill: '#38bdf8', stroke: '#ffffff', strokeWidth: 2 }}
+              activeDot={{ r: 5, fill: CHART_THEME.forecast, stroke: "#0B1220", strokeWidth: 2 }}
             />
           </LineChart>
         </ResponsiveContainer>

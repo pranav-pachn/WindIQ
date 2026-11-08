@@ -20,91 +20,90 @@ export function ForecastDirectionCard({
   const zeroPct = totalHours > 0 ? (zeroErrorHours / totalHours) * 100 : 0
 
   return (
-    <Card className="h-full flex flex-col">
+    <Card className="h-full flex flex-col bg-[#111C2D] border-[#26364A]">
       <CardHeader className="pb-2">
         <CardTitle className="text-xs">
-          <Scale className="w-4 h-4 text-cyan-400" />
+          <Scale className="w-4 h-4 text-[#35B9C8]" />
           <span>Forecast Direction Analysis (Over vs Under)</span>
         </CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
-        {/* Top summary figures */}
+        {/* Comparison Metrics */}
         <div className="grid grid-cols-2 gap-3 pt-1">
           {/* Overforecast */}
-          <div className="rounded-lg p-3 bg-amber-950/20 border border-amber-900/40 space-y-1">
-            <div className="flex items-center justify-between text-xs text-amber-300">
-              <span className="font-medium flex items-center gap-1">
-                <ArrowUpRight className="w-3.5 h-3.5 text-amber-400" />
+          <div className="rounded-lg p-3 bg-[#162337] border border-[#26364A] space-y-1">
+            <div className="flex items-center justify-between text-xs text-[#E7AD4A]">
+              <span className="font-medium flex items-center gap-1 text-[11px] uppercase tracking-wider font-mono">
+                <ArrowUpRight className="w-3.5 h-3.5 text-[#E7AD4A]" />
                 Overforecast
               </span>
-              <span className="font-mono font-bold">{formatPct(overPct, 1)}</span>
+              <span className="font-mono font-bold tabular-nums">{formatPct(overPct, 1)}</span>
             </div>
-            <div className="text-2xl font-bold font-mono text-amber-200">
+            <div className="text-2xl font-bold font-mono text-[#E7EDF5] tabular-nums">
               {overforecastHours.toLocaleString()}{' '}
-              <span className="text-xs font-normal text-amber-400/80">hrs</span>
+              <span className="text-xs font-normal text-[#718198]">hrs</span>
             </div>
-            <div className="text-[11px] text-slate-400">
-              Predicted generation exceeded measured actuals
+            <div className="text-[11px] text-[#718198] leading-tight">
+              Day-ahead forecast exceeded measured settlement actuals
             </div>
           </div>
 
           {/* Underforecast */}
-          <div className="rounded-lg p-3 bg-emerald-950/20 border border-emerald-900/40 space-y-1">
-            <div className="flex items-center justify-between text-xs text-emerald-300">
-              <span className="font-medium flex items-center gap-1">
-                <ArrowDownRight className="w-3.5 h-3.5 text-emerald-400" />
+          <div className="rounded-lg p-3 bg-[#162337] border border-[#26364A] space-y-1">
+            <div className="flex items-center justify-between text-xs text-[#35B98A]">
+              <span className="font-medium flex items-center gap-1 text-[11px] uppercase tracking-wider font-mono">
+                <ArrowDownRight className="w-3.5 h-3.5 text-[#35B98A]" />
                 Underforecast
               </span>
-              <span className="font-mono font-bold">{formatPct(underPct, 1)}</span>
+              <span className="font-mono font-bold tabular-nums">{formatPct(underPct, 1)}</span>
             </div>
-            <div className="text-2xl font-bold font-mono text-emerald-200">
+            <div className="text-2xl font-bold font-mono text-[#E7EDF5] tabular-nums">
               {underforecastHours.toLocaleString()}{' '}
-              <span className="text-xs font-normal text-emerald-400/80">hrs</span>
+              <span className="text-xs font-normal text-[#718198]">hrs</span>
             </div>
-            <div className="text-[11px] text-slate-400">
-              Measured actuals exceeded day-ahead prediction
+            <div className="text-[11px] text-[#718198] leading-tight">
+              Measured settlement actuals exceeded day-ahead forecast
             </div>
           </div>
         </div>
 
-        {/* Proportional Segmented Progress Bar */}
+        {/* Clear Horizontal Proportion Visualization */}
         <div className="space-y-1.5">
-          <div className="flex justify-between text-[11px] text-slate-400 font-mono">
-            <span>Forecast &gt; Actual ({overforecastHours}h)</span>
-            <span>Forecast &lt; Actual ({underforecastHours}h)</span>
+          <div className="flex justify-between text-[11px] text-[#9AAABD] font-mono tabular-nums">
+            <span>Forecast &gt; Actual: {overforecastHours}h ({overPct.toFixed(1)}%)</span>
+            <span>Forecast &lt; Actual: {underforecastHours}h ({underPct.toFixed(1)}%)</span>
           </div>
 
-          <div className="h-3 w-full rounded-full bg-slate-900 overflow-hidden flex border border-slate-800">
+          <div className="h-2.5 w-full rounded-sm bg-[#0E1726] overflow-hidden flex border border-[#26364A]">
             <div
               style={{ width: `${overPct}%` }}
-              className="bg-amber-500/80 hover:bg-amber-400 transition-all"
+              className="bg-[#E7AD4A] transition-all"
               title={`Overforecast: ${overforecastHours} hrs (${overPct.toFixed(1)}%)`}
             />
             {zeroPct > 0 && (
               <div
                 style={{ width: `${zeroPct}%` }}
-                className="bg-slate-500 hover:bg-slate-400 transition-all"
+                className="bg-[#718198] transition-all"
                 title={`Zero error: ${zeroErrorHours} hrs (${zeroPct.toFixed(1)}%)`}
               />
             )}
             <div
               style={{ width: `${underPct}%` }}
-              className="bg-emerald-500/80 hover:bg-emerald-400 transition-all"
+              className="bg-[#35B98A] transition-all"
               title={`Underforecast: ${underforecastHours} hrs (${underPct.toFixed(1)}%)`}
             />
           </div>
         </div>
 
-        {/* Domain Integrity Notice */}
-        <div className="rounded bg-[#0b1120] p-2.5 border border-slate-800/80 flex items-start gap-2 text-[11px] text-slate-400">
-          <Info className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+        {/* Analytical Boundary Note */}
+        <div className="rounded bg-[#0E1726] p-2.5 border border-[#1E2B3E] flex items-start gap-2 text-[11px] text-[#718198]">
+          <Info className="w-3.5 h-3.5 text-[#35B9C8] shrink-0 mt-0.5" />
           <p className="leading-snug">
-            <strong className="text-slate-300">Analytical Boundary:</strong> Overforecasting means the national wind fleet produced less power than predicted at day-ahead cutoff. This metric evaluates wind generation forecasts and does not represent the utility&apos;s total portfolio electricity procurement position or customer demand.
+            <strong className="text-[#9AAABD]">Analytical Boundary:</strong> Evaluates national wind generation forecast deviation against outturn. This metric measures wind forecasting accuracy and does not represent total system electricity procurement or net demand positions.
           </p>
         </div>
       </CardContent>
     </Card>
   )
 }
-

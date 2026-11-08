@@ -27,65 +27,65 @@ export function DiurnalHeatmap({ items, onSelectCell }: DiurnalHeatmapProps) {
 
   const getCellColor = (absError: number | null | undefined) => {
     if (absError === null || absError === undefined) {
-      return "bg-slate-900 text-slate-600";
+      return "bg-app-bg text-muted";
     }
     if (absError < 1000) {
-      return "bg-emerald-950/60 hover:bg-emerald-800/80 border-emerald-900/40 text-emerald-300";
+      return "bg-emerald-950/40 hover:bg-emerald-900/60 border-emerald-900/40 text-emerald-300";
     }
     if (absError < 2000) {
-      return "bg-amber-950/70 hover:bg-amber-800/80 border-amber-800/50 text-amber-300";
+      return "bg-amber-950/40 hover:bg-amber-900/60 border-amber-900/40 text-amber-300";
     }
     if (absError < 3000) {
-      return "bg-orange-950/80 hover:bg-orange-800/80 border-orange-700/60 text-orange-200";
+      return "bg-orange-950/50 hover:bg-orange-900/60 border-orange-900/40 text-orange-300";
     }
-    return "bg-rose-950/90 hover:bg-rose-800/90 border-rose-700/80 text-rose-200 font-bold";
+    return "bg-rose-950/60 hover:bg-rose-900/80 border-rose-900/40 text-rose-300 font-bold";
   };
 
   if (!dates.length) {
     return (
-      <div className="flex items-center justify-center h-64 rounded-xl bg-slate-900/40 border border-slate-800 text-slate-500 text-xs">
+      <div className="flex items-center justify-center h-64 rounded-xl bg-app-surface border border-app-border text-muted text-xs">
         No hourly data available for diurnal heatmap.
       </div>
     );
   }
 
   return (
-    <div className="rounded-xl bg-slate-900/60 border border-slate-800 p-4 space-y-3">
+    <div className="rounded-xl bg-app-surface border border-app-border p-4 space-y-3">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <h3 className="text-sm font-semibold text-slate-100 flex items-center gap-2">
             Diurnal Forecast Error Heatmap (24h × {dates.length} Delivery Days)
           </h3>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-muted">
             Absolute forecast deviation (|Error| MW) by local hour of day and delivery date
           </p>
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-2 text-[10px] text-slate-400 self-end sm:self-auto">
+        <div className="flex items-center gap-2 text-[10px] text-muted self-end sm:self-auto">
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded bg-emerald-950 border border-emerald-800 inline-block" />
+            <span className="w-2.5 h-2.5 rounded bg-emerald-950/60 border border-emerald-800/60 inline-block" />
             &lt;1k MW
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded bg-amber-950 border border-amber-800 inline-block" />
+            <span className="w-2.5 h-2.5 rounded bg-amber-950/60 border border-amber-800/60 inline-block" />
             1k–2k
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded bg-orange-950 border border-orange-700 inline-block" />
+            <span className="w-2.5 h-2.5 rounded bg-orange-950/60 border border-orange-800/60 inline-block" />
             2k–3k
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded bg-rose-950 border border-rose-700 inline-block" />
+            <span className="w-2.5 h-2.5 rounded bg-rose-950/60 border border-rose-800/60 inline-block" />
             &gt;3k MW
           </span>
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-slate-800">
+      <div className="overflow-x-auto rounded-lg border border-app-border">
         <table className="w-full text-center border-collapse text-[10px] font-mono">
           <thead>
-            <tr className="bg-slate-950 border-b border-slate-800 text-slate-400">
+            <tr className="bg-[#0E1726] border-b border-app-border text-muted">
               <th className="p-1 text-left w-14 font-semibold text-slate-300">Hour</th>
               {dates.map((d) => (
                 <th key={d} className="p-1 font-semibold whitespace-nowrap min-w-[28px]">
@@ -94,10 +94,10 @@ export function DiurnalHeatmap({ items, onSelectCell }: DiurnalHeatmapProps) {
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800/40">
+          <tbody className="divide-y divide-app-border/40">
             {Array.from({ length: 24 }, (_, hour) => (
-              <tr key={hour} className="hover:bg-slate-800/20">
-                <td className="p-1 text-left font-semibold text-slate-400 whitespace-nowrap bg-slate-950/60 border-r border-slate-800/60">
+              <tr key={hour} className="hover:bg-app-elevated/40">
+                <td className="p-1 text-left font-semibold text-muted whitespace-nowrap bg-[#0E1726]/60 border-r border-app-border/60">
                   {String(hour).padStart(2, "0")}:00
                 </td>
                 {dates.map((date) => {

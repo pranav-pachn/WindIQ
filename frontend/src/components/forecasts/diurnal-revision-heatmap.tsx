@@ -38,49 +38,49 @@ export const DiurnalRevisionHeatmap: React.FC<DiurnalRevisionHeatmapProps> = ({ 
 
   // Color interpolation helper
   const getCellColor = (val: number | undefined) => {
-    if (val === undefined || val === 0) return 'bg-slate-900 text-slate-500'
+    if (val === undefined || val === 0) return 'bg-app-bg text-muted'
     const intensity = Math.min(val / matrix.maxVal, 1)
 
     if (intensity < 0.25) {
-      return 'bg-blue-950/40 text-blue-300 border border-blue-900/30'
+      return 'bg-app-elevated text-slate-300 border border-app-border'
     } else if (intensity < 0.5) {
-      return 'bg-indigo-950/60 text-indigo-200 border border-indigo-800/40'
+      return 'bg-accent/15 text-accent border border-accent/30'
     } else if (intensity < 0.75) {
-      return 'bg-amber-950/70 text-amber-200 border border-amber-800/50'
+      return 'bg-amber-950/40 text-amber-200 border border-amber-800/40'
     } else {
-      return 'bg-rose-950/80 text-rose-200 border border-rose-700/60 font-bold'
+      return 'bg-rose-950/60 text-rose-200 border border-rose-800/50 font-bold'
     }
   }
 
   return (
-    <Card className="bg-slate-900 border-slate-800">
+    <Card className="bg-app-surface border-app-border">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-base font-semibold text-slate-200">
               Diurnal Revision Volatility Matrix (24h &times; 6 Horizons)
             </CardTitle>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-muted mt-1">
               Mean absolute revision (|&Delta; MW|) segmented by UK local hour of day and lead time horizon. Highlights when forecast updates are most turbulent.
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] text-slate-400">Scale:</span>
+            <span className="text-[11px] text-muted">Scale:</span>
             <div className="flex items-center gap-1 text-[10px]">
-              <span className="px-1.5 py-0.5 rounded bg-blue-950/50 text-blue-300 border border-blue-900/40">
+              <span className="px-1.5 py-0.5 rounded bg-app-elevated text-slate-300 border border-app-border font-mono">
                 Low
               </span>
-              <span className="px-1.5 py-0.5 rounded bg-indigo-950/60 text-indigo-200 border border-indigo-800/40">
+              <span className="px-1.5 py-0.5 rounded bg-accent/15 text-accent border border-accent/30 font-mono">
                 Moderate
               </span>
-              <span className="px-1.5 py-0.5 rounded bg-amber-950/70 text-amber-200 border border-amber-800/50">
+              <span className="px-1.5 py-0.5 rounded bg-amber-950/40 text-amber-200 border border-amber-800/40 font-mono">
                 Elevated
               </span>
-              <span className="px-1.5 py-0.5 rounded bg-rose-950/80 text-rose-200 border border-rose-700/60">
+              <span className="px-1.5 py-0.5 rounded bg-rose-950/60 text-rose-200 border border-rose-800/50 font-mono">
                 High Volatility
               </span>
             </div>
-            <Badge variant="outline" className="border-slate-700 text-slate-300 text-[10px]">
+            <Badge variant="outline" className="border-app-border text-muted text-[10px] font-mono">
               Peak: {formatMw(matrix.maxVal, 0)}
             </Badge>
           </div>
@@ -90,7 +90,7 @@ export const DiurnalRevisionHeatmap: React.FC<DiurnalRevisionHeatmapProps> = ({ 
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-center">
             <thead>
-              <tr className="text-[11px] text-slate-400 border-b border-slate-800">
+              <tr className="text-[11px] text-muted border-b border-app-border bg-[#0E1726]">
                 <th className="p-2 text-left font-semibold w-24">UK Hour</th>
                 {HORIZON_BUCKETS.map((bucket) => (
                   <th key={bucket} className="p-2 font-semibold">
@@ -99,12 +99,12 @@ export const DiurnalRevisionHeatmap: React.FC<DiurnalRevisionHeatmapProps> = ({ 
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/40">
+            <tbody className="divide-y divide-app-border/40">
               {hours.map((hour) => {
                 const hourFormatted = `${hour.toString().padStart(2, '0')}:00`
                 return (
-                  <tr key={hour} className="hover:bg-slate-800/20">
-                    <td className="p-1.5 text-left text-xs font-mono text-slate-300 font-medium">
+                  <tr key={hour} className="hover:bg-app-elevated/40">
+                    <td className="p-1.5 text-left text-xs font-mono text-muted font-medium bg-[#0E1726]/60 border-r border-app-border/60">
                       {hourFormatted}
                     </td>
                     {HORIZON_BUCKETS.map((bucket) => {
