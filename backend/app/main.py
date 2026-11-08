@@ -95,7 +95,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app = FastAPI(
         title=cfg.APP_NAME,
-        version="2.1.0",
+        version="2.2.0",
         description="Enterprise UK Wind Generation Forecast Accuracy Analytics Platform",
         docs_url="/docs",
         redoc_url="/redoc",
@@ -203,7 +203,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         """Returns application metadata, operational environment, and endpoint links."""
         return {
             "app_name": cfg.APP_NAME,
-            "version": "2.1.0",
+            "version": "2.2.0",
             "environment": cfg.APP_ENV,
             "status": "operational",
             "docs_url": "/docs",
@@ -221,6 +221,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "status": "alive",
             "timestamp": datetime.now(UTC).isoformat(),
             "environment": cfg.APP_ENV,
+            "version": "2.2.0",
         }
 
     @app.get("/health/ready", summary="Readiness Probe", tags=["Health"])
@@ -231,7 +232,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app_settings = getattr(request.app.state, "settings", None)
         is_db_ready = await check_db_health(engine=get_engine(app_settings))
         is_redis_ready = await check_redis_health(settings=app_settings)
-        is_ready = is_db_ready and is_redis_ready
+
+        # In cloud demo mode or when distributed rate-limiting is disabled, Redis is optional
+        rate_limiting_active = getattr(app_settings, "RATE_LIMIT_ENABLED", True)
+        is_cloud_demo = getattr(app_settings, "APP_ENV", "") == "cloud_demo"
+        if is_cloud_demo or not rate_limiting_active:
+            is_ready = is_db_ready
+        else:
+            is_ready = is_db_ready and is_redis_ready
 
         payload = {
             "status": "ready" if is_ready else "unhealthy",
