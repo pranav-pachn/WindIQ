@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
-import { Zap } from 'lucide-react'
+import { Zap, Loader2, AlertCircle } from 'lucide-react'
 import { Sidebar } from './sidebar'
 import { TopNav } from './top-nav'
 import { usePlatformOverview } from '@/hooks/use-overview'
@@ -12,10 +12,24 @@ export function AppShell() {
   const [collapsed, setCollapsed] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const [isBannerDismissed, setIsBannerDismissed] = useState(false)
+  const [isBannerLoggingIn, setIsBannerLoggingIn] = useState(false)
+  const [bannerError, setBannerError] = useState<string | null>(null)
   const location = useLocation()
   const { data: overview } = usePlatformOverview()
   const { period } = useEvaluationPeriod()
   const { isAuthenticated, isLoading, login } = useAuth()
+
+  const handleInstantLogin = async () => {
+    setIsBannerLoggingIn(true)
+    setBannerError(null)
+    try {
+      await login('analyst@windiq.local', 'AnalystPass123!#')
+    } catch (err: any) {
+      setBannerError(err?.message || 'Login failed. Please check backend connection.')
+    } finally {
+      setIsBannerLoggingIn(false)
+    }
+  }
 
   // Determine page title based on path
   const getPageInfo = () => {
@@ -102,11 +116,16 @@ export function AppShell() {
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => login('analyst@windiq.local', 'AnalystPass123!#')}
-                  className="px-3 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-all shadow-sm shadow-cyan-500/30"
+                  disabled={isBannerLoggingIn}
+                  onClick={handleInstantLogin}
+                  className="px-3 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-all shadow-sm shadow-cyan-500/30 disabled:opacity-60"
                 >
-                  <Zap className="w-3.5 h-3.5 fill-current" />
-                  <span>Instant Login as Analyst</span>
+                  {isBannerLoggingIn ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Zap className="w-3.5 h-3.5 fill-current" />
+                  )}
+                  <span>{isBannerLoggingIn ? 'Authenticating...' : 'Instant Login as Analyst'}</span>
                 </button>
                 <button
                   type="button"
@@ -118,6 +137,19 @@ export function AppShell() {
                 </button>
               </div>
             </div>
+            {bannerError && (
+              <div className="max-w-7xl mx-auto mt-2 p-2 rounded-lg bg-rose-950/90 border border-rose-800 text-rose-200 text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+                <span className="flex-1 font-mono">{bannerError}</span>
+                <button
+                  type="button"
+                  onClick={() => setBannerError(null)}
+                  className="text-rose-400 hover:text-rose-200 text-xs"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
           </div>
         )}
 

@@ -175,7 +175,14 @@ async function request<T>(endpoint: string, options?: RequestInit, isRetry = fal
               : JSON.stringify(errJson.detail);
         }
       } catch {
-        // Not a JSON response
+        // Not a JSON response (e.g. HTML gateway error)
+        if (res.status === 502) {
+          errorMessage = "Render backend service is unavailable (502 Bad Gateway). Please verify active deployment in Render dashboard.";
+        } else if (res.status === 503) {
+          errorMessage = "Backend service starting up (503 Service Unavailable). Please retry in a few seconds.";
+        } else if (res.status === 504) {
+          errorMessage = "Gateway timeout (504). Render backend instance is waking up.";
+        }
       }
 
       throw new ApiError(errorMessage, res.status, errorDetails, responseRequestId);

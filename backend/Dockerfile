@@ -50,7 +50,7 @@ ENV PYTHONUNBUFFERED=1 \
 
 USER windiq
 
-EXPOSE 8000
+EXPOSE 8000 10000
 
 # Native Python healthcheck (zero external curl/wget dependencies)
 HEALTHCHECK --interval=15s --timeout=5s --start-period=5s --retries=3 \
