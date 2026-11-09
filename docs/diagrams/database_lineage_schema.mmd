@@ -1,0 +1,55 @@
+%%{init: {'theme': 'dark'}}%%
+erDiagram
+    INGESTION_RUNS ||--o{ RAW_FORECAST_RECORDS : "ingests"
+    INGESTION_RUNS ||--o{ RAW_ACTUAL_READINGS : "ingests"
+    INGESTION_RUNS ||--o{ DATA_QUALITY_EVENTS : "audits"
+
+    RAW_ACTUAL_READINGS ||--|| HOURLY_ACTUAL_GENERATION : "SP_1 (00:00) + SP_2 (00:30)"
+    RAW_FORECAST_RECORDS ||--o{ FORECAST_EVALUATIONS : "selected_forecast_id (<= 09:00 UK)"
+    HOURLY_ACTUAL_GENERATION ||--o{ FORECAST_EVALUATIONS : "hourly_actual_id"
+
+    INGESTION_RUNS {
+        uuid id PK
+        timestamptz started_at_utc
+        timestamptz completed_at_utc
+        varchar status "RUNNING | SUCCESS | FAILED"
+        int records_processed
+    }
+
+    RAW_FORECAST_RECORDS {
+        uuid id PK
+        timestamptz publish_time_utc "UK Cutoff Evaluated Against This"
+        timestamptz delivery_hour_utc
+        numeric forecast_mw
+        varchar bmrs_dataset "WINDFOR"
+    }
+
+    RAW_ACTUAL_READINGS {
+        uuid id PK
+        timestamptz reading_time_utc
+        date settlement_date
+        int settlement_period "1..50"
+        numeric generation_mw
+        varchar settlement_run "II | SF | R1 | RF"
+    }
+
+    HOURLY_ACTUAL_GENERATION {
+        uuid id PK
+        timestamptz delivery_hour_utc UK
+        uuid reading_first_half_id FK "First 30m Settlement Reading"
+        uuid reading_second_half_id FK "Second 30m Settlement Reading"
+        numeric actual_mw "Exact 2-Reading Mean"
+    }
+
+    FORECAST_EVALUATIONS {
+        uuid id PK
+        timestamptz delivery_hour_utc
+        varchar cutoff_rule_applied "09:00 Europe/London"
+        timestamptz decision_cutoff_utc
+        uuid selected_forecast_id FK
+        uuid hourly_actual_id FK
+        numeric signed_error_mw "Forecast - Actual"
+        numeric absolute_error_mw
+        numeric squared_error_mw2
+        numeric ape_percent
+    }

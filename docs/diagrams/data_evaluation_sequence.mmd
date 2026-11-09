@@ -1,0 +1,36 @@
+%%{init: {'theme': 'dark', 'themeVariables': { 'actorBkg': '#1e293b', 'actorBorder': '#64748b', 'actorTextColor': '#f8fafc', 'signalColor': '#94a3b8', 'signalTextColor': '#f8fafc', 'noteBkgColor': '#0f172a', 'noteBorderColor': '#3b82f6', 'noteTextColor': '#e2e8f0'}}}%%
+sequenceDiagram
+    autonumber
+    actor Trader as Energy Trader /<br/>Analyst
+    participant UI as React 19 SPA<br/>(Web Dashboard)
+    participant API as FastAPI Gateway<br/>(Auth & Rate Limit)
+    participant Domain as Domain Engine &<br/>WindIQScheduler
+    participant DB as PostgreSQL 16<br/>(TIMESTAMPTZ UTC)
+    participant BMRS as Elexon BMRS API<br/>(WINDFOR / FUELHH)
+
+    rect rgb(15, 23, 42)
+        Note over Domain, BMRS: Phase 1: Out-of-Band Ingestion & 09:00 UK Cutoff Evaluation (APScheduler)
+        Domain->>DB: Acquire PG Advisory Lock (42, 1001) & create IngestionRun (status='RUNNING')
+        Domain->>BMRS: Poll WINDFOR publications & FUELHH settlement streams (Exponential Backoff)
+        BMRS-->>Domain: Raw JSON Payloads (UTC timestamps)
+        Domain->>DB: Bulk Upsert raw_forecast_records & raw_actual_readings (No synthetic interpolation)
+
+        Note over Domain, DB: Day-Ahead 09:00 Europe/London Rule (GMT=09:00Z / BST=08:00Z)
+        Domain->>DB: 1. Select latest WINDFOR where publish_time <= decision_cutoff_utc
+        Domain->>DB: 2. Aggregate strictly 2 half-hourly FUELHH readings (e.g. SP25 + SP26) -> hourly_actual_generation
+        Domain->>DB: 3. Commit immutable forecast_evaluations (Error = Forecast - Actual, MAE, RMSE, MAPE, Bias)
+        Domain->>DB: Mark IngestionRun (status='SUCCESS') & log DataQualityEvents
+    end
+
+    rect rgb(23, 37, 84)
+        Note over Trader, DB: Phase 2: Synchronous Inspection & Immutable Lineage Audit (Zero External Latency)
+        Trader->>UI: Select Delivery Hour (e.g. 2026-01-28 12:00 UTC)
+        UI->>API: GET /api/v1/forecasts/publications/2026-01-28T12:00:00Z
+        API->>API: Validate JWT / API Key & Redis Sliding-Window Rate Limit
+        API->>Domain: Resolve publication revision history & settlement lineage
+        Domain->>DB: Fetch winning forecast_id, all 24 prior revisions & 2 constituent FUELHH readings
+        DB-->>Domain: Precomputed Evaluation + Revision Curve + SP25/SP26 Settlement Rows
+        Domain-->>API: Validated Pydantic v2 Lineage DTO
+        API-->>UI: 200 OK (JSON Payload + X-Request-ID)
+        UI-->>Trader: Render Publication Evolution Curve & Audit Lineage Modal
+    end
