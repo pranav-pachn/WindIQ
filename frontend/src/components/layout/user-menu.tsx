@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { User, Key, LogOut, ChevronDown, Sparkles } from 'lucide-react'
+import { User, Key, LogOut, ChevronDown, Sparkles, X } from 'lucide-react'
 import { useAuth } from '@/context/auth-context'
 import { api } from '@/lib/api-client'
 import { QuickRoleSwitcher } from '@/components/layout/quick-role-switcher'
@@ -105,11 +105,22 @@ export function UserMenu() {
                 <span className="text-[10px] uppercase tracking-wider text-[#718198] font-mono font-semibold">
                   Active Session
                 </span>
-                {user?.is_active && (
-                  <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-[#133829] text-[#35B98A] border border-[#1C523B]">
-                    Authenticated
-                  </span>
-                )}
+                <div className="flex items-center gap-2">
+                  {user?.is_active && (
+                    <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-[#133829] text-[#35B98A] border border-[#1C523B]">
+                      Authenticated
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setIsOpen(false)}
+                    className="p-1 rounded-md text-[#9AAABD] hover:text-[#E7EDF5] hover:bg-[#162337] border border-transparent hover:border-[#26364A] transition-colors"
+                    title="Close user menu"
+                    aria-label="Close user menu"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
               <div className="font-semibold text-[#E7EDF5] truncate text-xs">
                 {user?.email ?? 'Unauthenticated (Guest Mode)'}
@@ -132,7 +143,19 @@ export function UserMenu() {
                   <Sparkles className="w-3 h-3 text-[#35B9C8]" />
                   <span>Demo Role Switcher</span>
                 </div>
-                <span className="text-[10px] text-[#718198]">Instant RBAC</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] text-[#718198]">Instant RBAC</span>
+                  <button
+                    type="button"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono text-[#9AAABD] hover:text-[#E7EDF5] bg-[#162337] hover:bg-[#1E2B3E] border border-[#26364A] transition-colors"
+                    title="Close role switcher"
+                    aria-label="Close role switcher"
+                  >
+                    <X className="w-3 h-3" />
+                    <span>Close</span>
+                  </button>
+                </div>
               </div>
 
               <QuickRoleSwitcher variant="cards" onRoleSwitched={() => {}} />
@@ -163,6 +186,14 @@ export function UserMenu() {
                   <span>Sign Out Session</span>
                 </button>
               )}
+
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="w-full mt-1 py-1 rounded-md text-center text-[11px] font-mono text-[#9AAABD] hover:text-[#E7EDF5] bg-[#162337]/60 hover:bg-[#162337] border border-[#26364A] transition-colors"
+              >
+                Close Menu
+              </button>
             </div>
           </div>
         </>

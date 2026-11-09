@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Shield, Sparkles, KeyRound, Check, Loader2, AlertCircle, Zap } from 'lucide-react'
+  import { Shield, Sparkles, KeyRound, Check, Loader2, AlertCircle, Zap, X } from 'lucide-react'
 import { useAuth } from '@/context/auth-context'
 
 export interface DemoAccount {
@@ -57,15 +57,17 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
 interface QuickRoleSwitcherProps {
   variant?: 'compact' | 'cards'
   onRoleSwitched?: () => void
+  onClose?: () => void
 }
 
-export function QuickRoleSwitcher({ variant = 'compact', onRoleSwitched }: QuickRoleSwitcherProps) {
+export function QuickRoleSwitcher({ variant = 'compact', onRoleSwitched, onClose }: QuickRoleSwitcherProps) {
   const { role, login } = useAuth()
   const [switchingRole, setSwitchingRole] = useState<string | null>(null)
   const [switchError, setSwitchError] = useState<string | null>(null)
+  const [isDismissed, setIsDismissed] = useState(false)
 
-  // Completely suppress demo role switcher if disabled in enterprise production
-  if (import.meta.env.VITE_ENABLE_DEMO_SWITCHER === 'false') {
+  // Completely suppress demo role switcher if disabled in enterprise production or dismissed
+  if (import.meta.env.VITE_ENABLE_DEMO_SWITCHER === 'false' || isDismissed) {
     return null
   }
 
@@ -125,6 +127,20 @@ export function QuickRoleSwitcher({ variant = 'compact', onRoleSwitched }: Quick
               </button>
             )
           })}
+
+          <div className="w-[1px] h-3.5 bg-[#26364A] mx-0.5" />
+          <button
+            type="button"
+            onClick={() => {
+              setIsDismissed(true)
+              onClose?.()
+            }}
+            className="p-1 rounded text-[#718198] hover:text-[#E36D73] hover:bg-[#3E1A1D]/60 transition-colors"
+            title="Dismiss demo role switcher"
+            aria-label="Close role switcher"
+          >
+            <X className="w-3 h-3" />
+          </button>
         </div>
 
         {switchError && (
@@ -146,6 +162,22 @@ export function QuickRoleSwitcher({ variant = 'compact', onRoleSwitched }: Quick
 
   return (
     <div className="space-y-2">
+      {onClose && (
+        <div className="flex items-center justify-between pb-1 border-b border-[#1E2B3E]">
+          <span className="text-[10px] font-mono uppercase text-[#718198] font-semibold">
+            Role Switcher
+          </span>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-1 rounded text-[#718198] hover:text-[#E7EDF5] hover:bg-[#162337] transition-colors"
+            title="Close role switcher"
+            aria-label="Close role switcher"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
       {switchError && (
         <div className="p-2.5 rounded-md bg-[#3E1A1D] border border-[#5E262B] text-[#E36D73] text-xs flex items-start gap-2">
           <AlertCircle className="w-4 h-4 text-[#E36D73] shrink-0 mt-0.5" />

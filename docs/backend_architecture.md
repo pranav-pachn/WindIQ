@@ -20,71 +20,154 @@ The backend architecture is structured as a **modular monolith** adhering to Cle
 
 ---
 
-## 2. System Architecture (Modular Monolith)
+## 2. System Architecture (Full-Stack & Cloud Topology)
 
-The system avoids the operational complexity of distributed microservices (no unnecessary message queues, service meshes, or Redis/Kafka clusters at current scale). Instead, clean vertical domain boundaries are enforced within a single deployment unit.
+WindIQ enforces clean domain boundaries with an asynchronous background orchestration engine, decoupled read services, dual-token JWT / CSRF security middleware, atomic sliding-window rate limiting via Redis 7, single-leader scheduling via PostgreSQL advisory locks `(42, 1001)`, and strict relational data lineage.
 
 ```mermaid
-graph TD
-    subgraph Clients ["Clients & External Systems"]
-        UI["Web UI / Dashboard (Phase 3)"]
-        CLI["Admin CLI & Ingestion Runner"]
-        ELEXON["Elexon BMRS API (External)"]
+%%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#1e293b', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#475569', 'lineColor': '#94a3b8', 'secondaryColor': '#0f172a', 'tertiaryColor': '#1e1b4b'}}}%%
+flowchart TB
+    %% ─────────────────────────────────────────────────────────────
+    %% 1. PRESENTATION LAYER
+    %% ─────────────────────────────────────────────────────────────
+    subgraph Presentation ["1. Presentation Layer (React 19 · TypeScript · Vite 8 · TanStack Query)"]
+        direction LR
+        Browser["User Browser<br/>(Desktop / Trading Workstation)"]
+        subgraph UI_Views ["SPA Analytical Views"]
+            direction LR
+            V_Exec["Executive Overview<br/>Dashboard"]
+            V_Exp["Forecast Explorer<br/>(Multi-Horizon & Evolution)"]
+            V_Acc["Accuracy Workstation<br/>(MAE · RMSE · MAPE · Bias)"]
+            V_RBAC["Role Switcher &<br/>RBAC Context (Viewer/Analyst/Admin)"]
+        end
+        Browser --> UI_Views
     end
 
-    subgraph API_Layer ["Presentation Layer (FastAPI)"]
-        ROUTER["API Router (/api/v1)"]
-        MW["Middleware (Tracing, CORS, Timing, Errors)"]
-        SCHEMAS["Pydantic v2 Schemas (Validation & DTOs)"]
+    %% ─────────────────────────────────────────────────────────────
+    %% 2. EDGE & INGRESS LAYER
+    %% ─────────────────────────────────────────────────────────────
+    subgraph Edge ["2. Edge & Ingress Layer (Vercel Edge CDN / Nginx Alpine)"]
+        direction LR
+        CDN["Global Edge Proxy & TLS Termination"]
+        Static["Static SPA Assets<br/>(HTML · CSS · JS Bundles)"]
+        Rewrite["Edge Rewrite Proxy<br/>(/api/v1/* · /health/*)"]
+        CDN --> Static
+        CDN --> Rewrite
     end
 
-    subgraph Domain_Layer ["Domain Service Layer"]
-        FC_SVC["Forecast Service"]
-        ACT_SVC["Actuals Service"]
-        ACC_SVC["Accuracy Evaluation Service"]
-        DQ_SVC["Data Health Service"]
-        ING_SVC["Ingestion Orchestrator"]
+    %% ─────────────────────────────────────────────────────────────
+    %% 3. APPLICATION GATEWAY (FASTAPI)
+    %% ─────────────────────────────────────────────────────────────
+    subgraph Gateway ["3. Application Gateway (FastAPI · Python 3.12+ · Pydantic v2)"]
+        direction TB
+        subgraph Security_MW ["Security & Governance Middleware Stack"]
+            direction LR
+            MW_Proxy["TrustedProxyMiddleware<br/>(CIDR X-Forwarded-For)"]
+            MW_Headers["Security Headers · CORS · CSP<br/>& Trace ID (X-Request-ID)"]
+            MW_Rate["Sliding-Window Rate Limiter<br/>(Lua Atomic · Fail-Open)"]
+            MW_Auth["Dual-Token JWT (HS256) · Argon2id<br/>& Double-Submit CSRF"]
+            MW_Proxy --> MW_Headers --> MW_Rate --> MW_Auth
+        end
+
+        subgraph Routers ["REST API v1 Routers"]
+            direction LR
+            R_Over["/api/v1/overview"]
+            R_Fc["/api/v1/forecasts<br/>(Horizons · Revisions · Lineage)"]
+            R_Acc["/api/v1/accuracy<br/>(Summary · Daily · Hourly)"]
+            R_DQ["/api/v1/data-health"]
+            R_Auth["/api/v1/auth<br/>(Login · Rotation · API Keys)"]
+            R_Health["/health/live &<br/>/health/ready"]
+        end
+
+        Security_MW --> Routers
     end
 
-    subgraph Persistence_Layer ["Persistence Layer (SQLAlchemy 2.0 Async)"]
-        FC_REPO["Forecast Repository"]
-        ACT_REPO["Actuals Repository"]
-        EVAL_REPO["Evaluation Repository"]
-        DQ_REPO["Data Quality Repository"]
-        ING_REPO["Ingestion Run Repository"]
+    %% ─────────────────────────────────────────────────────────────
+    %% 4. DOMAIN SERVICES & BACKGROUND ORCHESTRATION
+    %% ─────────────────────────────────────────────────────────────
+    subgraph Domain ["4. Domain Services & Out-of-Band Orchestration"]
+        direction LR
+        subgraph Read_Services ["Synchronous Analytical Services"]
+            direction TB
+            S_Acc["Accuracy Service<br/>(MAE · RMSE · MAPE · Quantiles)"]
+            S_Fc["Forecast Service<br/>(Multi-Horizon & Evolution)"]
+            S_Act["Actuals Service<br/>(2x Half-Hourly FUELHH Avg)"]
+            S_DQ["Data Health Service<br/>(Gap & Duplicate Audits)"]
+        end
+
+        subgraph BG_Engine ["Background Ingestion Engine (Out-of-Band)"]
+            direction TB
+            Scheduler["WindIQScheduler<br/>(APScheduler 3.x AsyncIO)"]
+            Eval_Orch["Evaluation Orchestrator<br/>(09:00 Europe/London Cutoff)"]
+            BMRS_Client["Elexon BMRS Extractor<br/>(Exponential Backoff)"]
+            Scheduler --> Eval_Orch
+            Scheduler --> BMRS_Client
+        end
     end
 
-    subgraph Storage ["Database (PostgreSQL 16+)"]
-        PG_RAW_FC[("raw_forecast_records")]
-        PG_RAW_ACT[("raw_actual_readings")]
-        PG_HR_ACT[("hourly_actual_generation")]
-        PG_EVAL[("forecast_evaluations")]
-        PG_ING[("ingestion_runs")]
-        PG_DQ[("data_quality_events")]
+    %% ─────────────────────────────────────────────────────────────
+    %% 5. EXTERNAL DATA SOURCES
+    %% ─────────────────────────────────────────────────────────────
+    subgraph External ["External Market Data Source"]
+        Elexon["Elexon BMRS API<br/>(WINDFOR Publications & FUELHH Settlement Runs)"]
     end
 
-    UI -->|HTTP / REST| MW
-    MW --> ROUTER
-    ROUTER --> SCHEMAS
-    ROUTER --> Domain_Layer
+    %% ─────────────────────────────────────────────────────────────
+    %% 6. PERSISTENCE & DISTRIBUTED COORDINATION
+    %% ─────────────────────────────────────────────────────────────
+    subgraph Persistence ["5. Persistence & Coordination Layer (SQLAlchemy 2.0 Async · Alembic)"]
+        direction LR
+        subgraph PG ["PostgreSQL 16+ (TIMESTAMPTZ UTC)"]
+            direction LR
+            T_RawFc[("raw_forecast_records")]
+            T_RawAct[("raw_actual_readings")]
+            T_HrAct[("hourly_actual_generation")]
+            T_Eval[("forecast_evaluations")]
+            T_Ops[("ingestion_runs &<br/>data_quality_events")]
+            T_Auth[("users · refresh_tokens<br/>& api_keys")]
+        end
 
-    CLI --> ING_SVC
-    ING_SVC -->|ElexonExtractor| ELEXON
-    ING_SVC --> Domain_Layer
+        subgraph Redis_Cluster ["Redis 7.2+ (Distributed Coordination)"]
+            R_Store[("Sliding-Window Counters &<br/>Token Family Blacklist")]
+        end
+    end
 
-    FC_SVC --> FC_REPO
-    ACT_SVC --> ACT_REPO
-    ACC_SVC --> EVAL_REPO
-    ACC_SVC --> FC_REPO
-    ACC_SVC --> ACT_REPO
-    DQ_SVC --> DQ_REPO
+    %% ─────────────────────────────────────────────────────────────
+    %% CROSS-LAYER CONNECTIONS
+    %% ─────────────────────────────────────────────────────────────
+    UI_Views ==>|"HTTPS / REST"| CDN
+    Rewrite ==> MW_Proxy
+    MW_Rate -.->|"Atomic Lua Eval"| R_Store
 
-    FC_REPO --> PG_RAW_FC
-    ACT_REPO --> PG_RAW_ACT
-    ACT_REPO --> PG_HR_ACT
-    EVAL_REPO --> PG_EVAL
-    DQ_REPO --> PG_DQ
-    ING_REPO --> PG_ING
+    R_Over & R_Acc --> S_Acc
+    R_Fc --> S_Fc
+    R_Fc --> S_Act
+    R_DQ --> S_DQ
+    R_Auth --> T_Auth
+
+    BMRS_Client ==>|"HTTPS GET Stream"| Elexon
+    Scheduler -.->|"PG Advisory Lock (42, 1001)<br/>Single-Leader Election"| PG
+
+    S_Acc --> T_Eval
+    S_Fc --> T_RawFc
+    S_Act --> T_HrAct & T_RawAct
+    S_DQ --> T_Ops
+
+    BMRS_Client --> T_RawFc & T_RawAct
+    Eval_Orch --> T_HrAct & T_Eval & T_Ops
+
+    %% Styling
+    classDef layer fill:#0f172a,stroke:#334155,stroke-width:1.5px,color:#f8fafc;
+    classDef subbox fill:#1e293b,stroke:#475569,stroke-width:1px,color:#e2e8f0;
+    classDef db fill:#064e3b,stroke:#10b981,stroke-width:1.5px,color:#ecfdf5;
+    classDef redis fill:#7f1d1d,stroke:#ef4444,stroke-width:1.5px,color:#fef2f2;
+    classDef ext fill:#312e81,stroke:#6366f1,stroke-width:1.5px,color:#e0e7ff;
+
+    class Presentation,Edge,Gateway,Domain,Persistence layer;
+    class UI_Views,Security_MW,Routers,Read_Services,BG_Engine subbox;
+    class T_RawFc,T_RawAct,T_HrAct,T_Eval,T_Ops,T_Auth db;
+    class R_Store redis;
+    class Elexon ext;
 ```
 
 ---
@@ -157,39 +240,107 @@ backend/
 
 ## 4. End-to-End Data Flow & Ingestion Decoupling
 
-External API interactions are strictly decoupled from API read routes:
+External API interactions and heavy analytical evaluations operate strictly out-of-band, guaranteeing sub-50ms read latency on analytical endpoints:
 
 ```mermaid
+%%{init: {'theme': 'dark', 'themeVariables': { 'actorBkg': '#1e293b', 'actorBorder': '#64748b', 'actorTextColor': '#f8fafc', 'signalColor': '#94a3b8', 'signalTextColor': '#f8fafc', 'noteBkgColor': '#0f172a', 'noteBorderColor': '#3b82f6', 'noteTextColor': '#e2e8f0'}}}%%
 sequenceDiagram
     autonumber
-    participant Scheduler as Ingestion Trigger (CLI/Cron)
-    participant IngService as Ingestion Service
-    participant Extractor as Elexon Extractor
-    participant BMRS as Elexon BMRS API
-    participant Normalizer as Actuals Normalizer
-    participant Selector as Forecast Selector
-    participant DB as PostgreSQL Database
-    participant API as FastAPI Read Router
-    participant Client as Dashboard Client
+    actor Trader as Energy Trader /<br/>Analyst
+    participant UI as React 19 SPA<br/>(Web Dashboard)
+    participant API as FastAPI Gateway<br/>(Auth & Rate Limit)
+    participant Domain as Domain Engine &<br/>WindIQScheduler
+    participant DB as PostgreSQL 16<br/>(TIMESTAMPTZ UTC)
+    participant BMRS as Elexon BMRS API<br/>(WINDFOR / FUELHH)
 
-    Note over Scheduler, DB: Asynchronous ETL Phase (Out-of-Band)
-    Scheduler->>IngService: Trigger Ingestion (e.g. Daily at 10:00 UTC)
-    IngService->>DB: Create IngestionRun (status='RUNNING')
-    IngService->>Extractor: Extract WINDFOR & FUELHH
-    Extractor->>BMRS: HTTP GET with Exponential Backoff
-    BMRS-->>Extractor: JSON Stream Payload
-    Extractor->>DB: Bulk Insert raw_forecast_records & raw_actual_readings
-    IngService->>Normalizer: Aggregate Half-Hourly FUELHH Readings
-    Normalizer->>DB: Bulk Insert hourly_actual_generation
-    IngService->>Selector: Apply Cutoff & Match Forecasts
-    Selector->>DB: Bulk Upsert forecast_evaluations
-    IngService->>DB: Update IngestionRun (status='SUCCESS', runtime, counts)
+    rect rgb(15, 23, 42)
+        Note over Domain, BMRS: Phase 1: Out-of-Band Ingestion & 09:00 UK Cutoff Evaluation (APScheduler)
+        Domain->>DB: Acquire PG Advisory Lock (42, 1001) & create IngestionRun (status='RUNNING')
+        Domain->>BMRS: Poll WINDFOR publications & FUELHH settlement streams (Exponential Backoff)
+        BMRS-->>Domain: Raw JSON Payloads (UTC timestamps)
+        Domain->>DB: Bulk Upsert raw_forecast_records & raw_actual_readings (No synthetic interpolation)
 
-    Note over Client, DB: Synchronous Read Phase (Fast, Cached, Zero Latency)
-    Client->>API: GET /api/v1/accuracy/summary?delivery_date_from=2026-01-02
-    API->>DB: Query precomputed forecast_evaluations & hourly_actual_generation
-    DB-->>API: Filtered records
-    API-->>Client: 200 OK (Instant Response)
+        Note over Domain, DB: Day-Ahead 09:00 Europe/London Rule (GMT=09:00Z / BST=08:00Z)
+        Domain->>DB: 1. Select latest WINDFOR where publish_time <= decision_cutoff_utc
+        Domain->>DB: 2. Aggregate strictly 2 half-hourly FUELHH readings (e.g. SP25 + SP26) -> hourly_actual_generation
+        Domain->>DB: 3. Commit immutable forecast_evaluations (Error = Forecast - Actual, MAE, RMSE, MAPE, Bias)
+        Domain->>DB: Mark IngestionRun (status='SUCCESS') & log DataQualityEvents
+    end
+
+    rect rgb(23, 37, 84)
+        Note over Trader, DB: Phase 2: Synchronous Inspection & Immutable Lineage Audit (Zero External Latency)
+        Trader->>UI: Select Delivery Hour (e.g. 2026-01-28 12:00 UTC)
+        UI->>API: GET /api/v1/forecasts/publications/2026-01-28T12:00:00Z
+        API->>API: Validate JWT / API Key & Redis Sliding-Window Rate Limit
+        API->>Domain: Resolve publication revision history & settlement lineage
+        Domain->>DB: Fetch winning forecast_id, all 24 prior revisions & 2 constituent FUELHH readings
+        DB-->>Domain: Precomputed Evaluation + Revision Curve + SP25/SP26 Settlement Rows
+        Domain-->>API: Validated Pydantic v2 Lineage DTO
+        API-->>UI: 200 OK (JSON Payload + X-Request-ID)
+        UI-->>Trader: Render Publication Evolution Curve & Audit Lineage Modal
+    end
+```
+
+### 4.1 Database Entity-Relationship & Lineage Schema
+
+To guarantee Requirement #2 (Immutable Traceability), every evaluation record stores relational foreign keys directly to its selected winning forecast publication and its hourly actual generation record (which links to the two specific half-hourly settlement readings):
+
+```mermaid
+%%{init: {'theme': 'dark'}}%%
+erDiagram
+    INGESTION_RUNS ||--o{ RAW_FORECAST_RECORDS : "ingests"
+    INGESTION_RUNS ||--o{ RAW_ACTUAL_READINGS : "ingests"
+    INGESTION_RUNS ||--o{ DATA_QUALITY_EVENTS : "audits"
+
+    RAW_ACTUAL_READINGS ||--|| HOURLY_ACTUAL_GENERATION : "SP_1 (00:00) + SP_2 (00:30)"
+    RAW_FORECAST_RECORDS ||--o{ FORECAST_EVALUATIONS : "selected_forecast_id (<= 09:00 UK)"
+    HOURLY_ACTUAL_GENERATION ||--o{ FORECAST_EVALUATIONS : "hourly_actual_id"
+
+    INGESTION_RUNS {
+        uuid id PK
+        timestamptz started_at_utc
+        timestamptz completed_at_utc
+        varchar status "RUNNING | SUCCESS | FAILED"
+        int records_processed
+    }
+
+    RAW_FORECAST_RECORDS {
+        uuid id PK
+        timestamptz publish_time_utc "UK Cutoff Evaluated Against This"
+        timestamptz delivery_hour_utc
+        numeric forecast_mw
+        varchar bmrs_dataset "WINDFOR"
+    }
+
+    RAW_ACTUAL_READINGS {
+        uuid id PK
+        timestamptz reading_time_utc
+        date settlement_date
+        int settlement_period "1..50"
+        numeric generation_mw
+        varchar settlement_run "II | SF | R1 | RF"
+    }
+
+    HOURLY_ACTUAL_GENERATION {
+        uuid id PK
+        timestamptz delivery_hour_utc UK
+        uuid reading_first_half_id FK "First 30m Settlement Reading"
+        uuid reading_second_half_id FK "Second 30m Settlement Reading"
+        numeric actual_mw "Exact 2-Reading Mean"
+    }
+
+    FORECAST_EVALUATIONS {
+        uuid id PK
+        timestamptz delivery_hour_utc
+        varchar cutoff_rule_applied "09:00 Europe/London"
+        timestamptz decision_cutoff_utc
+        uuid selected_forecast_id FK
+        uuid hourly_actual_id FK
+        numeric signed_error_mw "Forecast - Actual"
+        numeric absolute_error_mw
+        numeric squared_error_mw2
+        numeric ape_percent
+    }
 ```
 
 ---
@@ -245,7 +396,46 @@ When an error occurs, the API returns a structured RFC 7807 problem response:
 
 ---
 
-## 7. Testing Strategy & Quality Gates
+## 7. Authentication, Session Management & RBAC
+
+* **Password Security**: Passwords hashed using standard Argon2id with cryptographically random salts.
+* **Dual-Token JWT Architecture**:
+  * **Short-Lived Access Tokens**: Signed with HS256, 15-minute validity, carried in `Authorization: Bearer <token>` or returned in response payload.
+  * **Secure HTTP-Only Refresh Tokens**: 7-day validity, bound to single-flight token family rotation stored in PostgreSQL (`refresh_tokens` table).
+  * **Theft Detection & Family Revocation**: If an invalidated refresh token is reused, the entire token family is immediately revoked, forcing all active sessions to terminate.
+* **Double-Submit CSRF Hardening**: Stateful mutation requests (`POST`, `PUT`, `DELETE`, `PATCH`) require cryptographic `X-CSRF-Token` headers matched against secure SameSite cookies scoped to `/`.
+* **Role-Based Access Control (RBAC)**:
+  * **Viewer**: Read-only access to standard analytical overview and benchmark summaries.
+  * **Analyst**: Deep access to publication revisions, multi-horizon analytics, lineage modals, and CSV exports.
+  * **Admin**: Unrestricted analytical access, API key provisioning/revocation, ingestion triggers, and system audit logs.
+
+---
+
+## 8. Distributed Rate Limiting & Production API Security
+
+* **Atomic Sliding-Window Rate Limiting**: Enforced via Redis 7.x Lua scripts across distributed API worker processes:
+  * **Login Endpoint**: 5 attempts per 60 seconds per IP with account-level lockouts.
+  * **Analytics Endpoints**: 60 requests per minute per IP/API-key for public viewers; 300 requests per minute for authenticated analysts.
+  * **Fail-Open Resilience**: If Redis is temporarily unreachable in demo environments, rate limiting fails open gracefully with structured warnings rather than returning 500 errors.
+* **Reverse Proxy Header Trust**: Configured `TrustedProxyMiddleware` parses `X-Forwarded-For` strictly against configured proxy CIDR blocks (Docker bridge, Render/Vercel edges), preventing IP spoofing.
+* **Security Headers & Tracing**: All responses enforce `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, modern Content Security Policies, and trace IDs (`X-Request-ID`).
+
+---
+
+## 9. Background Ingestion & Scheduling (`WindIQScheduler`)
+
+* **Engine**: Built on `APScheduler 3.x` with AsyncIO event loop integration.
+* **Leader Election via PostgreSQL Advisory Locks**:
+  * Prevents concurrent multi-container execution race conditions during horizontal scaling.
+  * Uses deterministic advisory lock key `(42, 1001)` acquired on startup and released gracefully on shutdown.
+* **Cron & Interval Cadences**:
+  * **Day-Ahead Ingestion**: Evaluates rolling dates where the 09:00 Europe/London cutoff has elapsed.
+  * **Settlement Actuals Ingestion**: Polls BMRS `FUELHH` runs at half-hourly intervals with lookback windows to capture settlement runs (II, SF, R1, RF).
+  * **Data Quality Audits**: Hourly automated audits verifying sequence gaps, negative generation, and publication duplicates.
+
+---
+
+## 10. Testing Strategy & Quality Gates
 
 The backend test suite uses `pytest` and `pytest-asyncio` organized into four distinct test layers:
 

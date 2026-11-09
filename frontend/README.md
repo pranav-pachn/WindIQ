@@ -1,32 +1,38 @@
-# React + TypeScript + Vite
+# WindIQ Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Enterprise analytics dashboard for UK Wind Generation forecast accuracy intelligence.
 
-Currently, two official plugins are available:
+## Technology Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+* **Core**: React 19, TypeScript 5.6, Vite 8
+* **Styling**: Tailwind CSS 3.4, Lucide React
+* **State & Data Fetching**: TanStack Query (React Query v5)
+* **Visualization**: Recharts (diurnal heatmaps, multi-horizon bars, error quantiles, timeline brush)
+* **Testing & Quality**: Vitest 5.1, React Testing Library, Oxlint
 
-## React Compiler
+## Available Scripts
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+# Start local Vite development server
+npm run dev
 
-## Expanding the Oxlint configuration
+# Run TypeScript typecheck without emitting
+npm run typecheck
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+# Run linter
+npm run lint
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+# Run Vitest test suite
+npm test
+
+# Build optimized production bundle
+npm run build
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Structure
+
+* `src/pages/`: Main views (`overview-page.tsx`, `accuracy-page.tsx`, `forecast-page.tsx`)
+* `src/components/`: Modular domain components (`dashboard/`, `accuracy/`, `forecasts/`, `charts/`, `layout/`, `ui/`)
+* `src/hooks/`: Typed TanStack Query data hooks (`use-overview`, `use-accuracy`, `use-forecasts`, `use-api-health`)
+* `src/lib/`: API client, date formatters, CSV export utilities, and theme tokens
+* `src/test/`: Comprehensive unit and integration test suite

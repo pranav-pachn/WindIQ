@@ -95,4 +95,35 @@ describe('QuickRoleSwitcher Component', () => {
       })
     })
   })
+
+  it('dismisses compact role switcher when close button is clicked', () => {
+    const onClose = vi.fn()
+    render(
+      <AuthProvider>
+        <QuickRoleSwitcher variant="compact" onClose={onClose} />
+      </AuthProvider>
+    )
+
+    const closeBtn = screen.getByRole('button', { name: /Close role switcher/i })
+    expect(closeBtn).toBeInTheDocument()
+    fireEvent.click(closeBtn)
+
+    expect(onClose).toHaveBeenCalled()
+    expect(screen.queryByText('Analyst')).not.toBeInTheDocument()
+  })
+
+  it('calls onClose when close button is clicked in card mode', () => {
+    const onClose = vi.fn()
+    render(
+      <AuthProvider>
+        <QuickRoleSwitcher variant="cards" onClose={onClose} />
+      </AuthProvider>
+    )
+
+    const closeBtn = screen.getByRole('button', { name: /Close role switcher/i })
+    expect(closeBtn).toBeInTheDocument()
+    fireEvent.click(closeBtn)
+
+    expect(onClose).toHaveBeenCalled()
+  })
 })
