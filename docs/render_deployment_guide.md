@@ -1,6 +1,6 @@
 # WindIQ — Production Deployment Guide on Render
 
-**Document Identifier**: [`docs/render_deployment_guide.md`](file:///c:/Users/prana/Projects/WindIQ/docs/render_deployment_guide.md)  
+**Document Identifier**: `docs/render_deployment_guide.md`  
 **Author**: DevOps, Security & Release Engineering  
 **Version**: 2.2.0-rc1  
 **Target Platform**: [Render Cloud Infrastructure](https://render.com)  
@@ -79,7 +79,7 @@ Render services are billed by the second while active and can be cancelled or pa
 4. Connect your GitHub account and select the **WindIQ** repository.
 
 ### Step 2: Review Blueprint (`render.yaml`)
-Render will automatically detect [`render.yaml`](file:///c:/Users/prana/Projects/WindIQ/render.yaml) at the repository root and display the 4 declared resources:
+Render will automatically detect [`render.yaml`](../render.yaml) at the repository root and display the 4 declared resources:
 1. `windiq-db` (PostgreSQL Database)
 2. `windiq-redis` (Key Value Store)
 3. `windiq-backend` (Private Service)

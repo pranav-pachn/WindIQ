@@ -96,7 +96,7 @@ ape = (abs_errors / actuals) * 100.0
 
 Delivery date `2026-01-28` recorded the highest daily MAE (**5,374.79 MW**), RMSE (**5,399.40 MW**), and MAPE (**97.22%**) of the entire month.
 
-The complete 24-hour hourly profile was exported to [hourly_error_investigation_jan28.csv](file:///c:/Users/prana/Projects/WindIQ/reports/hourly_error_investigation_jan28.csv).
+The complete 24-hour hourly profile was exported to [hourly_error_investigation_jan28.csv](hourly_error_investigation_jan28.csv).
 
 ### Hourly Profile Summary (2026-01-28)
 - **Overforecast Frequency**: 24 out of 24 hours (100% overforecasted).

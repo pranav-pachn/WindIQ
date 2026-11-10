@@ -108,8 +108,7 @@ The platform reconciles 100% against the verified 744-hour January 2026 benchmar
 * [Backend Architecture & System Design](docs/backend_architecture.md)
 * [Database Schema & Entity Relationship Specification](docs/database_schema.md)
 * [REST API Contract Specification](docs/api_contract.md)
-* [Zero-Cost Cloud Deployment Guide (Vercel + Render + Supabase + Upstash)](docs/free_cloud_deployment_guide.md)
 * [Render Production Deployment Guide](docs/render_deployment_guide.md)
-* [Submission Readiness & System Verification Audit](docs/final_submission_readiness_audit.md)
+* [January 2026 Forecast Accuracy Audit Summary](reports/january_audit_summary.md)
 * [Forensic Data Pipeline & Integrity Audit Report](reports/final_integrity_audit.md)
 

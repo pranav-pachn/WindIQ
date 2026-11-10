@@ -1,0 +1,97 @@
+%%{init: {'theme': 'dark', 'themeVariables': {'primaryColor': '#1e293b', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#475569', 'lineColor': '#94a3b8'}}}%%
+erDiagram
+    INGESTION_RUNS ||--o{ RAW_FORECAST_RECORDS : "ingests"
+    INGESTION_RUNS ||--o{ RAW_ACTUAL_RECORDS : "ingests"
+    INGESTION_RUNS ||--o{ DATA_QUALITY_EVENTS : "logs"
+
+    RAW_ACTUAL_RECORDS ||--o| HOURLY_ACTUALS : "first_half_hour"
+    RAW_ACTUAL_RECORDS ||--o| HOURLY_ACTUALS : "second_half_hour"
+
+    EVALUATION_CONFIGURATIONS ||--o{ FORECAST_EVALUATIONS : "governs"
+    RAW_FORECAST_RECORDS ||--o| FORECAST_EVALUATIONS : "selected_forecast"
+    HOURLY_ACTUALS ||--o| FORECAST_EVALUATIONS : "hourly_actual"
+
+    INGESTION_RUNS {
+        uuid id PK
+        varchar dataset
+        varchar status
+        timestamptz started_at
+        timestamptz completed_at
+        int records_extracted
+        int records_inserted
+        int records_rejected
+        text error_message
+        jsonb metadata
+    }
+
+    RAW_FORECAST_RECORDS {
+        bigserial id PK
+        timestamptz publish_time_utc
+        timestamptz delivery_hour_utc
+        double_precision generation_mw
+        varchar source_dataset
+        uuid ingestion_run_id FK
+        timestamptz created_at
+    }
+
+    RAW_ACTUAL_RECORDS {
+        bigserial id PK
+        timestamptz start_time_utc UK
+        date settlement_date
+        smallint settlement_period
+        varchar fuel_type
+        double_precision generation_mw
+        varchar source_dataset
+        uuid ingestion_run_id FK
+        timestamptz created_at
+    }
+
+    HOURLY_ACTUALS {
+        bigserial id PK
+        timestamptz delivery_hour_utc UK
+        double_precision generation_mw
+        bigint first_half_hour_record_id FK
+        bigint second_half_hour_record_id FK
+        boolean is_complete
+        timestamptz created_at
+    }
+
+    EVALUATION_CONFIGURATIONS {
+        serial id PK
+        varchar configuration_name UK
+        smallint decision_cutoff_hour
+        smallint decision_cutoff_minute
+        varchar timezone
+        boolean is_default
+        jsonb metadata
+        timestamptz created_at
+    }
+
+    FORECAST_EVALUATIONS {
+        bigserial id PK
+        bigint forecast_record_id FK
+        bigint actual_hourly_id FK
+        int evaluation_configuration_id FK
+        date decision_date
+        timestamptz decision_cutoff_utc
+        timestamptz delivery_hour_utc
+        double_precision forecast_generation_mw
+        double_precision actual_generation_mw
+        double_precision error_mw
+        double_precision absolute_error_mw
+        double_precision absolute_percentage_error
+        boolean is_overforecast
+        boolean is_underforecast
+        timestamptz created_at
+    }
+
+    DATA_QUALITY_EVENTS {
+        bigserial id PK
+        varchar dataset
+        varchar issue_type
+        varchar severity
+        timestamptz event_timestamp_utc
+        jsonb details
+        uuid ingestion_run_id FK
+        timestamptz created_at
+    }
